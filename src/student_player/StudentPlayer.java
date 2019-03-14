@@ -29,6 +29,7 @@ public class StudentPlayer extends PentagoPlayer {
         if (firstMove) {
             try {
                 CustomBoardFunctions.initNewGame(boardState);
+                MonteCarloTreeSearch.initNewGame(boardState);
             } catch (NoSuchFieldException e) { // TODO: Should handle these
                 e.printStackTrace();
             } catch (IllegalAccessException e) {

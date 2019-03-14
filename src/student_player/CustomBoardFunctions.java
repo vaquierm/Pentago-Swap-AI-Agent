@@ -1,6 +1,5 @@
 package student_player;
 
-import boardgame.BoardState;
 import pentago_swap.PentagoBoardState;
 import pentago_swap.PentagoMove;
 import pentago_swap.PentagoBoardState.Piece;
@@ -21,7 +20,6 @@ public class CustomBoardFunctions {
     private static Field turnNumberField;
 
     // Some static variables of the board state class
-
     private static int FIRST_PLAYER;
     private static int QUAD_SIZE;
 
@@ -128,6 +126,22 @@ public class CustomBoardFunctions {
         }
 
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     public static void main(String[] args) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException, NoSuchFieldException {
 
