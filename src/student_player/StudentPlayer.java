@@ -8,6 +8,8 @@ import pentago_swap.PentagoBoardState;
 /** A player file submitted by a student. */
 public class StudentPlayer extends PentagoPlayer {
 
+    private boolean firstMove = true;
+
     /**
      * You must modify this constructor to return your student number. This is
      * important, because this is what the code that runs the competition uses to
@@ -23,10 +25,18 @@ public class StudentPlayer extends PentagoPlayer {
      * make decisions.
      */
     public Move chooseMove(PentagoBoardState boardState) {
-        // You probably will make separate functions in MyTools.
-        // For example, maybe you'll need to load some pre-processed best opening
-        // strategies...
-        MyTools.getSomething();
+
+        if (firstMove) {
+            try {
+                CustomBoardFunctions.initNewGame(boardState);
+            } catch (NoSuchFieldException e) { // TODO: Should handle these
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+            firstMove = false;
+        }
+
 
         Move myMove = boardState.getRandomMove();
 
