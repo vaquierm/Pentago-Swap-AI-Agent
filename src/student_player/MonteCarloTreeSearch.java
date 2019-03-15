@@ -3,6 +3,8 @@ package student_player;
 import pentago_swap.PentagoBoardState;
 import pentago_swap.PentagoMove;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -207,9 +209,12 @@ public class MonteCarloTreeSearch {
 
 
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
 
-        PentagoBoardState boardState = new PentagoBoardState();
+        Constructor<PentagoBoardState> constructor = PentagoBoardState.class.getDeclaredConstructor();
+        constructor.setAccessible(true);
+
+        PentagoBoardState boardState = constructor.newInstance();
 
         while (!boardState.gameOver()) {
             PentagoMove move = (PentagoMove) boardState.getRandomMove();

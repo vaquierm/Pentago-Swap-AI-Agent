@@ -153,7 +153,10 @@ public class CustomBoardFunctions {
 
     public static void main(String[] args) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException, NoSuchFieldException {
 
-        PentagoBoardState b1 = new PentagoBoardState();
+        Constructor<PentagoBoardState> constructor = PentagoBoardState.class.getDeclaredConstructor();
+        constructor.setAccessible(true);
+
+        PentagoBoardState b1 = constructor.newInstance();
         CustomPentagoBoardState b2 = new CustomPentagoBoardState();
         PentagoMove move;
 
@@ -177,8 +180,6 @@ public class CustomBoardFunctions {
         }
 
 
-        Constructor<PentagoBoardState> constructor = PentagoBoardState.class.getDeclaredConstructor();
-        constructor.setAccessible(true);
         PentagoBoardState boardState = constructor.newInstance();
 
         initNewGame(boardState);
@@ -211,13 +212,13 @@ public class CustomBoardFunctions {
 
         System.out.println("Benchmark what runs faster");
 
-        boardState = new PentagoBoardState();
+        boardState = constructor.newInstance();
         PentagoBoardState clone = null;
 
         long start = System.currentTimeMillis();
         for (int i = 0; i < 1000000; i ++) {
             if (boardState.gameOver()) {
-                boardState = new PentagoBoardState();
+                boardState = constructor.newInstance();
             }
             else {
                 move = (PentagoMove) boardState.getRandomMove();
@@ -227,7 +228,7 @@ public class CustomBoardFunctions {
         }
         System.out.println("Cloning took : " + (System.currentTimeMillis() - start) + "ms");
 
-        boardState = new PentagoBoardState();
+        boardState = constructor.newInstance();
         initNewGame(boardState);
         move = (PentagoMove) boardState.getRandomMove();
         boardState.processMove(move);
