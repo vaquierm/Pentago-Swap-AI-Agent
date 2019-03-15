@@ -26,7 +26,7 @@ public class StudentPlayer extends PentagoPlayer {
      */
     public Move chooseMove(PentagoBoardState boardState) {
 
-        Move myMove = MonteCarloTreeSearch.findBestMove(2000, boardState);
+        Move myMove = MonteCarloTreeSearch1.findBestMove(2000, boardState);
 
         // Return your move to be processed by the server.
         return myMove;
