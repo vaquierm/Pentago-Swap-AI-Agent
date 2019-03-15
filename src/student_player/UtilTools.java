@@ -202,7 +202,7 @@ public class UtilTools {
         System.out.println(System.currentTimeMillis());
 
         System.out.println(System.currentTimeMillis());
-        System.out.println(boardState.getAllLegalMovesWithSymemry().size());
+        System.out.println(boardState.getAllLegalMovesWithSymmetry().size());
         System.out.println(System.currentTimeMillis());
 
     }

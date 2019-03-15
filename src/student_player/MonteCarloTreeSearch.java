@@ -16,7 +16,9 @@ public class MonteCarloTreeSearch {
     public static void initNewGame(PentagoBoardState boardState) {
         currentRoot = new MonteCarloTreeNode();
 
-        for (PentagoMove move : boardState.getAllLegalMoves()) {
+        CustomPentagoBoardState state = new CustomPentagoBoardState(boardState);
+
+        for (PentagoMove move : state.getAllLegalMovesWithSymmetry()) {
             new MonteCarloTreeNode(currentRoot, move);
         }
     }
@@ -72,12 +74,12 @@ public class MonteCarloTreeSearch {
 
         CustomPentagoBoardState state = new CustomPentagoBoardState(lastState);
 
-        System.out.println("Saved " + currentRoot.getChildren().size() + " out of " + lastState.getAllLegalMoves().size());
+        System.out.println("Saved " + currentRoot.getChildren().size() + " out of " + state.getAllLegalMoves().size());
         for (MonteCarloTreeNode node : currentRoot.getChildren()) {
             PentagoMove move = node.getMove();
 
             try {
-                //state.processMove(move);//TODO
+                state.processMove(move);
             } catch (Exception e) {
                 state.printBoard();
                 e.printStackTrace();
@@ -91,7 +93,7 @@ public class MonteCarloTreeSearch {
             }
 
             // Revert the move that was just made
-            //state.revertMove(move);//TODO
+            state.revertMove(move);
         }
 
         // If the move that the opponent made was never explored re initialize the tree like if it was a new game starting at the new board state
@@ -216,12 +218,15 @@ public class MonteCarloTreeSearch {
 
         PentagoBoardState boardState = constructor.newInstance();
 
+        PentagoMove move;
+
         while (!boardState.gameOver()) {
-            PentagoMove move = (PentagoMove) boardState.getRandomMove();
-            boardState.processMove(move);
 
             move = findBestMove(2000, (PentagoBoardState) boardState.clone());
 
+            boardState.processMove(move);
+
+            move = (PentagoMove) boardState.getRandomMove();
             boardState.processMove(move);
         }
 
