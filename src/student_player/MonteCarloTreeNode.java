@@ -35,7 +35,7 @@ public class MonteCarloTreeNode {
 
     public double getWinRatio() {
         if (!winRatioUpToDate) {
-            winRatio = ((double) winCount) / visitCount;
+            winRatio = ((double) winCount) / ((double) visitCount);
             winRatioUpToDate = true;
         }
         return winRatio;
@@ -45,12 +45,22 @@ public class MonteCarloTreeNode {
         return children.size() == 0;
     }
 
+    public PentagoMove getMove() {
+        return move;
+    }
+
     public void visit() {
+        winRatioUpToDate = false;
         visitCount++;
     }
 
     public void win() {
+        winRatioUpToDate = false;
         winCount++;
+    }
+
+    public void removeParent() {
+        parent = null;
     }
 
     public int getVisitCount() {
@@ -78,12 +88,15 @@ public class MonteCarloTreeNode {
     }
 
     public double getUCTValue() {
-        if (visitCount == 0) {
-            return Integer.MAX_VALUE;
-        }
         if (parent == null) {
-            return 0;
+            return -100000;
         }
+        if (visitCount == 0) {
+            return 100000;
+        }
+        if (parent.getVisitCount() == 0)
+            return this.getWinRatio();
+
         return this.getWinRatio() + 1.41 * Math.sqrt(Math.log(parent.getVisitCount()) / (double) visitCount);
     }
 }

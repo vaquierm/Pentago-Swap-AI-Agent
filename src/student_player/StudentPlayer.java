@@ -26,20 +26,7 @@ public class StudentPlayer extends PentagoPlayer {
      */
     public Move chooseMove(PentagoBoardState boardState) {
 
-        if (firstMove) {
-            try {
-                CustomBoardFunctions.initNewGame(boardState);
-                MonteCarloTreeSearch.initNewGame(boardState);
-            } catch (NoSuchFieldException e) { // TODO: Should handle these
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            }
-            firstMove = false;
-        }
-
-
-        Move myMove = boardState.getRandomMove();
+        Move myMove = MonteCarloTreeSearch.findBestMove(2000, boardState);
 
         // Return your move to be processed by the server.
         return myMove;

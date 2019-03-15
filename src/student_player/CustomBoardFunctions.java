@@ -127,6 +127,14 @@ public class CustomBoardFunctions {
 
     }
 
+    public static boolean movesEqual(PentagoMove move1, PentagoMove move2) {
+        return move1.getASwap() == move2.getASwap() &&
+                move1.getBSwap() == move2.getBSwap() &&
+                move1.getMoveCoord().getX() == move2.getMoveCoord().getX() &&
+                move1.getMoveCoord().getY() == move2.getMoveCoord().getY();
+
+    }
+
 
 
 
