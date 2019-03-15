@@ -52,6 +52,12 @@ public class MonteCarloTreeSearch {
         currentRoot = bestNode;
         bestNode.removeParent();
 
+        // Apply the move and save the state to figure out what state the AI plays later
+        boardState.processMove(currentRoot.getMove());
+        lastState = (PentagoBoardState) boardState.clone();
+
+
+
         return bestNode.getMove();
     }
 
@@ -64,16 +70,26 @@ public class MonteCarloTreeSearch {
 
         CustomPentagoBoardState state = new CustomPentagoBoardState(lastState);
 
+        System.out.println("Saved " + currentRoot.getChildren().size() + " out of " + lastState.getAllLegalMoves().size());
         for (MonteCarloTreeNode node : currentRoot.getChildren()) {
             PentagoMove move = node.getMove();
 
-            state.processMove(move);
+            try {
+                state.processMove(move);
+            } catch (Exception e) {
+                state.printBoard();
+                e.printStackTrace();
+            }
 
             if (state.boardEquals(boardState)) {
                 // This is the move the opponent made. Update the root and get rid of the rest of the tree
+                System.out.println("Found the play the AI made!");
                 currentRoot = node;
                 currentRoot.removeParent();
             }
+
+            // Revert the move that was just made
+            state.revertMove(move);
         }
 
         // If the move that the opponent made was never explored re initialize the tree like if it was a new game starting at the new board state
@@ -199,7 +215,7 @@ public class MonteCarloTreeSearch {
             PentagoMove move = (PentagoMove) boardState.getRandomMove();
             boardState.processMove(move);
 
-            move = findBestMove(2000, boardState);
+            move = findBestMove(2000, (PentagoBoardState) boardState.clone());
 
             boardState.processMove(move);
         }

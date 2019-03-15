@@ -102,16 +102,12 @@ public class CustomPentagoBoardState extends BoardState {
     public CustomPentagoBoardState(PentagoBoardState pbs) {
         super();
         this.board = new Piece[BOARD_SIZE][BOARD_SIZE];
-        for (int i = 0; i < BOARD_SIZE; i++) {
-            for (int j = 0; j < BOARD_SIZE; j++) {
-                this.board[i][j] = pbs.getPieceAt(i, j);
-            }
-        }
+
         this.quadrants = new Piece[NUM_QUADS][QUAD_SIZE][QUAD_SIZE];
         for (int i = 0; i < BOARD_SIZE; i++) {
             for (int j = 0; j < BOARD_SIZE; j++) {
-                boolean isLeftQuadMove = i / 3 == 0;
-                boolean isTopQuadMove = j / 3 == 0;
+                boolean isLeftQuadMove = j / QUAD_SIZE == 0;
+                boolean isTopQuadMove = i / QUAD_SIZE == 0;
                 if (isLeftQuadMove && isTopQuadMove) { //Top left quadrant
                     quadrants[0][i][j] = pbs.getPieceAt(i, j);
                 } else if (!isLeftQuadMove && isTopQuadMove) { //Top right quadrant
@@ -123,6 +119,8 @@ public class CustomPentagoBoardState extends BoardState {
                 }
             }
         }
+
+        buildBoardFromQuadrants();
 
         rand = new Random(2019);
         this.winner = pbs.getWinner();
@@ -393,12 +391,10 @@ public class CustomPentagoBoardState extends BoardState {
         buildBoardFromQuadrants();
 
         // Reset the player to the previous player and the turn to the previous turn
-        turnPlayer = 1 - turnNumber;
+        if (turnPlayer == FIRST_PLAYER) { turnNumber -= 1; } // Update the turn number if needed
+        turnPlayer = 1 - turnPlayer; // Swap player
 
-        if (turnPlayer != FIRST_PLAYER) {
-            // Update back the turn number if necessary
-            turnNumber -= 1;
-        }
+        updateWinner();
     }
 
     public boolean boardEquals(PentagoBoardState pbs) {

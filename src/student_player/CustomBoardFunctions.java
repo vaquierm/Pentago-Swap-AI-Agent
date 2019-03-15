@@ -153,6 +153,29 @@ public class CustomBoardFunctions {
 
     public static void main(String[] args) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException, NoSuchFieldException {
 
+        PentagoBoardState b1 = new PentagoBoardState();
+        CustomPentagoBoardState b2 = new CustomPentagoBoardState();
+        PentagoMove move;
+
+        int numIter = (int)(Math.random() * 10);
+        for (int i = 0; i < numIter && !b1.gameOver() ; i++) {
+            move = (PentagoMove) b1.getRandomMove();
+            b1.processMove(move);
+            b2.processMove(move);
+            if(!b2.boardEquals(b1)) {
+                System.out.println("Boards are not equal");
+            }
+        }
+        move = (PentagoMove) b1.getRandomMove();
+        b2.processMove(move);
+        b2.revertMove(move);
+
+        if (!b2.boardEquals(b1)) {
+            System.out.println("Revert not working");
+            b1.printBoard();
+            b2.printBoard();
+        }
+
 
         Constructor<PentagoBoardState> constructor = PentagoBoardState.class.getDeclaredConstructor();
         constructor.setAccessible(true);
@@ -160,9 +183,9 @@ public class CustomBoardFunctions {
 
         initNewGame(boardState);
 
-        PentagoMove move;
 
-        int numIter = (int)(Math.random() * 10);
+
+
         for (int i = 0; i < numIter && !boardState.gameOver() ; i++) {
             move = (PentagoMove) boardState.getRandomMove();
             boardState.processMove(move);
@@ -171,7 +194,6 @@ public class CustomBoardFunctions {
         move = (PentagoMove) boardState.getRandomMove();
 
         PentagoBoardState beforeProcess = (PentagoBoardState) boardState.clone();
-
 
 
         boardState.processMove(move);
@@ -193,7 +215,7 @@ public class CustomBoardFunctions {
         PentagoBoardState clone = null;
 
         long start = System.currentTimeMillis();
-        for (int i = 0; i < 2000000; i ++) {
+        for (int i = 0; i < 1000000; i ++) {
             if (boardState.gameOver()) {
                 boardState = new PentagoBoardState();
             }
@@ -210,7 +232,7 @@ public class CustomBoardFunctions {
         move = (PentagoMove) boardState.getRandomMove();
         boardState.processMove(move);
         start = System.currentTimeMillis();
-        for (int i = 0; i < 2000000; i ++) {
+        for (int i = 0; i < 1000000; i ++) {
             move = (PentagoMove) boardState.getRandomMove();
             boardState.processMove(move);
             revertMove(boardState, move);
