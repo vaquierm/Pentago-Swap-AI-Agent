@@ -8,12 +8,11 @@ import pentago_swap.PentagoBoardState.Quadrant;
 import pentago_swap.PentagoBoardState.Piece;
 import pentago_swap.PentagoCoord;
 import pentago_swap.PentagoMove;
+import student_player.UtilTools.Symmetry;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 import java.util.function.UnaryOperator;
-import java.util.Random;
 
 /**
  *
@@ -187,6 +186,54 @@ public class CustomPentagoBoardState extends BoardState {
             }
         }
         return legalMoves;
+    }
+
+    public HashSet<PentagoMove> getAllLegalMovesAsHashSet() {
+        HashSet<PentagoMove> legalMoves = new HashSet<>();
+        for (int i = 0; i < BOARD_SIZE; i++) { //Iterate through positions on board
+            for (int j = 0; j < BOARD_SIZE; j++) {
+                if (board[i][j] == Piece.EMPTY) {
+                    for (int k = 0; k < NUM_QUADS - 1; k++) { // Iterate through valid swaps
+                        for (int l = k+1; l < NUM_QUADS; l++) {
+                            legalMoves.add(new PentagoMove(i, j, intToQuad.get(k), intToQuad.get(l), turnPlayer));
+                        }
+                    }
+                }
+            }
+        }
+        return legalMoves;
+    }
+
+    public ArrayList<PentagoMove> getAllLegalMovesWithSymmetry() {
+        HashSet<Symmetry> symmetries = UtilTools.checkSymmetry(board);
+
+        if (symmetries.size() > 0) {
+            System.out.println("Found " + symmetries.size() + " symmetries");
+        }
+
+        ArrayList<PentagoMove> legalMoves = getAllLegalMoves();
+        ArrayList<PentagoMove> moves = new ArrayList<>();
+
+        int halfBoard = BOARD_SIZE / 2;
+
+        for (PentagoMove move : legalMoves) {
+            PentagoCoord coord = move.getMoveCoord();
+            if (symmetries.contains(Symmetry.VERTICAL) && coord.getY() >= halfBoard) {
+                continue;
+            }
+            else if (symmetries.contains(Symmetry.HORIZONTAL) && coord.getX() >= halfBoard) {
+                continue;
+            }
+            else if (symmetries.contains(Symmetry.DIAGONAL1) && coord.getX() > coord.getY()) {
+                continue;
+            }
+            else if (symmetries.contains(Symmetry.DIAGONAL2) && coord.getX() + coord.getY() > BOARD_SIZE - 1) {
+                continue;
+            }
+            moves.add(move);
+        }
+
+        return moves;
     }
 
     /**
@@ -412,5 +459,24 @@ public class CustomPentagoBoardState extends BoardState {
 
         return true;
     }
+
+    public boolean boardEquals(CustomPentagoBoardState pbs) {
+
+        if (winner != pbs.getWinner() || turnNumber != pbs.getTurnNumber() || turnPlayer != pbs.getTurnPlayer())
+            return false;
+
+        for (int i = 0; i < BOARD_SIZE; i++) {
+            for (int j = 0; j < BOARD_SIZE; j++) {
+                if (this.board[i][j] != pbs.getPieceAt(i, j)) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+
+
 
 }

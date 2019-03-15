@@ -16,7 +16,9 @@ public class MonteCarloTreeSearch {
     public static void initNewGame(PentagoBoardState boardState) {
         currentRoot = new MonteCarloTreeNode();
 
-        for (PentagoMove move : boardState.getAllLegalMoves()) {
+        CustomPentagoBoardState state = new CustomPentagoBoardState(boardState);
+
+        for (PentagoMove move : state.getAllLegalMovesWithSymmetry()) {
             new MonteCarloTreeNode(currentRoot, move);
         }
     }
@@ -72,7 +74,7 @@ public class MonteCarloTreeSearch {
 
         CustomPentagoBoardState state = new CustomPentagoBoardState(lastState);
 
-        System.out.println("Saved " + currentRoot.getChildren().size() + " out of " + lastState.getAllLegalMoves().size());
+        System.out.println("Saved " + currentRoot.getChildren().size() + " out of " + state.getAllLegalMoves().size());
         for (MonteCarloTreeNode node : currentRoot.getChildren()) {
             PentagoMove move = node.getMove();
 
@@ -216,12 +218,15 @@ public class MonteCarloTreeSearch {
 
         PentagoBoardState boardState = constructor.newInstance();
 
+        PentagoMove move;
+
         while (!boardState.gameOver()) {
-            PentagoMove move = (PentagoMove) boardState.getRandomMove();
-            boardState.processMove(move);
 
             move = findBestMove(2000, (PentagoBoardState) boardState.clone());
 
+            boardState.processMove(move);
+
+            move = (PentagoMove) boardState.getRandomMove();
             boardState.processMove(move);
         }
 
