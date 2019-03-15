@@ -194,11 +194,17 @@ public class UtilTools {
 
 
     public static void main(String[] args) {
-        int[][] mat = { { 1, 0, 1 },
-                        { 1, 0, 0 },
-                        { 1, 1, 1 } };
 
-        //HashSet<Symmetry> sym = (HashSet<Symmetry>) checkSymmetry(mat);
+        CustomPentagoBoardState boardState = new CustomPentagoBoardState();
+
+        System.out.println(System.currentTimeMillis());
+        System.out.println(boardState.getAllLegalMoves().size());
+        System.out.println(System.currentTimeMillis());
+
+        System.out.println(System.currentTimeMillis());
+        System.out.println(boardState.getAllLegalMovesWithSymemry().size());
+        System.out.println(System.currentTimeMillis());
+
     }
 
 

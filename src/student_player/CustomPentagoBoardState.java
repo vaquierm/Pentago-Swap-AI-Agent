@@ -7,14 +7,12 @@ import pentago_swap.PentagoBoardState;
 import pentago_swap.PentagoBoardState.Quadrant;
 import pentago_swap.PentagoBoardState.Piece;
 import pentago_swap.PentagoCoord;
+import pentago_swap.PentagoMove;
 import student_player.UtilTools.Symmetry;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.*;
 import java.util.function.UnaryOperator;
-import java.util.Random;
 
 /**
  *
@@ -209,13 +207,29 @@ public class CustomPentagoBoardState extends BoardState {
     public ArrayList<CustomPentagoMove> getAllLegalMovesWithSymemry() {
         HashSet<Symmetry> symmetries = UtilTools.checkSymmetry(board);
 
-        //TODO: Based on the symmetry of the board, remove duplicate moves
+        ArrayList<CustomPentagoMove> legalMoves = getAllLegalMoves();
+        ArrayList<CustomPentagoMove> moves = new ArrayList<>();
 
-        for (Symmetry symmetry : symmetries) {
+        int halfBoard = BOARD_SIZE / 2;
 
+        for (CustomPentagoMove move : legalMoves) {
+            PentagoCoord coord = move.getMoveCoord();
+            if (symmetries.contains(Symmetry.VERTICAL) && coord.getY() >= halfBoard) {
+                continue;
+            }
+            else if (symmetries.contains(Symmetry.HORIZONTAL) && coord.getX() >= halfBoard) {
+                continue;
+            }
+            else if (symmetries.contains(Symmetry.DIAGONAL1) && coord.getX() > coord.getY()) {
+                continue;
+            }
+            else if (symmetries.contains(Symmetry.DIAGONAL2) && coord.getX() + coord.getY() > BOARD_SIZE - 1) {
+                continue;
+            }
+            moves.add(move);
         }
 
-        return null;
+        return moves;
     }
 
     /**
