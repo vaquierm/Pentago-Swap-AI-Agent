@@ -77,7 +77,7 @@ public class MonteCarloTreeSearch {
             PentagoMove move = node.getMove();
 
             try {
-                state.processMove(move);
+                //state.processMove(move);//TODO
             } catch (Exception e) {
                 state.printBoard();
                 e.printStackTrace();
@@ -91,7 +91,7 @@ public class MonteCarloTreeSearch {
             }
 
             // Revert the move that was just made
-            state.revertMove(move);
+            //state.revertMove(move);//TODO
         }
 
         // If the move that the opponent made was never explored re initialize the tree like if it was a new game starting at the new board state

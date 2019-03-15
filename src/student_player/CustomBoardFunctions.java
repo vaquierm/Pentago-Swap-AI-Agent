@@ -163,15 +163,15 @@ public class CustomBoardFunctions {
         int numIter = (int)(Math.random() * 10);
         for (int i = 0; i < numIter && !b1.gameOver() ; i++) {
             move = (PentagoMove) b1.getRandomMove();
-            b1.processMove(move);
-            b2.processMove(move);
+            //b1.processMove(move);
+            //b2.processMove(move);
             if(!b2.boardEquals(b1)) {
                 System.out.println("Boards are not equal");
             }
         }
         move = (PentagoMove) b1.getRandomMove();
-        b2.processMove(move);
-        b2.revertMove(move);
+        //b2.processMove(move);
+        //b2.revertMove(move);
 
         if (!b2.boardEquals(b1)) {
             System.out.println("Revert not working");

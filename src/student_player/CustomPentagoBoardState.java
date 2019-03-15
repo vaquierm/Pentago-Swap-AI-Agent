@@ -7,11 +7,12 @@ import pentago_swap.PentagoBoardState;
 import pentago_swap.PentagoBoardState.Quadrant;
 import pentago_swap.PentagoBoardState.Piece;
 import pentago_swap.PentagoCoord;
-import pentago_swap.PentagoMove;
+import student_player.UtilTools.Symmetry;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.function.UnaryOperator;
 import java.util.Random;
 
@@ -157,7 +158,7 @@ public class CustomPentagoBoardState extends BoardState {
 
     @Override
     public Move getRandomMove() {
-        ArrayList<PentagoMove> moves = getAllLegalMoves();
+        ArrayList<CustomPentagoMove> moves = getAllLegalMoves();
         //return moves.get(rand.nextInt(moves.size()));
         return moves.get((int)(Math.random() * moves.size()));
     }
@@ -173,14 +174,14 @@ public class CustomPentagoBoardState extends BoardState {
         return getPieceAt(coord.getX(), coord.getY());
     }
 
-    public ArrayList<PentagoMove> getAllLegalMoves() {
-        ArrayList<PentagoMove> legalMoves = new ArrayList<>();
+    public ArrayList<CustomPentagoMove> getAllLegalMoves() {
+        ArrayList<CustomPentagoMove> legalMoves = new ArrayList<>();
         for (int i = 0; i < BOARD_SIZE; i++) { //Iterate through positions on board
             for (int j = 0; j < BOARD_SIZE; j++) {
                 if (board[i][j] == Piece.EMPTY) {
                     for (int k = 0; k < NUM_QUADS - 1; k++) { // Iterate through valid swaps
                         for (int l = k+1; l < NUM_QUADS; l++) {
-                            legalMoves.add(new PentagoMove(i, j, intToQuad.get(k), intToQuad.get(l), turnPlayer));
+                            legalMoves.add(new CustomPentagoMove(i, j, intToQuad.get(k), intToQuad.get(l), turnPlayer));
                         }
                     }
                 }
@@ -189,12 +190,40 @@ public class CustomPentagoBoardState extends BoardState {
         return legalMoves;
     }
 
+    public HashSet<CustomPentagoMove> getAllLegalMovesAsHashSet() {
+        HashSet<CustomPentagoMove> legalMoves = new HashSet<>();
+        for (int i = 0; i < BOARD_SIZE; i++) { //Iterate through positions on board
+            for (int j = 0; j < BOARD_SIZE; j++) {
+                if (board[i][j] == Piece.EMPTY) {
+                    for (int k = 0; k < NUM_QUADS - 1; k++) { // Iterate through valid swaps
+                        for (int l = k+1; l < NUM_QUADS; l++) {
+                            legalMoves.add(new CustomPentagoMove(i, j, intToQuad.get(k), intToQuad.get(l), turnPlayer));
+                        }
+                    }
+                }
+            }
+        }
+        return legalMoves;
+    }
+
+    public ArrayList<CustomPentagoMove> getAllLegalMovesWithSymemry() {
+        HashSet<Symmetry> symmetries = UtilTools.checkSymmetry(board);
+
+        //TODO: Based on the symmetry of the board, remove duplicate moves
+
+        for (Symmetry symmetry : symmetries) {
+
+        }
+
+        return null;
+    }
+
     /**
      * Check if the given move is legal
      * @param m the move
      * @return true if the move is legal, false otherwise
      */
-    public boolean isLegal(PentagoMove m) {
+    public boolean isLegal(CustomPentagoMove m) {
         if (m.getASwap() == m.getBSwap()) { return false; } // Cannot swap same tile
         PentagoCoord c = m.getMoveCoord();
         if (c.getX() >= BOARD_SIZE || c.getX() < 0 || c.getY() < 0 || c.getY() >= BOARD_SIZE) { return false; }
@@ -212,7 +241,7 @@ public class CustomPentagoBoardState extends BoardState {
         return board[c.getX()][c.getY()] == Piece.EMPTY;
     }
 
-    public void processMove(PentagoMove m) throws IllegalArgumentException {
+    public void processMove(CustomPentagoMove m) throws IllegalArgumentException {
         if (!isLegal(m)) { throw new IllegalArgumentException("Invalid move. Move: " + m.toPrettyString()); }
         updateQuadrants(m);
         updateWinner();
@@ -224,7 +253,7 @@ public class CustomPentagoBoardState extends BoardState {
      * Updates the appropriate quandrant based on the location of the move m
      * @param m: Pentago move
      */
-    private void updateQuadrants(PentagoMove m) {
+    private void updateQuadrants(CustomPentagoMove m) {
         Piece turnPiece = turnPlayer == WHITE ? Piece.WHITE : Piece.BLACK;
         int x = m.getMoveCoord().getX();
         int y = m.getMoveCoord().getY();
@@ -364,7 +393,7 @@ public class CustomPentagoBoardState extends BoardState {
      * Note: It is assumed that the move passed was actually made.
      * @param move  The last move that was played that needs to be reverted
      */
-    public void revertMove(PentagoMove move) {
+    public void revertMove(CustomPentagoMove move) {
 
         //Swapping mechanism
         int a = quadToInt.get(move.getASwap());
@@ -412,5 +441,24 @@ public class CustomPentagoBoardState extends BoardState {
 
         return true;
     }
+
+    public boolean boardEquals(CustomPentagoBoardState pbs) {
+
+        if (winner != pbs.getWinner() || turnNumber != pbs.getTurnNumber() || turnPlayer != pbs.getTurnPlayer())
+            return false;
+
+        for (int i = 0; i < BOARD_SIZE; i++) {
+            for (int j = 0; j < BOARD_SIZE; j++) {
+                if (this.board[i][j] != pbs.getPieceAt(i, j)) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+
+
 
 }
