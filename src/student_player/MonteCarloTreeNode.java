@@ -2,10 +2,7 @@ package student_player;
 
 import pentago_swap.PentagoMove;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 /**
  * This class is used for the tree policy of the monte carlo tree search
@@ -72,9 +69,9 @@ public class MonteCarloTreeNode {
         visitCount++;
     }
 
-    public void win() {
+    public void incrementWinCount(int value) {
         winRatioUpToDate = false;
-        winCount++;
+        winCount += value;
     }
 
     public void removeParent() {
@@ -106,7 +103,7 @@ public class MonteCarloTreeNode {
     }
 
     public double getUCTValue() {
-        if (parent == null) {
+        if (parent == null || status != Status.PROGRESS) {
             return -100000;
         }
         if (visitCount == 0) {
@@ -125,5 +122,27 @@ public class MonteCarloTreeNode {
     public void updateStatus(Status status) {
         this.status = status;
         winRatioUpToDate = false;
+    }
+
+    public List<MonteCarloTreeNode> getUnexploredChildren() {
+        List<MonteCarloTreeNode> unexploredChildren = new ArrayList<>();
+
+        for (MonteCarloTreeNode child : children) {
+            if (child.getVisitCount() == 0) {
+                unexploredChildren.add(child);
+            }
+        }
+
+        return unexploredChildren;
+    }
+
+    public boolean hasChildWithLossStatus() {
+        for (MonteCarloTreeNode child : children) {
+            if (child.status == Status.LOSS) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

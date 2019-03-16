@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/pentago-swap.iml" filepath="$PROJECT_DIR$/pentago-swap.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Pentago-Swap-AI-Agent.iml" filepath="$PROJECT_DIR$/Pentago-Swap-AI-Agent.iml" />
     </modules>
   </component>
 </project>

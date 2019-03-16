@@ -10,7 +10,7 @@ public class MiniMaxTools {
         MonteCarloTreeNode bestNode = null;
         double bestVal = -100000;
         for (MonteCarloTreeNode child : root.getChildren()) {
-            double val = minimax(root, 6, true, -100000, 100000);
+            double val = minimax(child, 6, false, -100000, 100000);
             if (val > bestVal) {
                 bestVal = val;
                 bestNode = child;
@@ -22,9 +22,7 @@ public class MiniMaxTools {
 
     private static double minimax(MonteCarloTreeNode node, int level, boolean max, double alpha, double beta) {
         if (node.isLeaf() || level == 0) {
-            if (node.getWinRatio() < 1) //TODO Check if this works
-                return node.getWinRatio();
-            return 0;
+            return node.getWinRatio();
         }
 
         List<MonteCarloTreeNode> children = node.getChildren();

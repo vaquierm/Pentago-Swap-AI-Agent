@@ -44,7 +44,7 @@ public class Agent {
 
         System.out.println(counter + " default policy runs were ran in " + timeout + "ms");
 
-        return MonteCarloTreeSearch.getBestMoveWithTree();
+        return MonteCarloTreeSearch.getBestMoveWithTree(player, customPentagoBoardState);
 
     }
 
@@ -61,12 +61,12 @@ public class Agent {
 
             while (!boardState.gameOver()) {
 
-                move = (PentagoMove) boardState.getRandomMove();
-                boardState.processMove(move);
+                System.out.println("It's player " + boardState.getTurnPlayer() + "'s turn.");
 
                 move = findBestMoveMontecarlo(2000, (PentagoBoardState) boardState.clone());
-
                 boardState.processMove(move);
+
+                boardState.printBoard();
 
             }
 
