@@ -27,6 +27,6 @@ public class StudentPlayer extends PentagoPlayer {
     public Move chooseMove(PentagoBoardState boardState) {
 
         // Return your move to be processed by the server.
-        return Agent.findBestMoveMontecarlo(2000, boardState);
+        return Agent.findBestMoveMontecarlo(1800, boardState);
     }
 }

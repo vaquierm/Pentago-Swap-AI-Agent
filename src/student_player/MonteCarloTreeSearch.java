@@ -33,18 +33,19 @@ public class MonteCarloTreeSearch {
      * @return  The best move to play according to the tree
      */
     public static PentagoMove getBestMoveWithTree() {
-        List<MonteCarloTreeNode> children = root.getChildren();
-        for (MonteCarloTreeNode child : children) {
 
-        }
-        MonteCarloTreeNode max = Collections.max(root.getChildren(), Comparator.comparing(MonteCarloTreeNode::getUCTValue));
-        MonteCarloTreeNode min = Collections.max(root.getChildren(), Comparator.comparing(MonteCarloTreeNode::getUCTValue));
+        MonteCarloTreeNode max = Collections.max(root.getChildren(), Comparator.comparing(MonteCarloTreeNode::getWinRatio));
+        MonteCarloTreeNode min = Collections.min(root.getChildren(), Comparator.comparing(MonteCarloTreeNode::getWinRatio));
+
+        System.out.println("Max node has win rate: " + max.getWinRatio() + " for move " + max.getMove().getMoveCoord().getX() + ", " + max.getMove().getMoveCoord().getY());
+        System.out.println("Min node has win rate: " + min.getWinRatio() + " for move " + max.getMove().getMoveCoord().getX() + ", " + max.getMove().getMoveCoord().getY());
+
 
         if (max.getWinRatio() > 1000) {
             // If you can win, win
             return max.getMove();
         }
-        else if (min.getWinRatio() < 1000) {
+        else if (min.getWinRatio() < -1000) {
             // If you need to block, block
             return min.getMove();
         }
@@ -84,10 +85,17 @@ public class MonteCarloTreeSearch {
      * @param node  Node to expand
      * @param boardState  Board state at this node
      */
-    public static void expandNode(MonteCarloTreeNode node, CustomPentagoBoardState boardState) {
+    public static void expandNode(MonteCarloTreeNode node, CustomPentagoBoardState boardState, int player) {
 
-        if (boardState.getWinner() != Board.NOBODY) {
-
+        if (boardState.gameOver()) {
+            // If game done, don't expand
+            if (boardState.getWinner() == player) {
+                node.updateStatus(MonteCarloTreeNode.Status.WON);
+            }
+            else if (boardState.getWinner() == 1 - player) {
+                node.updateStatus(MonteCarloTreeNode.Status.LOSS);
+            }
+            return;
         }
 
         //TODO: only do by symmetry if necessary
@@ -109,15 +117,6 @@ public class MonteCarloTreeSearch {
     public static void simulateDefaultPolicyAndBackPropagate(CustomPentagoBoardState boardState, MonteCarloTreeNode node, int player) {
 
         int value = 0;
-
-        if (boardState.gameOver()) {
-            if (boardState.getWinner() == player) {
-                node.updateStatus(MonteCarloTreeNode.Status.WON);
-            }
-            else if (boardState.getWinner() == 1 - player) {
-                node.updateStatus(MonteCarloTreeNode.Status.LOSS);
-            }
-        }
 
         PentagoMove randomMove;
         while (!boardState.gameOver()) {

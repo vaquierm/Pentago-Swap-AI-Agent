@@ -36,7 +36,7 @@ public class Agent {
 
             MonteCarloTreeSearch.applyMovesUpTo(tempBoard, nodeToExpand);
 
-            MonteCarloTreeSearch.expandNode(nodeToExpand, tempBoard);
+            MonteCarloTreeSearch.expandNode(nodeToExpand, tempBoard, player);
 
             MonteCarloTreeSearch.simulateDefaultPolicyAndBackPropagate(tempBoard, nodeToExpand, player);
 
