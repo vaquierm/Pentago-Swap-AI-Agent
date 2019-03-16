@@ -10,7 +10,6 @@ import pentago_swap.PentagoCoord;
 import pentago_swap.PentagoMove;
 import student_player.UtilTools.Symmetry;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.function.UnaryOperator;
 
@@ -206,10 +205,6 @@ public class CustomPentagoBoardState extends BoardState {
 
     public ArrayList<PentagoMove> getAllLegalMovesWithSymmetry() {
         HashSet<Symmetry> symmetries = UtilTools.checkSymmetry(board);
-
-        if (symmetries.size() > 0) {
-            System.out.println("Found " + symmetries.size() + " symmetries");
-        }
 
         ArrayList<PentagoMove> legalMoves = getAllLegalMoves();
         ArrayList<PentagoMove> moves = new ArrayList<>();
