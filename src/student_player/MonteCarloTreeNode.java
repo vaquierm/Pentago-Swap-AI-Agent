@@ -2,6 +2,8 @@ package student_player;
 
 import pentago_swap.PentagoMove;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -20,10 +22,17 @@ public class MonteCarloTreeNode {
     private int visitCount = 0;
     private int winCount = 0;
 
+    private Status status;
+
+    public enum Status {
+        WON, LOSS, PROGRESS
+    }
+
     public MonteCarloTreeNode() {
         parent = null;
         children = new LinkedList<>();
         move = null;
+        status = Status.PROGRESS;
     }
 
     public MonteCarloTreeNode(MonteCarloTreeNode parent, PentagoMove move) {
@@ -31,11 +40,20 @@ public class MonteCarloTreeNode {
         this.move = move;
         children = new LinkedList<>();
         parent.addChild(this);
+        status = Status.PROGRESS;
     }
 
     public double getWinRatio() {
         if (!winRatioUpToDate) {
-            winRatio = ((double) winCount) / ((double) visitCount);
+            if (status == Status.WON) {
+                winRatio = 100000;
+            }
+            else if (status == Status.LOSS) {
+                winRatio = -100000;
+            }
+            else {
+                winRatio = ((double) winCount) / ((double) visitCount);
+            }
             winRatioUpToDate = true;
         }
         return winRatio;
@@ -98,5 +116,14 @@ public class MonteCarloTreeNode {
             return this.getWinRatio();
 
         return this.getWinRatio() + 1.41 * Math.sqrt(Math.log(parent.getVisitCount()) / (double) visitCount);
+    }
+
+    public MonteCarloTreeNode getChildWithBestUCT() {
+        return Collections.max(children, Comparator.comparing(MonteCarloTreeNode::getUCTValue));
+    }
+
+    public void updateStatus(Status status) {
+        this.status = status;
+        winRatioUpToDate = false;
     }
 }
