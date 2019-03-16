@@ -63,7 +63,7 @@ public class Agent {
 
                 System.out.println("It's player " + boardState.getTurnPlayer() + "'s turn.");
 
-                move = findBestMoveMontecarlo(2000, (PentagoBoardState) boardState.clone());
+                move = findBestMoveMontecarlo(500, (PentagoBoardState) boardState.clone());
                 boardState.processMove(move);
 
                 boardState.printBoard();

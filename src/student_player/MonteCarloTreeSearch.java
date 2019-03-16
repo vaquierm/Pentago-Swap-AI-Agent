@@ -69,12 +69,12 @@ public class MonteCarloTreeSearch {
                 }
             }
 
+            // Process the move to see what the board would be like if we played the move max
+            boardState.processMove(max.getMove());
+
             for (MonteCarloTreeNode unexploredChild : unexploredChildren) {
 
                 System.out.println("There are " + unexploredChildren.size() + " child moves unexplored");
-
-                // Try the move to see if it leads to a win for the opponent
-                boardState.processMove(unexploredChild.getMove());
 
                 if (moveLeadsToLoss(unexploredChild.getMove(), boardState, player)) {
                     // The move leads to a winning position for the opponent
@@ -82,7 +82,6 @@ public class MonteCarloTreeSearch {
                     break;
                 }
             }
-
 
             if (loss) {
                 // A move leading to a win for the opponent was found in the children.
