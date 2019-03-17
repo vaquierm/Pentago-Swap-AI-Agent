@@ -64,40 +64,38 @@ public class MonteCarloTreeSearch {
             clear = true;
         }
 
+        // Do not return a move until it is clear that it does not lead to instant defeat
         while (!clear) {
             List<MonteCarloTreeNode> unexploredChildren = max.getUnexploredChildren();
 
             boolean loss = false;
 
-
-            if (unexploredChildren.size() == 0) {
-                clear = true;
-                System.out.println("No unexplored children");
-
-                if (max.hasChildWithLossStatus()) {
-                    // If the move has a child with a loss status it is unsafe, revert the clear status and indicate that it leads to a loss
-                    System.out.println("Move has a child with a loss status this is unsafe");
-                    clear = false;
-                    loss = true;
-                }
+            // Check if this move leads to any direct losses
+            if (max.hasChildWithLossStatus()) {
+                // If the move has a child with a loss status it is unsafe, revert the clear status and indicate that it leads to a loss
+                System.out.println("Move has a child with a loss status this is unsafe");
+                loss = true;
             }
 
-            // Process the move to see what the board would be like if we played the move max
-            boardState.processMove(max.getMove());
-
-            for (MonteCarloTreeNode unexploredChild : unexploredChildren) {
+            // If already found child with loss status, no need to check for unexplored children
+            if (!loss) {
+                // Process the move to see what the board would be like if we played the move max
+                boardState.processMove(max.getMove());
 
                 System.out.println("There are " + unexploredChildren.size() + " child moves unexplored");
 
-                if (moveLeadsToLoss(unexploredChild.getMove(), boardState, player)) {
-                    // The move leads to a winning position for the opponent
-                    loss = true;
-                    break;
-                }
-            }
+                for (MonteCarloTreeNode unexploredChild : unexploredChildren) {
 
-            // Revert the move that was made
-            boardState.revertMove(max.getMove());
+                    if (moveLeadsToLoss(unexploredChild.getMove(), boardState, player)) {
+                        // The move leads to a winning position for the opponent
+                        loss = true;
+                        break;
+                    }
+                }
+
+                // Revert the move that was made
+                boardState.revertMove(max.getMove());
+            }
 
             if (loss) {
                 // A move leading to a win for the opponent was found in the children.

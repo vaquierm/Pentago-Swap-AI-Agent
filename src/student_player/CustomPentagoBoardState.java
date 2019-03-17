@@ -309,6 +309,7 @@ public class CustomPentagoBoardState extends BoardState {
      * Checks if the game has ended, and changes the winner attribute if so.
      */
     private void updateWinner() {
+        winner = Board.NOBODY;
         boolean playerWin = checkVerticalWin(turnPlayer) || checkHorizontalWin(turnPlayer) || checkDiagRightWin(turnPlayer) || checkDiagLeftWin(turnPlayer);
         int otherPlayer = 1 - turnPlayer;
         boolean otherWin = checkVerticalWin(otherPlayer) || checkHorizontalWin(otherPlayer) || checkDiagRightWin(otherPlayer) || checkDiagLeftWin(otherPlayer);
