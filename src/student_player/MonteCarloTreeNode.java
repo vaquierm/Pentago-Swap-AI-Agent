@@ -19,10 +19,12 @@ public class MonteCarloTreeNode {
     private int visitCount = 0;
     private int winCount = 0;
 
+    private int boardHeuristic;
+
     private Status status;
 
     public enum Status {
-        WON, LOSS, PROGRESS
+        WON, LOSS, TIE, PROGRESS
     }
 
     public MonteCarloTreeNode() {
@@ -30,6 +32,7 @@ public class MonteCarloTreeNode {
         children = new LinkedList<>();
         move = null;
         status = Status.PROGRESS;
+        boardHeuristic = 0;
     }
 
     public MonteCarloTreeNode(MonteCarloTreeNode parent, PentagoMove move) {
@@ -38,6 +41,24 @@ public class MonteCarloTreeNode {
         children = new LinkedList<>();
         parent.addChild(this);
         status = Status.PROGRESS;
+        boardHeuristic = 0;
+    }
+
+    public MonteCarloTreeNode(MonteCarloTreeNode parent, PentagoMove move, int boardHeuristic) {
+        this.parent = parent;
+        this.move = move;
+        children = new LinkedList<>();
+        parent.addChild(this);
+        status = Status.PROGRESS;
+        this.boardHeuristic = boardHeuristic;
+    }
+
+    public double getWinRatioBoardHeuristicComboScore() {
+        double boardVal = (boardHeuristic < 0) ? -Math.log(Math.abs(boardHeuristic) + 1) : Math.log(Math.abs(boardHeuristic) + 1);
+        boardVal /= 20;
+
+        System.out.println("Win ratio: " + getWinRatio() + ", Board value: " + boardVal);
+        return getWinRatio() + boardVal; // TODO: Figure out this
     }
 
     public double getWinRatio() {
