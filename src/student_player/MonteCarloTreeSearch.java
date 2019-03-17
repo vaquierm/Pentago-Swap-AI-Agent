@@ -193,7 +193,7 @@ public class MonteCarloTreeSearch {
         while (node != null) {
             node.visit();
             if (value != 0)
-                node.incrementWinCount(value); //TODO: Need to figure out the loss
+                node.incrementWinCount(value);
             node = node.getParent();
         }
     }
