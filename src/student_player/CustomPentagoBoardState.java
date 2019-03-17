@@ -487,7 +487,7 @@ public class CustomPentagoBoardState extends BoardState {
      * Evaluate a heuristic on how good the current board state is
      * @return  The value of the board state
      */
-    public int evaluate() {
+    public int evaluate(Piece piece) {
         if (gameOver()) {
             if (winner == 0) {
                 return Integer.MAX_VALUE;
@@ -498,7 +498,9 @@ public class CustomPentagoBoardState extends BoardState {
             else return 0;
         }
 
-        return computePatternValuesForPiece(Piece.WHITE) - computePatternValuesForPiece(Piece.BLACK);
+        int val = computePatternValuesForPiece(Piece.WHITE) - computePatternValuesForPiece(Piece.BLACK);
+
+        return (piece == Piece.WHITE) ? val : - val;
     }
 
     /**
@@ -548,6 +550,10 @@ public class CustomPentagoBoardState extends BoardState {
             overallScore += computeBonusOccurrences(patternPresent, i+1, i+2);
         }
 
+        for (int i = 0; i < bitMasksForPairs.length; i++) {
+            overallScore += computeBonusSamePatternInDiffQuad(patternPresent, i);
+        }
+
 
         return overallScore;
 
@@ -572,6 +578,25 @@ public class CustomPentagoBoardState extends BoardState {
         return bonusScore;
     }
 
+    private int computeBonusSamePatternInDiffQuad(int[][] patternPresent, int index) {
+
+        int occurences = 0;
+        for (int i = 0; i < 4; i++) {
+            if (patternPresent[i][index] == 1) {
+                occurences++;
+            }
+        }
+
+        return (occurences > 1) ? 2 : 0;
+    }
+
+    /**
+     * Reward for having a combination of these two patterns in any 2 quadrants
+     * @param patternPresent  The pattern present array
+     * @param index1  The first pattern
+     * @param index2  The second pattern
+     * @return  Bonus rewarded
+     */
     private int computeBonusOccurrences(int[][] patternPresent, int index1, int index2) {
         int occurances;
 
@@ -580,6 +605,9 @@ public class CustomPentagoBoardState extends BoardState {
         occurances = patternPresent[0][index1] + patternPresent[0][index2] + patternPresent[1][index1] + patternPresent[1][index2] + patternPresent[2][index1] + patternPresent[2][index2] + patternPresent[3][index1] + patternPresent[3][index2];
         if (occurances == 2) {
             bonusScore += 1;
+        }
+        else if (occurances > 3) {
+            bonusScore += 5;
         }
         else if (occurances > 2) {
             bonusScore += 3;

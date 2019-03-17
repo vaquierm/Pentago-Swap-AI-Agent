@@ -1,5 +1,6 @@
 package student_player;
 
+import pentago_swap.PentagoBoardState;
 import pentago_swap.PentagoMove;
 
 import java.util.List;
@@ -9,9 +10,11 @@ public class MiniMax {
     public static PentagoMove computeMove(CustomPentagoBoardState boardState) {
         PentagoMove bestMove = null;
 
+        boolean maxPlayer = boardState.getTurnPlayer() == 1;
+
         int bestVal = Integer.MIN_VALUE;
         for (PentagoMove move : boardState.getAllLegalMovesWithSymmetry()) {
-            int val = minimax(boardState, 2, false, -100000, 100000);
+            int val = minimax(boardState, 2, maxPlayer, -100000, 100000);
             if (val > bestVal) {
                 bestVal = val;
                 bestMove = move;
@@ -24,7 +27,7 @@ public class MiniMax {
 
     public static int minimax(CustomPentagoBoardState boardState, int level, boolean max, int alpha, int beta) {
         if (boardState.gameOver() || level == 0) {
-            return boardState.evaluate();
+            return boardState.evaluate(PentagoBoardState.Piece.WHITE);
         }
 
         List<PentagoMove> moves = boardState.getAllLegalMovesWithSymmetry();

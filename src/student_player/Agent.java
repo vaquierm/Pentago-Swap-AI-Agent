@@ -93,7 +93,7 @@ public class Agent {
 
                 boardState.printBoard();
 
-                System.out.println("Board has value: " + (new CustomPentagoBoardState(boardState)).evaluate());
+                System.out.println("Board has value: " + (new CustomPentagoBoardState(boardState)).evaluate(PentagoBoardState.Piece.WHITE) + " for white");
 
                 System.out.println("It's player " + boardState.getTurnPlayer() + "'s turn.");
 
@@ -107,7 +107,7 @@ public class Agent {
 
                 boardState.printBoard();
 
-                System.out.println("Board has value: " + (new CustomPentagoBoardState(boardState)).evaluate());
+                System.out.println("Board has value: " + (new CustomPentagoBoardState(boardState)).evaluate(PentagoBoardState.Piece.BLACK) + " for black");
 
             }
 

@@ -1,6 +1,7 @@
 package student_player;
 
 import boardgame.Board;
+import pentago_swap.PentagoBoardState;
 import pentago_swap.PentagoMove;
 import student_player.MonteCarloTreeNode.Status;
 
@@ -174,7 +175,7 @@ public class MonteCarloTreeSearch {
         }
         else {
             returnStatus = Status.PROGRESS;
-            returnVal = boardState.evaluate();
+            returnVal = boardState.evaluate((player == 0) ? PentagoBoardState.Piece.WHITE : PentagoBoardState.Piece.BLACK);
         }
 
         boardState.revertMove(move);
