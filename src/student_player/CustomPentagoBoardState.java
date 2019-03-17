@@ -439,6 +439,11 @@ public class CustomPentagoBoardState extends BoardState {
         updateWinner();
     }
 
+    /**
+     * Check if the two boards are equal
+     * @param pbs  Other board
+     * @return True if the two boards are equal
+     */
     public boolean boardEquals(PentagoBoardState pbs) {
 
         if (winner != pbs.getWinner() || turnNumber != pbs.getTurnNumber() || turnPlayer != pbs.getTurnPlayer())
@@ -455,6 +460,12 @@ public class CustomPentagoBoardState extends BoardState {
         return true;
     }
 
+
+    /**
+     * Check if the two boards are equal
+     * @param pbs  Other board
+     * @return True if the two boards are equal
+     */
     public boolean boardEquals(CustomPentagoBoardState pbs) {
 
         if (winner != pbs.getWinner() || turnNumber != pbs.getTurnNumber() || turnPlayer != pbs.getTurnPlayer())
@@ -471,7 +482,147 @@ public class CustomPentagoBoardState extends BoardState {
         return true;
     }
 
+    /**
+     * Evaluate a heuristic on how good the current board state is
+     * @return  The value of the board state
+     */
+    public int evaluate() {
+        if (gameOver()) {
+            if (winner == 0) {
+                return Integer.MAX_VALUE;
+            }
+            else if (winner == 1) {
+                return  Integer.MAX_VALUE;
+            }
+            else return 0;
+        }
 
+        return computePatternValuesForPiece(Piece.WHITE) - computePatternValuesForPiece(Piece.BLACK);
+    }
+
+    /**
+     * Compute the sum of the pattern values of each quadrant for a piece
+     * @param piece  The piece to look for
+     * @return  The pattern value
+     */
+    private int computePatternValuesForPiece(Piece piece) {
+
+        int overallScore = 0;
+
+        int[] quadrantValues = getQuadrantIntValue(piece);
+
+        int[] bitMasksForPairs = {  0b100100000, 0b010010000, 0b001001000, 0b000100100, 0b000010010, 0b000001001, // Pairs of verticals
+                                    0b110000000, 0b011000000, 0b000110000, 0b000011000, 0b000000110, 0b000000011, // Pairs of horizontals
+                                    0b100010000, 0b010001000, 0b000100010, 0b000010001, // Pairs of diagonal1
+                                    0b010100000, 0b001010000, 0b000010100, 0b000001010}; // Pairs of diagonal2
+
+        int[][] patternPresent = new int[4][bitMasksForPairs.length];
+
+        for (int i = 0; i < bitMasksForPairs.length; i++) {
+            for (int k = 0; k < 4; k++) {
+                int temp = bitMasksForPairs[i] & quadrantValues[k]; // Check if the pattern is present in the quadrant
+                if (temp == bitMasksForPairs[i]) {
+                    // If the pattern is present in the quadrant, indicate that in the flags array
+                    patternPresent[k][i]++;
+                    // Update the overall score that a pattern was found
+                    overallScore++;
+                }
+            }
+        }
+
+        // Now that the patterns has been found, add bonus
+
+        // Horizontal bonuses
+        for (int i = 6; i < 12; i+=2){
+            overallScore += computeBonusOccurrences(patternPresent, i, i+1);
+        }
+
+        // Vertical bonuses
+        for (int i = 0; i < 3; i++){
+            overallScore += computeBonusOccurrences(patternPresent, i, i+3);
+        }
+
+
+        for (int i = 12; i < 20; i+=4) {
+            overallScore += computeBonusOccurrences(patternPresent, i+1, i+2);
+        }
+
+
+        return overallScore;
+
+    }
+
+    private int computeBonusChoseTwo(int[][] patternPresent) {
+
+        int bonusScore = 0;
+
+        for (int i = 0; i < patternPresent.length - 1; i++) {
+            for (int j = i; j < patternPresent.length; j++) {
+                int count = 0;
+                for (int k = 0; k < 3; k++) {
+                    count += (patternPresent[k][i] & patternPresent[k][j]);
+                }
+                if (count >= 2) {
+                    bonusScore+=2;
+                }
+            }
+        }
+
+        return bonusScore;
+    }
+
+    private int computeBonusOccurrences(int[][] patternPresent, int index1, int index2) {
+        int occurances;
+
+        int bonusScore = 0;
+
+        occurances = patternPresent[0][index1] + patternPresent[0][index2] + patternPresent[1][index1] + patternPresent[1][index2] + patternPresent[2][index1] + patternPresent[2][index2] + patternPresent[3][index1] + patternPresent[3][index2];
+        if (occurances == 2) {
+            bonusScore += 1;
+        }
+        else if (occurances > 2) {
+            bonusScore += 3;
+        }
+
+        return bonusScore;
+    }
+
+
+
+    /**
+     * Gets the value of the quadrant as an integer with respect to a piece
+     * w w
+     *   w w
+     *   w
+     * would return
+     * 110011010
+     * @param piece  The piece to check for
+     * @return  The integer representation of the quadrant
+     */
+    private int[] getQuadrantIntValue(Piece piece) {
+
+        int[] quadValues = new int[4];
+        for (int i = 0; i < QUAD_SIZE; i++) {
+            for (int j = 0; j < QUAD_SIZE; j++) {
+                for (int k = 0; k < 3; k++) {
+                    // If the piece exists at this position, add
+                    if (quadrants[k][i][j] == piece) {
+                        quadValues[k]++;
+                    }
+                    // shift by a bit
+                    quadValues[k] = quadValues[k] << 1;
+                }
+            }
+        }
+
+        // shift back 1 bit and return
+        quadValues[0] = quadValues[0] >> 1;
+        quadValues[1] = quadValues[1] >> 1;
+        quadValues[2] = quadValues[2] >> 1;
+        quadValues[3] = quadValues[3] >> 1;
+
+        return quadValues;
+    }
 
 
 }

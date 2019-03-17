@@ -24,7 +24,11 @@ public class Agent {
 
         int counter = 0;
 
-        MonteCarloTreeSearch.resetTree(customPentagoBoardState);
+        PentagoMove winMove = MonteCarloTreeSearch.resetTree(customPentagoBoardState);
+
+        if (winMove != null) {
+            return winMove;
+        }
 
         while (System.currentTimeMillis() - startTime < timeout) {
 
@@ -49,6 +53,20 @@ public class Agent {
     }
 
 
+    /**
+     * Finds the best move with minimax and alpha beta pruning
+     * @param timeout  The time given to explore
+     * @param boardState  The board state
+     * @return  The best move to play
+     */
+    public static PentagoMove findBestMoveMiniMax(long timeout, PentagoBoardState boardState) {
+
+        long startTime = System.currentTimeMillis();
+
+        return MiniMax.computeMove(new CustomPentagoBoardState(boardState));
+    }
+
+
     public static void main(String[] args) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
         Constructor<PentagoBoardState> constructor = PentagoBoardState.class.getDeclaredConstructor();
         constructor.setAccessible(true);
@@ -59,14 +77,37 @@ public class Agent {
 
             PentagoBoardState boardState = constructor.newInstance();
 
+            long start;
+
             while (!boardState.gameOver()) {
 
                 System.out.println("It's player " + boardState.getTurnPlayer() + "'s turn.");
 
-                move = findBestMoveMontecarlo(500, (PentagoBoardState) boardState.clone());
+                start = System.currentTimeMillis();
+
+                move = findBestMoveMontecarlo(1000, (PentagoBoardState) boardState.clone());
+
+                System.out.println((System.currentTimeMillis() - start) + "ms to play");
+
                 boardState.processMove(move);
 
                 boardState.printBoard();
+
+                System.out.println("Board has value: " + (new CustomPentagoBoardState(boardState)).evaluate());
+
+                System.out.println("It's player " + boardState.getTurnPlayer() + "'s turn.");
+
+                start = System.currentTimeMillis();
+
+                move = findBestMoveMiniMax(1000, (PentagoBoardState) boardState.clone());
+
+                System.out.println((System.currentTimeMillis() - start) + "ms to play");
+
+                boardState.processMove(move);
+
+                boardState.printBoard();
+
+                System.out.println("Board has value: " + (new CustomPentagoBoardState(boardState)).evaluate());
 
             }
 
