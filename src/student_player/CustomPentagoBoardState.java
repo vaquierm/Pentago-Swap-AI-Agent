@@ -513,13 +513,22 @@ public class CustomPentagoBoardState extends BoardState {
         int overallScore = 0;
 
         int[] quadrantValues = getQuadrantIntValue(piece);
+        int[] quadrantValuesOpponent = getQuadrantIntValue((piece == Piece.WHITE) ? Piece.BLACK : Piece.WHITE);
 
-        int[] bitMasksForPairs = {  0b100100000, 0b010010000, 0b001001000, 0b000100100, 0b000010010, 0b000001001, // Pairs of verticals
-                                    0b110000000, 0b011000000, 0b000110000, 0b000011000, 0b000000110, 0b000000011, // Pairs of horizontals
-                                    0b100010000, 0b010001000, 0b000100010, 0b000010001, // Pairs of diagonal1
-                                    0b010100000, 0b001010000, 0b000010100, 0b000001010}; // Pairs of diagonal2
+        int[] bitMasksForPairs = {      0b100100000, 0b010010000, 0b001001000, 0b000100100, 0b000010010, 0b000001001, // Pairs of verticals
+                                        0b110000000, 0b011000000, 0b000110000, 0b000011000, 0b000000110, 0b000000011, // Pairs of horizontals
+                                        0b100010000, 0b010001000, 0b000100010, 0b000010001, // Pairs of diagonal1
+                                        0b010100000, 0b001010000, 0b000010100, 0b000001010}; // Pairs of diagonal2
+
+        int[] bitMasksForAntiPairs = {  0b000000100, 0b000000010, 0b000000001, 0b100000000, 0b010000000, 0b001000000,
+                                        0b001000000, 0b100000000, 0b000001000, 0b000100000, 0b000000001, 0b000000100,
+                                        0b000000001, 0b000000000, 0b000000000, 0b100000000,
+                                        0b000000000, 0b000000100, 0b001000000, 0b000000000};
 
         int[][] patternPresent = new int[4][bitMasksForPairs.length];
+        int[][] patternPresentOpponent = new int[4][bitMasksForPairs.length];
+        int[][] antiPatternPresent = new int[4][bitMasksForAntiPairs.length];
+        int[][] antiPatternPresentOpponent = new int[4][bitMasksForAntiPairs.length];
 
         for (int i = 0; i < bitMasksForPairs.length; i++) {
             for (int k = 0; k < 4; k++) {
@@ -528,27 +537,47 @@ public class CustomPentagoBoardState extends BoardState {
                     // If the pattern is present in the quadrant, indicate that in the flags array
                     patternPresent[k][i]++;
                     // Update the overall score that a pattern was found
-                    overallScore++;
+                    overallScore+=2;
+                }
+                temp = bitMasksForPairs[i] & quadrantValuesOpponent[k];
+                if (temp == bitMasksForPairs[i]) {
+                    // If the pattern is present in the quadrant for the opponent, indicate that in the flags array
+                    patternPresentOpponent[k][i]++;
+                    // Update the overall score that a pattern was found for the opponent
+                    overallScore-=2;
+                }
+                temp = bitMasksForAntiPairs[i] & quadrantValues[k]; //Check if the anti pattern is present in the quadrant
+                if (patternPresentOpponent[k][i] > 0 && temp == bitMasksForAntiPairs[i]) {
+                    // If the anti pattern is present in the quadrant, and it is blocking the opponent's pattern, indicate that in the flags array
+                    antiPatternPresent[k][i]++;
+                    // Update the overall score that a pattern was found for the opponent
+                    overallScore+=3;
+                }
+                temp = bitMasksForAntiPairs[i] & quadrantValuesOpponent[k]; //Check if the anti pattern is present in the quadrant for the opponent
+                if (patternPresent[k][i] > 0 && temp == bitMasksForAntiPairs[i]) {
+                    // If the anti pattern is present in the quadrant, and it is blocking the opponent's pattern, indicate that in the flags array
+                    antiPatternPresent[k][i]++;
+                    // Update the overall score that the pattern was found for the opponent blocking your pattern
+                    overallScore-=3;
                 }
             }
         }
 
         // Now that the patterns has been found, add bonus
 
-        // Horizontal bonuses
+        // Horizontal pieces
         for (int i = 6; i < 12; i+=2){
             overallScore += computeBonusOccurrences(patternPresent, i, i+1);
         }
 
-        // Vertical bonuses
+        // Vertical pieces
         for (int i = 0; i < 3; i++){
             overallScore += computeBonusOccurrences(patternPresent, i, i+3);
         }
 
-
-        for (int i = 12; i < 20; i+=4) {
-            overallScore += computeBonusOccurrences(patternPresent, i+1, i+2);
-        }
+        // Diagonal
+        overallScore += computeBonusOccurrences(patternPresent, 12, 15);
+        overallScore += computeBonusOccurrences(patternPresent, 17, 18);
 
         for (int i = 0; i < bitMasksForPairs.length; i++) {
             overallScore += computeBonusSamePatternInDiffQuad(patternPresent, i);
@@ -559,25 +588,12 @@ public class CustomPentagoBoardState extends BoardState {
 
     }
 
-    private int computeBonusChoseTwo(int[][] patternPresent) {
-
-        int bonusScore = 0;
-
-        for (int i = 0; i < patternPresent.length - 1; i++) {
-            for (int j = i; j < patternPresent.length; j++) {
-                int count = 0;
-                for (int k = 0; k < 3; k++) {
-                    count += (patternPresent[k][i] & patternPresent[k][j]);
-                }
-                if (count >= 2) {
-                    bonusScore+=2;
-                }
-            }
-        }
-
-        return bonusScore;
-    }
-
+    /**
+     * Check if the pattern exists in more than one quadrant
+     * @param patternPresent  The pattern array
+     * @param index  Index of pattern to check for
+     * @return  The bonus rewarded
+     */
     private int computeBonusSamePatternInDiffQuad(int[][] patternPresent, int index) {
 
         int occurences = 0;
@@ -598,22 +614,18 @@ public class CustomPentagoBoardState extends BoardState {
      * @return  Bonus rewarded
      */
     private int computeBonusOccurrences(int[][] patternPresent, int index1, int index2) {
-        int occurances;
+        int bonus = 0;
 
-        int bonusScore = 0;
-
-        occurances = patternPresent[0][index1] + patternPresent[0][index2] + patternPresent[1][index1] + patternPresent[1][index2] + patternPresent[2][index1] + patternPresent[2][index2] + patternPresent[3][index1] + patternPresent[3][index2];
-        if (occurances == 2) {
-            bonusScore += 1;
-        }
-        else if (occurances > 3) {
-            bonusScore += 5;
-        }
-        else if (occurances > 2) {
-            bonusScore += 3;
+        for (int i = 0; i < 3; i++) {
+            for (int j = i + 1; j < 4; j++) {
+                if (patternPresent[i][index1] > 0 && patternPresent[j][index2] > 0) {
+                    bonus+=2;
+                    break;
+                }
+            }
         }
 
-        return bonusScore;
+        return bonus;
     }
 
 
