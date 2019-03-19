@@ -23,7 +23,7 @@ public class MonteCarloTreeSearch {
         root = new MonteCarloTreeNode();
 
         // If the opponent made the first move, we want to play next to them to start off a defensive game.
-        List<PentagoMove> moves = (boardState.boardOneMove()) ? boardState.getAllLegalMovesWithSymmetryAroundOpponent() : boardState.getAllLegalMovesWithSymmetry();
+        List<PentagoMove> moves = (boardState.boardOneOrThreeMoves()) ? boardState.getAllLegalMovesWithSymmetryAroundOpponent() : boardState.getAllLegalMovesWithSymmetry();
 
         MonteCarloTreeNode node;
         for (PentagoMove move : moves) {
@@ -51,7 +51,9 @@ public class MonteCarloTreeSearch {
      */
     public static PentagoMove getBestMoveWithTree(int player, CustomPentagoBoardState boardState) {
 
-        MonteCarloTreeNode max = Collections.max(root.getChildren(), Comparator.comparing(MonteCarloTreeNode::getWinRatioBoardHeuristicComboScore));
+        boolean offensiveMode = boardState.getTurnNumber() > 3 || boardState.getTurnPlayer() != CustomPentagoBoardState.BLACK;
+
+        MonteCarloTreeNode max = Collections.max(root.getChildren(), Comparator.comparing(node -> node.getWinRatioBoardHeuristicComboScore(offensiveMode)));
 
 
         if (max.getWinRatio() > 1000) {
@@ -111,7 +113,7 @@ public class MonteCarloTreeSearch {
                     return max.getMove();
                 }
 
-                max = Collections.max(root.getChildren(), Comparator.comparing(MonteCarloTreeNode::getWinRatioBoardHeuristicComboScore));
+                max = Collections.max(root.getChildren(), Comparator.comparing(node -> node.getWinRatioBoardHeuristicComboScore(offensiveMode)));
 
                 System.out.println("The move was unsafe, getting new move");
             } else {

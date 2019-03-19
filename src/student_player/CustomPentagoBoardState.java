@@ -230,7 +230,7 @@ public class CustomPentagoBoardState extends BoardState {
             for (int j = 0; j < BOARD_SIZE; j++) {
                 if (board[i][j] == opponent) {
                     for (PentagoMove move : moves) {
-                        if (move.getMoveCoord().getX() / QUAD_SIZE == i / QUAD_SIZE && move.getMoveCoord().getY() / QUAD_SIZE == j / QUAD_SIZE && move.getMoveCoord().getX() + move.getMoveCoord().getY() - i - j < 3) {
+                        if (!movesAroundOpponent.contains(move) && move.getMoveCoord().getX() / QUAD_SIZE == i / QUAD_SIZE && move.getMoveCoord().getY() / QUAD_SIZE == j / QUAD_SIZE && move.getMoveCoord().getX() + move.getMoveCoord().getY() - i - j < 3) {
                             movesAroundOpponent.add(move);
                         }
                     }
@@ -508,7 +508,7 @@ public class CustomPentagoBoardState extends BoardState {
             else return 0;
         }
 
-        int val = computePatternValuesForPiece(Piece.WHITE) - computePatternValuesForPiece(Piece.BLACK);
+        int val = computePatternValuesForPiece(Piece.WHITE, piece == Piece.WHITE) - computePatternValuesForPiece(Piece.BLACK, piece == Piece.WHITE);
 
         return (piece == Piece.WHITE) ? val : - val;
     }
@@ -516,11 +516,15 @@ public class CustomPentagoBoardState extends BoardState {
     /**
      * Compute the sum of the pattern values of each quadrant for a piece
      * @param piece  The piece to look for
+     * @param offensiveMode  Evaluate the board differently based on this parameter. if not offensive mode, value blocks a lot more
      * @return  The pattern value
      */
-    private int computePatternValuesForPiece(Piece piece) {
+    private int computePatternValuesForPiece(Piece piece, boolean offensiveMode) {
 
         int overallScore = 0;
+
+        int pairScore = (offensiveMode) ? 2 : 1;
+        int blockScore = (offensiveMode) ? 1 : 4;
 
         int[] quadrantValues = getQuadrantIntValue(piece);
         int[] quadrantValuesOpponent = getQuadrantIntValue((piece == Piece.WHITE) ? Piece.BLACK : Piece.WHITE);
@@ -547,28 +551,28 @@ public class CustomPentagoBoardState extends BoardState {
                     // If the pattern is present in the quadrant, indicate that in the flags array
                     patternPresent[k][i]++;
                     // Update the overall score that a pattern was found
-                    overallScore+=1;
+                    overallScore+=pairScore;
                 }
                 temp = bitMasksForPairs[i] & quadrantValuesOpponent[k];
                 if (temp == bitMasksForPairs[i]) {
                     // If the pattern is present in the quadrant for the opponent, indicate that in the flags array
                     patternPresentOpponent[k][i]++;
                     // Update the overall score that a pattern was found for the opponent
-                    overallScore-=1;
+                    overallScore-=pairScore;
                 }
                 temp = bitMasksForAntiPairs[i] & quadrantValues[k]; //Check if the anti pattern is present in the quadrant
                 if (patternPresentOpponent[k][i] > 0 && temp == bitMasksForAntiPairs[i]) {
                     // If the anti pattern is present in the quadrant, and it is blocking the opponent's pattern, indicate that in the flags array
                     antiPatternPresent[k][i]++;
                     // Update the overall score that a pattern was found for the opponent
-                    overallScore+=1;
+                    overallScore+=blockScore;
                 }
                 temp = bitMasksForAntiPairs[i] & quadrantValuesOpponent[k]; //Check if the anti pattern is present in the quadrant for the opponent
                 if (patternPresent[k][i] > 0 && temp == bitMasksForAntiPairs[i]) {
                     // If the anti pattern is present in the quadrant, and it is blocking the opponent's pattern, indicate that in the flags array
-                    antiPatternPresent[k][i]++;
+                    antiPatternPresentOpponent[k][i]++;
                     // Update the overall score that the pattern was found for the opponent blocking your pattern
-                    overallScore-=1;
+                    overallScore-=blockScore;
                 }
             }
         }
@@ -676,22 +680,22 @@ public class CustomPentagoBoardState extends BoardState {
     }
 
     /**
-     * @return  True if only one move has been played so far, False otherwise
+     * @return  True if only one or three moves has been played so far, False otherwise
      */
-    public boolean boardOneMove() {
+    public boolean boardOneOrThreeMoves() {
         int pieceCount = 0;
         for (int i = 0; i < BOARD_SIZE; i++) {
             for (int j = 0; j < BOARD_SIZE; j++) {
                 if (board[i][j] != Piece.EMPTY) {
                     pieceCount++;
                 }
-                if (pieceCount > 1) {
+                if (pieceCount > 5) {
                     return false;
                 }
             }
         }
 
-        return pieceCount == 1;
+        return pieceCount == 1 || pieceCount == 3 || pieceCount == 5;
     }
 
 

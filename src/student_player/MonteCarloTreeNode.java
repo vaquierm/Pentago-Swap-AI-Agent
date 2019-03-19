@@ -53,9 +53,11 @@ public class MonteCarloTreeNode {
         this.boardHeuristic = boardHeuristic;
     }
 
-    public double getWinRatioBoardHeuristicComboScore() {
+    public double getWinRatioBoardHeuristicComboScore(boolean offensiveMode) {
+        double divTerm = offensiveMode ? 20 : 8;
+
         double boardVal = (boardHeuristic < 0) ? -Math.log(Math.abs(boardHeuristic) + 1) : Math.log(Math.abs(boardHeuristic) + 1);
-        boardVal /= 20;
+        boardVal /= divTerm;
 
         System.out.println("Win ratio: " + getWinRatio() + ", Board value: " + boardVal);
         return getWinRatio() + boardVal; // TODO: Figure out this
