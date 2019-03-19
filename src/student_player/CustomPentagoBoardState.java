@@ -187,22 +187,6 @@ public class CustomPentagoBoardState extends BoardState {
         return legalMoves;
     }
 
-    public HashSet<PentagoMove> getAllLegalMovesAsHashSet() {
-        HashSet<PentagoMove> legalMoves = new HashSet<>();
-        for (int i = 0; i < BOARD_SIZE; i++) { //Iterate through positions on board
-            for (int j = 0; j < BOARD_SIZE; j++) {
-                if (board[i][j] == Piece.EMPTY) {
-                    for (int k = 0; k < NUM_QUADS - 1; k++) { // Iterate through valid swaps
-                        for (int l = k+1; l < NUM_QUADS; l++) {
-                            legalMoves.add(new PentagoMove(i, j, intToQuad.get(k), intToQuad.get(l), turnPlayer));
-                        }
-                    }
-                }
-            }
-        }
-        return legalMoves;
-    }
-
     public ArrayList<PentagoMove> getAllLegalMovesWithSymmetry() {
         HashSet<Symmetry> symmetries = UtilTools.checkSymmetry(board);
 
@@ -229,6 +213,32 @@ public class CustomPentagoBoardState extends BoardState {
         }
 
         return moves;
+    }
+
+    /**
+     * @return  The list of valid moves taking into account symmetry, and around the opponent piece.
+     * Note: Assumes that there is only one opponent piece on the board.
+     */
+    public List<PentagoMove> getAllLegalMovesWithSymmetryAroundOpponent() {
+
+        List<PentagoMove> moves = getAllLegalMovesWithSymmetry();
+        List<PentagoMove> movesAroundOpponent = new LinkedList<>();
+
+        Piece opponent = (turnPlayer == BLACK) ? Piece.WHITE : Piece.BLACK;
+
+        for (int i = 0; i < BOARD_SIZE; i++) {
+            for (int j = 0; j < BOARD_SIZE; j++) {
+                if (board[i][j] == opponent) {
+                    for (PentagoMove move : moves) {
+                        if (move.getMoveCoord().getX() / QUAD_SIZE == i / QUAD_SIZE && move.getMoveCoord().getY() / QUAD_SIZE == j / QUAD_SIZE && move.getMoveCoord().getX() + move.getMoveCoord().getY() - i - j < 3) {
+                            movesAroundOpponent.add(move);
+                        }
+                    }
+                }
+            }
+        }
+
+        return movesAroundOpponent;
     }
 
     /**
@@ -537,28 +547,28 @@ public class CustomPentagoBoardState extends BoardState {
                     // If the pattern is present in the quadrant, indicate that in the flags array
                     patternPresent[k][i]++;
                     // Update the overall score that a pattern was found
-                    overallScore+=2;
+                    overallScore+=1;
                 }
                 temp = bitMasksForPairs[i] & quadrantValuesOpponent[k];
                 if (temp == bitMasksForPairs[i]) {
                     // If the pattern is present in the quadrant for the opponent, indicate that in the flags array
                     patternPresentOpponent[k][i]++;
                     // Update the overall score that a pattern was found for the opponent
-                    overallScore-=2;
+                    overallScore-=1;
                 }
                 temp = bitMasksForAntiPairs[i] & quadrantValues[k]; //Check if the anti pattern is present in the quadrant
                 if (patternPresentOpponent[k][i] > 0 && temp == bitMasksForAntiPairs[i]) {
                     // If the anti pattern is present in the quadrant, and it is blocking the opponent's pattern, indicate that in the flags array
                     antiPatternPresent[k][i]++;
                     // Update the overall score that a pattern was found for the opponent
-                    overallScore+=3;
+                    overallScore+=1;
                 }
                 temp = bitMasksForAntiPairs[i] & quadrantValuesOpponent[k]; //Check if the anti pattern is present in the quadrant for the opponent
                 if (patternPresent[k][i] > 0 && temp == bitMasksForAntiPairs[i]) {
                     // If the anti pattern is present in the quadrant, and it is blocking the opponent's pattern, indicate that in the flags array
                     antiPatternPresent[k][i]++;
                     // Update the overall score that the pattern was found for the opponent blocking your pattern
-                    overallScore-=3;
+                    overallScore-=1;
                 }
             }
         }
@@ -663,6 +673,25 @@ public class CustomPentagoBoardState extends BoardState {
         quadValues[3] = quadValues[3] >> 1;
 
         return quadValues;
+    }
+
+    /**
+     * @return  True if only one move has been played so far, False otherwise
+     */
+    public boolean boardOneMove() {
+        int pieceCount = 0;
+        for (int i = 0; i < BOARD_SIZE; i++) {
+            for (int j = 0; j < BOARD_SIZE; j++) {
+                if (board[i][j] != Piece.EMPTY) {
+                    pieceCount++;
+                }
+                if (pieceCount > 1) {
+                    return false;
+                }
+            }
+        }
+
+        return pieceCount == 1;
     }
 
 
