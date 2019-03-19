@@ -22,8 +22,11 @@ public class MonteCarloTreeSearch {
     public static PentagoMove resetTree(CustomPentagoBoardState boardState) {
         root = new MonteCarloTreeNode();
 
+        // If the opponent made the first move, we want to play next to them to start off a defensive game.
+        List<PentagoMove> moves = (boardState.boardOneMove()) ? boardState.getAllLegalMovesWithSymmetryAroundOpponent() : boardState.getAllLegalMovesWithSymmetry();
+
         MonteCarloTreeNode node;
-        for (PentagoMove move : boardState.getAllLegalMovesWithSymmetry()) {
+        for (PentagoMove move : moves) {
             Pair<Status, Integer> statusIntegerPair = moveLeadsAndGetBoardScore(move, boardState, boardState.getTurnPlayer());
 
             if (statusIntegerPair.t == Status.WON) {
@@ -231,7 +234,6 @@ public class MonteCarloTreeSearch {
             return;
         }
 
-        //TODO: only do by symmetry if necessary
         List<PentagoMove> possibleMoves = boardState.getAllLegalMovesWithSymmetry();
 
         for (PentagoMove move : possibleMoves) {

@@ -187,22 +187,6 @@ public class CustomPentagoBoardState extends BoardState {
         return legalMoves;
     }
 
-    public HashSet<PentagoMove> getAllLegalMovesAsHashSet() {
-        HashSet<PentagoMove> legalMoves = new HashSet<>();
-        for (int i = 0; i < BOARD_SIZE; i++) { //Iterate through positions on board
-            for (int j = 0; j < BOARD_SIZE; j++) {
-                if (board[i][j] == Piece.EMPTY) {
-                    for (int k = 0; k < NUM_QUADS - 1; k++) { // Iterate through valid swaps
-                        for (int l = k+1; l < NUM_QUADS; l++) {
-                            legalMoves.add(new PentagoMove(i, j, intToQuad.get(k), intToQuad.get(l), turnPlayer));
-                        }
-                    }
-                }
-            }
-        }
-        return legalMoves;
-    }
-
     public ArrayList<PentagoMove> getAllLegalMovesWithSymmetry() {
         HashSet<Symmetry> symmetries = UtilTools.checkSymmetry(board);
 
@@ -229,6 +213,32 @@ public class CustomPentagoBoardState extends BoardState {
         }
 
         return moves;
+    }
+
+    /**
+     * @return  The list of valid moves taking into account symmetry, and around the opponent piece.
+     * Note: Assumes that there is only one opponent piece on the board.
+     */
+    public List<PentagoMove> getAllLegalMovesWithSymmetryAroundOpponent() {
+
+        List<PentagoMove> moves = getAllLegalMovesWithSymmetry();
+        List<PentagoMove> movesAroundOpponent = new LinkedList<>();
+
+        Piece opponent = (turnPlayer == BLACK) ? Piece.WHITE : Piece.BLACK;
+
+        for (int i = 0; i < BOARD_SIZE; i++) {
+            for (int j = 0; j < BOARD_SIZE; j++) {
+                if (board[i][j] == opponent) {
+                    for (PentagoMove move : moves) {
+                        if (move.getMoveCoord().getX() / QUAD_SIZE == i / QUAD_SIZE && move.getMoveCoord().getY() / QUAD_SIZE == j / QUAD_SIZE && move.getMoveCoord().getX() + move.getMoveCoord().getY() - i - j < 3) {
+                            movesAroundOpponent.add(move);
+                        }
+                    }
+                }
+            }
+        }
+
+        return movesAroundOpponent;
     }
 
     /**
@@ -513,13 +523,22 @@ public class CustomPentagoBoardState extends BoardState {
         int overallScore = 0;
 
         int[] quadrantValues = getQuadrantIntValue(piece);
+        int[] quadrantValuesOpponent = getQuadrantIntValue((piece == Piece.WHITE) ? Piece.BLACK : Piece.WHITE);
 
-        int[] bitMasksForPairs = {  0b100100000, 0b010010000, 0b001001000, 0b000100100, 0b000010010, 0b000001001, // Pairs of verticals
-                                    0b110000000, 0b011000000, 0b000110000, 0b000011000, 0b000000110, 0b000000011, // Pairs of horizontals
-                                    0b100010000, 0b010001000, 0b000100010, 0b000010001, // Pairs of diagonal1
-                                    0b010100000, 0b001010000, 0b000010100, 0b000001010}; // Pairs of diagonal2
+        int[] bitMasksForPairs = {      0b100100000, 0b010010000, 0b001001000, 0b000100100, 0b000010010, 0b000001001, // Pairs of verticals
+                                        0b110000000, 0b011000000, 0b000110000, 0b000011000, 0b000000110, 0b000000011, // Pairs of horizontals
+                                        0b100010000, 0b010001000, 0b000100010, 0b000010001, // Pairs of diagonal1
+                                        0b010100000, 0b001010000, 0b000010100, 0b000001010}; // Pairs of diagonal2
+
+        int[] bitMasksForAntiPairs = {  0b000000100, 0b000000010, 0b000000001, 0b100000000, 0b010000000, 0b001000000,
+                                        0b001000000, 0b100000000, 0b000001000, 0b000100000, 0b000000001, 0b000000100,
+                                        0b000000001, 0b000000000, 0b000000000, 0b100000000,
+                                        0b000000000, 0b000000100, 0b001000000, 0b000000000};
 
         int[][] patternPresent = new int[4][bitMasksForPairs.length];
+        int[][] patternPresentOpponent = new int[4][bitMasksForPairs.length];
+        int[][] antiPatternPresent = new int[4][bitMasksForAntiPairs.length];
+        int[][] antiPatternPresentOpponent = new int[4][bitMasksForAntiPairs.length];
 
         for (int i = 0; i < bitMasksForPairs.length; i++) {
             for (int k = 0; k < 4; k++) {
@@ -528,27 +547,47 @@ public class CustomPentagoBoardState extends BoardState {
                     // If the pattern is present in the quadrant, indicate that in the flags array
                     patternPresent[k][i]++;
                     // Update the overall score that a pattern was found
-                    overallScore++;
+                    overallScore+=1;
+                }
+                temp = bitMasksForPairs[i] & quadrantValuesOpponent[k];
+                if (temp == bitMasksForPairs[i]) {
+                    // If the pattern is present in the quadrant for the opponent, indicate that in the flags array
+                    patternPresentOpponent[k][i]++;
+                    // Update the overall score that a pattern was found for the opponent
+                    overallScore-=1;
+                }
+                temp = bitMasksForAntiPairs[i] & quadrantValues[k]; //Check if the anti pattern is present in the quadrant
+                if (patternPresentOpponent[k][i] > 0 && temp == bitMasksForAntiPairs[i]) {
+                    // If the anti pattern is present in the quadrant, and it is blocking the opponent's pattern, indicate that in the flags array
+                    antiPatternPresent[k][i]++;
+                    // Update the overall score that a pattern was found for the opponent
+                    overallScore+=1;
+                }
+                temp = bitMasksForAntiPairs[i] & quadrantValuesOpponent[k]; //Check if the anti pattern is present in the quadrant for the opponent
+                if (patternPresent[k][i] > 0 && temp == bitMasksForAntiPairs[i]) {
+                    // If the anti pattern is present in the quadrant, and it is blocking the opponent's pattern, indicate that in the flags array
+                    antiPatternPresent[k][i]++;
+                    // Update the overall score that the pattern was found for the opponent blocking your pattern
+                    overallScore-=1;
                 }
             }
         }
 
         // Now that the patterns has been found, add bonus
 
-        // Horizontal bonuses
+        // Horizontal pieces
         for (int i = 6; i < 12; i+=2){
             overallScore += computeBonusOccurrences(patternPresent, i, i+1);
         }
 
-        // Vertical bonuses
+        // Vertical pieces
         for (int i = 0; i < 3; i++){
             overallScore += computeBonusOccurrences(patternPresent, i, i+3);
         }
 
-
-        for (int i = 12; i < 20; i+=4) {
-            overallScore += computeBonusOccurrences(patternPresent, i+1, i+2);
-        }
+        // Diagonal
+        overallScore += computeBonusOccurrences(patternPresent, 12, 15);
+        overallScore += computeBonusOccurrences(patternPresent, 17, 18);
 
         for (int i = 0; i < bitMasksForPairs.length; i++) {
             overallScore += computeBonusSamePatternInDiffQuad(patternPresent, i);
@@ -559,25 +598,12 @@ public class CustomPentagoBoardState extends BoardState {
 
     }
 
-    private int computeBonusChoseTwo(int[][] patternPresent) {
-
-        int bonusScore = 0;
-
-        for (int i = 0; i < patternPresent.length - 1; i++) {
-            for (int j = i; j < patternPresent.length; j++) {
-                int count = 0;
-                for (int k = 0; k < 3; k++) {
-                    count += (patternPresent[k][i] & patternPresent[k][j]);
-                }
-                if (count >= 2) {
-                    bonusScore+=2;
-                }
-            }
-        }
-
-        return bonusScore;
-    }
-
+    /**
+     * Check if the pattern exists in more than one quadrant
+     * @param patternPresent  The pattern array
+     * @param index  Index of pattern to check for
+     * @return  The bonus rewarded
+     */
     private int computeBonusSamePatternInDiffQuad(int[][] patternPresent, int index) {
 
         int occurences = 0;
@@ -598,22 +624,18 @@ public class CustomPentagoBoardState extends BoardState {
      * @return  Bonus rewarded
      */
     private int computeBonusOccurrences(int[][] patternPresent, int index1, int index2) {
-        int occurances;
+        int bonus = 0;
 
-        int bonusScore = 0;
-
-        occurances = patternPresent[0][index1] + patternPresent[0][index2] + patternPresent[1][index1] + patternPresent[1][index2] + patternPresent[2][index1] + patternPresent[2][index2] + patternPresent[3][index1] + patternPresent[3][index2];
-        if (occurances == 2) {
-            bonusScore += 1;
-        }
-        else if (occurances > 3) {
-            bonusScore += 5;
-        }
-        else if (occurances > 2) {
-            bonusScore += 3;
+        for (int i = 0; i < 3; i++) {
+            for (int j = i + 1; j < 4; j++) {
+                if (patternPresent[i][index1] > 0 && patternPresent[j][index2] > 0) {
+                    bonus+=2;
+                    break;
+                }
+            }
         }
 
-        return bonusScore;
+        return bonus;
     }
 
 
@@ -651,6 +673,25 @@ public class CustomPentagoBoardState extends BoardState {
         quadValues[3] = quadValues[3] >> 1;
 
         return quadValues;
+    }
+
+    /**
+     * @return  True if only one move has been played so far, False otherwise
+     */
+    public boolean boardOneMove() {
+        int pieceCount = 0;
+        for (int i = 0; i < BOARD_SIZE; i++) {
+            for (int j = 0; j < BOARD_SIZE; j++) {
+                if (board[i][j] != Piece.EMPTY) {
+                    pieceCount++;
+                }
+                if (pieceCount > 1) {
+                    return false;
+                }
+            }
+        }
+
+        return pieceCount == 1;
     }
 
 
