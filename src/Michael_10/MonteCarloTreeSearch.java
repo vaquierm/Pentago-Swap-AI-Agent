@@ -1,9 +1,6 @@
-package student_player;
+package Michael_10;
 
-import boardgame.Board;
-import pentago_swap.PentagoBoardState;
 import pentago_swap.PentagoMove;
-import student_player.MonteCarloTreeNode.Status;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -14,35 +11,21 @@ public class MonteCarloTreeSearch {
 
     private static MonteCarloTreeNode root;
 
+    public static MonteCarloTreeNode getRoot() {
+        return root;
+    }
+
     /**
      * Resets the tree for a new move
      * @param boardState  The state of the board at start of move
-     * @return Null if there are no obvious win moves, The move to make to win right away
      */
-    public static PentagoMove resetTree(CustomPentagoBoardState boardState) {
+    public static void resetTree(CustomPentagoBoardState boardState) {
         root = new MonteCarloTreeNode();
 
-        // If the opponent made the first move, we want to play next to them to start off a defensive game.
-        List<PentagoMove> moves = (boardState.boardOneOrThreeMoves()) ? boardState.getAllLegalMovesWithSymmetryAroundOpponent() : boardState.getAllLegalMovesWithSymmetry();
-
-        MonteCarloTreeNode node;
-        for (PentagoMove move : moves) {
-            Pair<Status, Integer> statusIntegerPair = moveLeadsAndGetBoardScore(move, boardState, boardState.getTurnPlayer());
-
-            if (statusIntegerPair.t == Status.WON) {
-                return move;
-            }
-            else if (statusIntegerPair.t == Status.TIE) {
-                node = new MonteCarloTreeNode(root, move);
-                node.updateStatus(Status.TIE);
-            }
-            else if (statusIntegerPair.t == Status.PROGRESS) {
-                // Add the board heuristic
-                new MonteCarloTreeNode(root, move, statusIntegerPair.u);
-            }
+        for (PentagoMove move : boardState.getAllLegalMovesWithSymmetry()) {
+            if (!moveLeadsToLoss(move, boardState, boardState.getTurnPlayer()))
+                new MonteCarloTreeNode(root, move);
         }
-
-        return null;
     }
 
     /**
@@ -51,9 +34,7 @@ public class MonteCarloTreeSearch {
      */
     public static PentagoMove getBestMoveWithTree(int player, CustomPentagoBoardState boardState) {
 
-        boolean offensiveMode = boardState.getTurnNumber() > 3 || boardState.getTurnPlayer() != CustomPentagoBoardState.BLACK;
-
-        MonteCarloTreeNode max = Collections.max(root.getChildren(), Comparator.comparing(node -> node.getWinRatioBoardHeuristicComboScore(offensiveMode)));
+        MonteCarloTreeNode max = Collections.max(root.getChildren(), Comparator.comparing(MonteCarloTreeNode::getWinRatio));
 
 
         if (max.getWinRatio() > 1000) {
@@ -70,37 +51,36 @@ public class MonteCarloTreeSearch {
             clear = true;
         }
 
-        // Do not return a move until it is clear that it does not lead to instant defeat
         while (!clear) {
             List<MonteCarloTreeNode> unexploredChildren = max.getUnexploredChildren();
 
             boolean loss = false;
 
-            // Check if this move leads to any direct losses
-            if (max.hasChildWithLossStatus()) {
-                // If the move has a child with a loss status it is unsafe, revert the clear status and indicate that it leads to a loss
-                System.out.println("Move has a child with a loss status this is unsafe");
-                loss = true;
+
+            if (unexploredChildren.size() == 0) {
+                clear = true;
+                System.out.println("No unexplored children");
+
+                if (max.hasChildWithLossStatus()) {
+                    // If the move has a child with a loss status it is unsafe, revert the clear status and indicate that it leads to a loss
+                    System.out.println("Move has a child with a loss status this is unsafe");
+                    clear = false;
+                    loss = true;
+                }
             }
 
-            // If already found child with loss status, no need to check for unexplored children
-            if (!loss) {
-                // Process the move to see what the board would be like if we played the move max
-                boardState.processMove(max.getMove());
+            // Process the move to see what the board would be like if we played the move max
+            boardState.processMove(max.getMove());
+
+            for (MonteCarloTreeNode unexploredChild : unexploredChildren) {
 
                 System.out.println("There are " + unexploredChildren.size() + " child moves unexplored");
 
-                for (MonteCarloTreeNode unexploredChild : unexploredChildren) {
-
-                    if (moveLeadsToLoss(unexploredChild.getMove(), boardState, player)) {
-                        // The move leads to a winning position for the opponent
-                        loss = true;
-                        break;
-                    }
+                if (moveLeadsToLoss(unexploredChild.getMove(), boardState, player)) {
+                    // The move leads to a winning position for the opponent
+                    loss = true;
+                    break;
                 }
-
-                // Revert the move that was made
-                boardState.revertMove(max.getMove());
             }
 
             if (loss) {
@@ -113,7 +93,7 @@ public class MonteCarloTreeSearch {
                     return max.getMove();
                 }
 
-                max = Collections.max(root.getChildren(), Comparator.comparing(node -> node.getWinRatioBoardHeuristicComboScore(offensiveMode)));
+                max = Collections.max(root.getChildren(), Comparator.comparing(MonteCarloTreeNode::getWinRatio));
 
                 System.out.println("The move was unsafe, getting new move");
             } else {
@@ -130,7 +110,7 @@ public class MonteCarloTreeSearch {
 
     /**
      * Check if a particular move leads to a loss for the player
-     * Note: The board state will be reverted back to normal
+     * Note: The boars state will be reverted back to normal
      * @param move  The move to be played
      * @param boardState  The current board state
      * @param player  The player to check for
@@ -154,41 +134,6 @@ public class MonteCarloTreeSearch {
     }
 
     /**
-     * Check if a particular move leads to a loss for the player
-     * and het a heuristic on how good the board is
-     * Note: The board state will be reverted back to normal
-     * @param move  The move to be played
-     * @param boardState  The current board state
-     * @param player  The player to check for
-     * @return  The status the move leads to and the board status
-     */
-    public static Pair<Status, Integer> moveLeadsAndGetBoardScore(PentagoMove move, CustomPentagoBoardState boardState, int player) {
-
-        Status returnStatus;
-        int returnVal = 0;
-
-        boardState.processMove(move);
-
-        if (boardState.getWinner() == 1 - player) {
-            returnStatus = Status.LOSS;
-        }
-        else if (boardState.getWinner() == player) {
-            returnStatus = Status.WON;
-        }
-        else if (boardState.getWinner() == Board.DRAW) {
-            returnStatus = Status.TIE;
-        }
-        else {
-            returnStatus = Status.PROGRESS;
-            returnVal = boardState.evaluate((player == 0) ? PentagoBoardState.Piece.WHITE : PentagoBoardState.Piece.BLACK);
-        }
-
-        boardState.revertMove(move);
-
-        return new Pair<>(returnStatus, returnVal);
-    }
-
-    /**
      * Back propagate the result value from the node
      * @param node  Node to back propagate from
      * @param value  Value to back propagate
@@ -198,7 +143,7 @@ public class MonteCarloTreeSearch {
         while (node != null) {
             node.visit();
             if (value != 0)
-                node.incrementWinCount(value);
+                node.incrementWinCount(value); //TODO: Need to figure out the loss
             node = node.getParent();
         }
     }
@@ -225,17 +170,15 @@ public class MonteCarloTreeSearch {
         if (boardState.gameOver()) {
             // If game done, don't expand
             if (boardState.getWinner() == player) {
-                node.updateStatus(Status.WON);
+                node.updateStatus(MonteCarloTreeNode.Status.WON);
             }
             else if (boardState.getWinner() == 1 - player) {
-                node.updateStatus(Status.LOSS);
-            }
-            else {
-                node.updateStatus(Status.TIE);
+                node.updateStatus(MonteCarloTreeNode.Status.LOSS);
             }
             return;
         }
 
+        //TODO: only do by symmetry if necessary
         List<PentagoMove> possibleMoves = boardState.getAllLegalMovesWithSymmetry();
 
         for (PentagoMove move : possibleMoves) {

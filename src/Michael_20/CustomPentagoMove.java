@@ -1,4 +1,4 @@
-package student_player;
+package Michael_20;
 
 import pentago_swap.PentagoBoardState;
 import pentago_swap.PentagoCoord;

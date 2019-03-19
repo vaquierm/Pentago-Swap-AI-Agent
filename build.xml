@@ -21,7 +21,7 @@
     <!-- Run Client with StudentPlayer ======================================================== -->
     <target name="student" depends="compile">
         <java classpath="${run.classpath}" classname="boardgame.Client" fork="true">
-            <arg value="student_player.StudentPlayer"/>
+            <arg value="Michael_31.StudentPlayer"/>
         </java>
     </target>
 

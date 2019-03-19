@@ -1,4 +1,4 @@
-package student_player;
+package Michael_20;
 
 import pentago_swap.PentagoMove;
 
@@ -53,11 +53,9 @@ public class MonteCarloTreeNode {
         this.boardHeuristic = boardHeuristic;
     }
 
-    public double getWinRatioBoardHeuristicComboScore(boolean offensiveMode) {
-        double divTerm = offensiveMode ? 20 : 8;
-
+    public double getWinRatioBoardHeuristicComboScore() {
         double boardVal = (boardHeuristic < 0) ? -Math.log(Math.abs(boardHeuristic) + 1) : Math.log(Math.abs(boardHeuristic) + 1);
-        boardVal /= divTerm;
+        boardVal /= 20;
 
         System.out.println("Win ratio: " + getWinRatio() + ", Board value: " + boardVal);
         return getWinRatio() + boardVal; // TODO: Figure out this

@@ -1,4 +1,4 @@
-package student_player;
+package Michael_31;
 
 import boardgame.Move;
 
@@ -16,7 +16,7 @@ public class StudentPlayer extends PentagoPlayer {
      * associate you with your agent. The constructor should do nothing else.
      */
     public StudentPlayer() {
-        super("260677712");
+        super("Michael_3.1");
     }
 
     /**

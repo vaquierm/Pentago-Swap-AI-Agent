@@ -10,7 +10,7 @@
 <listEntry value="org.eclipse.debug.ui.launchGroup.run"/>
 </listAttribute>
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="boardgame.Client"/>
-<stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="student_player.StudentPlayer"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="Michael_31.StudentPlayer"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="pentago-swap"/>
 <stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Xms520m -Xmx520m"/>
 </launchConfiguration>
