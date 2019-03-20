@@ -1,4 +1,4 @@
-package Michael_31;
+package Michael_32;
 
 import pentago_swap.PentagoMove;
 
