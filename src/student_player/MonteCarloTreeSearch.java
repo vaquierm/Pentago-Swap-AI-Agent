@@ -277,7 +277,7 @@ public class MonteCarloTreeSearch {
                 // If the opponent was able to win in one move, we should not consider this move
                 node.updateStatus(MonteCarloTreeNode.Status.LOSS);
 
-                if (node.getParent().getParent() == root)
+                if (node.getParent().getParent() == root) // If the node is a move that is directly two levels under root, the opponent could win in one turn if we play this move's parent
                     node.getParent().updateStatus(Status.LOSS);
             }
         }

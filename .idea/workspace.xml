@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0ad525eb-777c-486d-a924-d7dddb08f768" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/boardgame/Server.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/boardgame/Server.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/student_player/MonteCarloTreeSearch.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/student_player/MonteCarloTreeSearch.java" afterDir="false" />
     </list>
@@ -24,11 +23,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/student_player/MonteCarloTreeSearch.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="284">
-              <caret line="280" column="61" selection-start-line="280" selection-start-column="61" selection-end-line="280" selection-end-column="61" />
+            <state relative-caret-position="429">
+              <caret line="280" column="20" selection-start-line="280" selection-start-column="20" selection-end-line="280" selection-end-column="20" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -37,10 +36,31 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/student_player/MonteCarloTreeNode.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-708">
+              <caret line="55" column="18" selection-start-line="55" selection-start-column="18" selection-end-line="55" selection-end-column="18" />
+              <folding>
+                <element signature="e#2588#2589#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/student_player/CustomPentagoBoardState.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="19">
-              <caret line="523" selection-start-line="523" selection-end-line="523" />
+            <state relative-caret-position="23">
+              <caret line="510" column="80" selection-start-line="510" selection-start-column="80" selection-end-line="510" selection-end-column="80" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/boardgame/Server.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="102">
+              <caret line="50" column="50" selection-start-line="50" selection-start-column="50" selection-end-line="50" selection-end-column="50" />
             </state>
           </provider>
         </entry>
@@ -82,8 +102,8 @@
         <option value="$PROJECT_DIR$/src/student_player/MiniMax.java" />
         <option value="$PROJECT_DIR$/src/student_player/CustomPentagoBoardState.java" />
         <option value="$PROJECT_DIR$/src/student_player/MonteCarloTreeNode.java" />
-        <option value="$PROJECT_DIR$/src/boardgame/Server.java" />
         <option value="$PROJECT_DIR$/src/student_player/MonteCarloTreeSearch.java" />
+        <option value="$PROJECT_DIR$/src/boardgame/Server.java" />
       </list>
     </option>
   </component>
@@ -137,7 +157,7 @@
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1553021827986" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1553045319303" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -207,7 +227,7 @@
     <frame x="-6" y="-6" width="1513" height="973" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.19862543" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.19862543" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Image Layers" order="2" />
       <window_info id="Designer" order="3" />
@@ -216,7 +236,7 @@
       <window_info id="Favorites" order="6" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.5255042" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.35705814" />
+      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.25622776" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.47449586" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -367,8 +387,11 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/student_player/MonteCarloTreeNode.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="918">
-          <caret line="56" column="47" lean-forward="true" selection-start-line="56" selection-start-column="47" selection-end-line="56" selection-end-column="47" />
+        <state relative-caret-position="-708">
+          <caret line="55" column="18" selection-start-line="55" selection-start-column="18" selection-end-line="55" selection-end-column="18" />
+          <folding>
+            <element signature="e#2588#2589#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -388,25 +411,25 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/student_player/CustomPentagoBoardState.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="19">
-          <caret line="523" selection-start-line="523" selection-end-line="523" />
+        <state relative-caret-position="23">
+          <caret line="510" column="80" selection-start-line="510" selection-start-column="80" selection-end-line="510" selection-end-column="80" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/student_player/MonteCarloTreeSearch.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="429">
+          <caret line="280" column="20" selection-start-line="280" selection-start-column="20" selection-end-line="280" selection-end-column="20" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/boardgame/Server.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="102">
-          <caret line="50" column="53" selection-start-line="50" selection-start-column="53" selection-end-line="50" selection-end-column="53" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/student_player/MonteCarloTreeSearch.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="284">
-          <caret line="280" column="61" selection-start-line="280" selection-start-column="61" selection-end-line="280" selection-end-column="61" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
+          <caret line="50" column="50" selection-start-line="50" selection-start-column="50" selection-end-line="50" selection-end-column="50" />
         </state>
       </provider>
     </entry>
