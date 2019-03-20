@@ -51,7 +51,7 @@ public class MonteCarloTreeSearch {
      */
     public static PentagoMove getBestMoveWithTree(int player, CustomPentagoBoardState boardState) {
 
-        boolean offensiveMode = boardState.getTurnNumber() > 3 || boardState.getTurnPlayer() != CustomPentagoBoardState.BLACK;
+        boolean offensiveMode = boardState.getTurnNumber() > 2 || boardState.getTurnPlayer() != CustomPentagoBoardState.BLACK;
 
         MonteCarloTreeNode max = Collections.max(root.getChildren(), Comparator.comparing(node -> node.getWinRatioBoardHeuristicComboScore(offensiveMode)));
 
@@ -276,6 +276,9 @@ public class MonteCarloTreeSearch {
             if (opponentStart && count == 1) {
                 // If the opponent was able to win in one move, we should not consider this move
                 node.updateStatus(MonteCarloTreeNode.Status.LOSS);
+
+                if (node.getParent().getParent() == root)
+                    node.getParent().updateStatus(Status.LOSS);
             }
         }
 
