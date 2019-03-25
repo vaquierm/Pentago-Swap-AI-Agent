@@ -539,6 +539,10 @@ public class CustomPentagoBoardState extends BoardState {
                                         0b000000001, 0b000000000, 0b000000000, 0b100000000,
                                         0b000000000, 0b000000100, 0b001000000, 0b000000000};
 
+        int[] twoEndsBitMasks = {       0b101000000, 0b000101000, 0b000000101, 0b100000100, 0b010000101, 0b001000001, 0b100000001, 0b001000100 };
+
+        int[] twoEndsBlockBitMasks = {  0b010000000, 0b000010000, 0b000000010, 0b000100000, 0b000010000, 0b000001000, 0b000010000, 0b000010000 };
+
         int[][] patternPresent = new int[4][bitMasksForPairs.length];
         int[][] patternPresentOpponent = new int[4][bitMasksForPairs.length];
         int[][] antiPatternPresent = new int[4][bitMasksForAntiPairs.length];
@@ -576,6 +580,20 @@ public class CustomPentagoBoardState extends BoardState {
                 }
             }
         }
+
+        // Check if there is any major blocks
+        for (int i = 0; i < twoEndsBitMasks.length; i++) {
+            for (int k = 0; k < 4; k++) {
+                // if the two pieces are in the corner and it is blocked that is worth points
+                if ((quadrantValues[k] & twoEndsBitMasks[i]) == twoEndsBitMasks[i] && (quadrantValuesOpponent[k] & twoEndsBlockBitMasks[i]) == twoEndsBlockBitMasks[i]) {
+                    overallScore -= (offensiveMode) ? 3 : 6;
+                }
+                if ((quadrantValuesOpponent[k] & twoEndsBitMasks[i]) == twoEndsBitMasks[i] && (quadrantValues[k] & twoEndsBlockBitMasks[i]) == twoEndsBlockBitMasks[i]) {
+                    overallScore += (offensiveMode) ? 3 : 6;
+                }
+            }
+        }
+
 
         // Now that the patterns has been found, add bonus
 

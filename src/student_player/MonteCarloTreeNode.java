@@ -59,7 +59,6 @@ public class MonteCarloTreeNode {
         double boardVal = (boardHeuristic < 0) ? -Math.log(Math.abs(boardHeuristic) + 1) : Math.log(Math.abs(boardHeuristic) + 1);
         boardVal /= divTerm;
 
-        System.out.println("Win ratio: " + getWinRatio() + ", Board value: " + boardVal);
         return getWinRatio() + boardVal; // TODO: Figure out this
     }
 
