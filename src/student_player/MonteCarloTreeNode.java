@@ -59,8 +59,7 @@ public class MonteCarloTreeNode {
         double boardVal = (boardHeuristic < 0) ? -Math.log(Math.abs(boardHeuristic) + 1) : Math.log(Math.abs(boardHeuristic) + 1);
         boardVal /= divTerm;
 
-        System.out.println("Win ratio: " + getWinRatio() + ", Board value: " + boardVal);
-        return getWinRatio() + boardVal; // TODO: Figure out this
+        return getWinRatio() + boardVal;
     }
 
     public double getWinRatio() {
@@ -70,6 +69,9 @@ public class MonteCarloTreeNode {
             }
             else if (status == Status.LOSS) {
                 winRatio = -100000;
+            }
+            else if (status == Status.TIE || visitCount == 0) {
+                return 0;
             }
             else {
                 winRatio = ((double) winCount) / ((double) visitCount);

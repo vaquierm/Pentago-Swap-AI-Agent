@@ -53,79 +53,55 @@ public class MonteCarloTreeSearch {
 
         boolean offensiveMode = boardState.getTurnNumber() > 2 || boardState.getTurnPlayer() != CustomPentagoBoardState.BLACK;
 
-        MonteCarloTreeNode max = Collections.max(root.getChildren(), Comparator.comparing(node -> node.getWinRatioBoardHeuristicComboScore(offensiveMode)));
-
-
-        if (max.getWinRatio() > 1000) {
-            // If you can win, win
-            System.out.println("Win move!");
-            return max.getMove();
-        }
-
-        boolean clear = false;
+        MonteCarloTreeNode max;
 
         if (boardState.getTurnNumber() < 3) {
             // If the game has not started that much yet no need to worry
             System.out.println("No need to check move since it is before move 3");
-            clear = true;
+
         }
 
-        // Do not return a move until it is clear that it does not lead to instant defeat
-        while (!clear) {
+        while (true) {
+
+            // If we have no more hope return random
+            if (root.getChildren().size() == 0) {
+                System.out.println("No more hope... Returning random");
+                return (PentagoMove) boardState.getRandomMove();
+            }
+
+            max = Collections.max(root.getChildren(), Comparator.comparing(node -> node.getWinRatioBoardHeuristicComboScore(offensiveMode)));
+
+            // No need to check if the move is safe before move 3
+            if (boardState.getTurnNumber() < 3) {
+                System.out.println("No need to check move safety before move 3");
+                return max.getMove();
+            }
+
             List<MonteCarloTreeNode> unexploredChildren = max.getUnexploredChildren();
 
-            boolean loss = false;
+            // Process the move to see what the board would be like if we played the move max
+            boardState.processMove(max.getMove());
 
-            // Check if this move leads to any direct losses
-            if (max.hasChildWithLossStatus()) {
-                // If the move has a child with a loss status it is unsafe, revert the clear status and indicate that it leads to a loss
-                System.out.println("Move has a child with a loss status this is unsafe");
-                loss = true;
-            }
+            System.out.println("There are " + unexploredChildren.size() + " child moves unexplored");
 
-            // If already found child with loss status, no need to check for unexplored children
-            if (!loss) {
-                // Process the move to see what the board would be like if we played the move max
-                boardState.processMove(max.getMove());
+            for (MonteCarloTreeNode unexploredChild : unexploredChildren) {
 
-                System.out.println("There are " + unexploredChildren.size() + " child moves unexplored");
-
-                for (MonteCarloTreeNode unexploredChild : unexploredChildren) {
-
-                    if (moveLeadsToLoss(unexploredChild.getMove(), boardState, player)) {
-                        // The move leads to a winning position for the opponent
-                        loss = true;
-                        break;
-                    }
+                if (moveLeadsToLoss(unexploredChild.getMove(), boardState, player)) {
+                    // The move leads to a winning position for the opponent
+                    root.getChildren().remove(max);
+                    // Revert the move that was made
+                    boardState.revertMove(max.getMove());
+                    max = null;
+                    System.out.println("One of the children was unsafe");
+                    break;
                 }
-
-                // Revert the move that was made
-                boardState.revertMove(max.getMove());
             }
 
-            if (loss) {
-                // A move leading to a win for the opponent was found in the children.
-                // We should not make this move. Get a new max
-                root.getChildren().remove(max);
-
-                if (root.getChildren().size() == 0) {
-                    // If none of the moves are clear, we cannot win, return the move anyways
-                    return max.getMove();
-                }
-
-                max = Collections.max(root.getChildren(), Comparator.comparing(node -> node.getWinRatioBoardHeuristicComboScore(offensiveMode)));
-
-                System.out.println("The move was unsafe, getting new move");
-            } else {
-                // There were no losses found for the opponent
-                // The move is clear
-                clear = true;
-
-                System.out.println("The move was safe");
+            if (max != null) {
+                return max.getMove();
             }
+
         }
-
-        return max.getMove();
     }
 
     /**
@@ -257,7 +233,7 @@ public class MonteCarloTreeSearch {
 
         PentagoMove randomMove;
         int count = 0;
-        boolean opponentStart = boardState.getTurnPlayer() == 1 - player;
+        boolean weStart = boardState.getTurnPlayer() == player;
 
         while (!boardState.gameOver()) {
 
@@ -273,12 +249,13 @@ public class MonteCarloTreeSearch {
         }
         else if (boardState.getWinner() == 1 - player) {
             value -= 1;
-            if (opponentStart && count == 1) {
-                // If the opponent was able to win in one move, we should not consider this move
+            if (weStart && count == 0) {
+                // The opponent has already won because of a dumb move we made earlier
                 node.updateStatus(MonteCarloTreeNode.Status.LOSS);
 
-                if (node.getParent().getParent() == root) // If the node is a move that is directly two levels under root, the opponent could win in one turn if we play this move's parent
-                    node.getParent().updateStatus(Status.LOSS);
+                // Do not conciser this dumb move anymore
+                if (node.getParent().getParent() != null)
+                    node.getParent().getParent().getChildren().remove(node.getParent());
             }
         }
 

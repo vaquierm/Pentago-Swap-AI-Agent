@@ -25,8 +25,12 @@ public class StudentPlayer extends PentagoPlayer {
      * make decisions.
      */
     public Move chooseMove(PentagoBoardState boardState) {
-
+        long start = System.currentTimeMillis();
         // Return your move to be processed by the server.
-        return Agent.findBestMoveMontecarlo(1750, boardState);
+        Move move = Agent.findBestMoveMontecarlo(1400, boardState);
+
+        System.out.println("Move played in " + (System.currentTimeMillis() - start) + "ms");
+
+        return move;
     }
 }
