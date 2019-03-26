@@ -536,10 +536,29 @@ public class CustomPentagoBoardState extends BoardState {
             else return 0;
         }
 
-        int val = computePatternValuesForPiece(Piece.WHITE, piece == Piece.WHITE) - computePatternValuesForPiece(Piece.BLACK, piece == Piece.WHITE);
+        int val = computePatternValuesForPiece(Piece.WHITE, true) - computePatternValuesForPiece(Piece.BLACK, true);
 
         return (piece == Piece.WHITE) ? val : - val;
     }
+
+    private static int[] bitMasksForPairs = {      0b100100000, 0b010010000, 0b001001000, 0b000100100, 0b000010010, 0b000001001, // Pairs of verticals
+            0b110000000, 0b011000000, 0b000110000, 0b000011000, 0b000000110, 0b000000011, // Pairs of horizontals
+            0b100010000, 0b010001000, 0b000100010, 0b000010001, // Pairs of diagonal1
+            0b010100000, 0b001010000, 0b000010100, 0b000001010}; // Pairs of diagonal2
+
+    private static int[] bitMasksForAntiPairs = {  0b000000100, 0b000000010, 0b000000001, 0b100000000, 0b010000000, 0b001000000,
+            0b001000000, 0b100000000, 0b000001000, 0b000100000, 0b000000001, 0b000000100,
+            0b000000001, 0b000000000, 0b000000000, 0b100000000,
+            0b000000000, 0b000000100, 0b001000000, 0b000000000};
+
+    private static int[] twoEndsBitMasks = {       0b101000000, 0b000101000, 0b000000101, 0b100000100, 0b010000101, 0b001000001, 0b100000001, 0b001000100 };
+
+    private static int[] twoEndsBlockBitMasks = {  0b010000000, 0b000010000, 0b000000010, 0b000100000, 0b000010000, 0b000001000, 0b000010000, 0b000010000 };
+
+    private static int[][] patternPresent = new int[4][bitMasksForPairs.length];
+    private static int[][] patternPresentOpponent = new int[4][bitMasksForPairs.length];
+    private static int[][] antiPatternPresent = new int[4][bitMasksForAntiPairs.length];
+    private static int[][] antiPatternPresentOpponent = new int[4][bitMasksForAntiPairs.length];
 
     /**
      * Compute the sum of the pattern values of each quadrant for a piece
@@ -556,25 +575,6 @@ public class CustomPentagoBoardState extends BoardState {
 
         int[] quadrantValues = getQuadrantIntValue(piece);
         int[] quadrantValuesOpponent = getQuadrantIntValue((piece == Piece.WHITE) ? Piece.BLACK : Piece.WHITE);
-
-        int[] bitMasksForPairs = {      0b100100000, 0b010010000, 0b001001000, 0b000100100, 0b000010010, 0b000001001, // Pairs of verticals
-                                        0b110000000, 0b011000000, 0b000110000, 0b000011000, 0b000000110, 0b000000011, // Pairs of horizontals
-                                        0b100010000, 0b010001000, 0b000100010, 0b000010001, // Pairs of diagonal1
-                                        0b010100000, 0b001010000, 0b000010100, 0b000001010}; // Pairs of diagonal2
-
-        int[] bitMasksForAntiPairs = {  0b000000100, 0b000000010, 0b000000001, 0b100000000, 0b010000000, 0b001000000,
-                                        0b001000000, 0b100000000, 0b000001000, 0b000100000, 0b000000001, 0b000000100,
-                                        0b000000001, 0b000000000, 0b000000000, 0b100000000,
-                                        0b000000000, 0b000000100, 0b001000000, 0b000000000};
-
-        int[] twoEndsBitMasks = {       0b101000000, 0b000101000, 0b000000101, 0b100000100, 0b010000101, 0b001000001, 0b100000001, 0b001000100 };
-
-        int[] twoEndsBlockBitMasks = {  0b010000000, 0b000010000, 0b000000010, 0b000100000, 0b000010000, 0b000001000, 0b000010000, 0b000010000 };
-
-        int[][] patternPresent = new int[4][bitMasksForPairs.length];
-        int[][] patternPresentOpponent = new int[4][bitMasksForPairs.length];
-        int[][] antiPatternPresent = new int[4][bitMasksForAntiPairs.length];
-        int[][] antiPatternPresentOpponent = new int[4][bitMasksForAntiPairs.length];
 
         for (int i = 0; i < bitMasksForPairs.length; i++) {
             for (int k = 0; k < 4; k++) {
