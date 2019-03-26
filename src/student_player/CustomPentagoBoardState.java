@@ -155,9 +155,37 @@ public class CustomPentagoBoardState extends BoardState {
 
     @Override
     public Move getRandomMove() {
-        ArrayList<PentagoMove> moves = getAllLegalMoves();
-        //return moves.get(rand.nextInt(moves.size()));
-        return moves.get((int)(Math.random() * moves.size()));
+        int numLegalMoves = 0;
+        for (int i = 0; i < BOARD_SIZE; i++) { //Iterate through positions on board
+            for (int j = 0; j < BOARD_SIZE; j++) {
+                if (board[i][j] == Piece.EMPTY) {
+                    // There are 6 possible swaps
+                    numLegalMoves += 6;
+                }
+            }
+        }
+
+        int randMoveIndex = (int) (Math.random() * numLegalMoves);
+
+        for (int i = 0; i < BOARD_SIZE; i++) { //Iterate through positions on board
+            for (int j = 0; j < BOARD_SIZE; j++) {
+                if (board[i][j] == Piece.EMPTY) {
+                    if (randMoveIndex < 6) {
+                        int swapCount = 0;
+                        for (int k = 0; k < NUM_QUADS - 1; k++) { // Iterate through valid swaps
+                            for (int l = k+1; l < NUM_QUADS; l++) {
+                                if (swapCount == randMoveIndex) {
+                                    return new PentagoMove(i, j, intToQuad.get(k), intToQuad.get(l), turnPlayer);
+                                }
+                                swapCount++;
+                            }
+                        }
+                    }
+                    randMoveIndex -= 6;
+                }
+            }
+        }
+        return null;
     }
 
     public Piece getPieceAt(int xPos, int yPos) {
