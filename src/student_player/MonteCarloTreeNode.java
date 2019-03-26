@@ -128,7 +128,7 @@ public class MonteCarloTreeNode {
     }
 
     public double getUCTValue() {
-        if (parent == null || status != Status.PROGRESS) {
+        if (parent == null /*|| status != Status.PROGRESS*/) {// TODO: Figure out if this is useful
             return -100000;
         }
         if (visitCount == 0) {

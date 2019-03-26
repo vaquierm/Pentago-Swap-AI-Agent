@@ -28,8 +28,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/student_player/MonteCarloTreeSearch.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="217">
-              <caret line="262" column="41" lean-forward="true" selection-start-line="262" selection-start-column="41" selection-end-line="262" selection-end-column="41" />
+            <state relative-caret-position="85">
+              <caret line="62" column="151" selection-start-line="62" selection-start-column="151" selection-end-line="62" selection-end-column="151" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -53,8 +53,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/student_player/MonteCarloTreeNode.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="182">
-              <caret line="49" column="38" lean-forward="true" selection-start-line="49" selection-start-column="38" selection-end-line="49" selection-end-column="38" />
+            <state relative-caret-position="131">
+              <caret line="130" column="99" selection-start-line="130" selection-start-column="99" selection-end-line="130" selection-end-column="99" />
               <folding>
                 <element signature="e#2298#2299#0" expanded="true" />
                 <element signature="e#2361#2362#0" expanded="true" />
@@ -73,8 +73,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/student_player/StudentPlayer.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="439">
-              <caret line="33" column="20" selection-start-line="33" selection-start-column="20" selection-end-line="33" selection-end-column="20" />
+            <state relative-caret-position="-13">
+              <caret line="16" column="7" lean-forward="true" selection-start-line="16" selection-start-column="7" selection-end-line="16" selection-end-column="7" />
             </state>
           </provider>
         </entry>
@@ -82,8 +82,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/student_player/Agent.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="187">
-              <caret line="20" column="60" selection-start-line="20" selection-start-column="60" selection-end-line="20" selection-end-column="60" />
+            <state relative-caret-position="255">
+              <caret line="21" lean-forward="true" selection-start-line="21" selection-end-line="21" />
             </state>
           </provider>
         </entry>
@@ -112,11 +112,11 @@
       <list>
         <option value="$PROJECT_DIR$/src/student_player/MiniMaxTools.java" />
         <option value="$PROJECT_DIR$/src/student_player/Pair.java" />
-        <option value="$PROJECT_DIR$/src/student_player/Agent.java" />
         <option value="$PROJECT_DIR$/src/student_player/MiniMax.java" />
         <option value="$PROJECT_DIR$/src/student_player/CustomPentagoBoardState.java" />
         <option value="$PROJECT_DIR$/src/boardgame/Server.java" />
         <option value="$PROJECT_DIR$/src/student_player/MonteCarloTreeNode.java" />
+        <option value="$PROJECT_DIR$/src/student_player/Agent.java" />
         <option value="$PROJECT_DIR$/src/student_player/StudentPlayer.java" />
         <option value="$PROJECT_DIR$/src/student_player/MonteCarloTreeSearch.java" />
       </list>
@@ -172,7 +172,7 @@
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1553571657477" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1553573392397" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -251,7 +251,7 @@
       <window_info id="Favorites" order="6" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.5255042" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.44721234" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.49466193" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.5005931" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -269,19 +269,6 @@
       <window_info anchor="right" id="Capture Analysis" order="6" />
       <window_info anchor="right" id="Palette&#9;" order="7" />
     </layout>
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="java-line">
-          <condition expression="node.getParent().getParent() == root" language="JAVA" />
-          <url>file://$PROJECT_DIR$/src/student_player/MonteCarloTreeSearch.java</url>
-          <line>264</line>
-          <properties />
-          <option name="timeStamp" value="56" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
   </component>
   <component name="debuggerHistoryManager">
     <expressions id="breakpointCondition">
@@ -383,13 +370,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/student_player/Agent.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="187">
-          <caret line="20" column="60" selection-start-line="20" selection-start-column="60" selection-end-line="20" selection-end-column="60" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/student_player/UtilTools.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="68">
@@ -411,24 +391,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/boardgame/Server.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="119">
-          <caret line="50" column="50" selection-start-line="50" selection-start-column="50" selection-end-line="50" selection-end-column="50" />
-          <folding>
-            <element signature="e#29381#29382#0" expanded="true" />
-            <element signature="e#29424#29425#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/student_player/StudentPlayer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="439">
-          <caret line="33" column="20" selection-start-line="33" selection-start-column="20" selection-end-line="33" selection-end-column="20" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/boardgame/Client.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="156">
@@ -443,10 +405,24 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/student_player/Agent.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="255">
+          <caret line="21" lean-forward="true" selection-start-line="21" selection-end-line="21" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/student_player/StudentPlayer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-13">
+          <caret line="16" column="7" lean-forward="true" selection-start-line="16" selection-start-column="7" selection-end-line="16" selection-end-column="7" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/student_player/MonteCarloTreeNode.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="182">
-          <caret line="49" column="38" lean-forward="true" selection-start-line="49" selection-start-column="38" selection-end-line="49" selection-end-column="38" />
+        <state relative-caret-position="131">
+          <caret line="130" column="99" selection-start-line="130" selection-start-column="99" selection-end-line="130" selection-end-column="99" />
           <folding>
             <element signature="e#2298#2299#0" expanded="true" />
             <element signature="e#2361#2362#0" expanded="true" />
@@ -461,10 +437,21 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/boardgame/Server.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="119">
+          <caret line="50" column="50" selection-start-line="50" selection-start-column="50" selection-end-line="50" selection-end-column="50" />
+          <folding>
+            <element signature="e#29381#29382#0" expanded="true" />
+            <element signature="e#29424#29425#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/student_player/MonteCarloTreeSearch.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="217">
-          <caret line="262" column="41" lean-forward="true" selection-start-line="262" selection-start-column="41" selection-end-line="262" selection-end-column="41" />
+        <state relative-caret-position="85">
+          <caret line="62" column="151" selection-start-line="62" selection-start-column="151" selection-end-line="62" selection-end-column="151" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>

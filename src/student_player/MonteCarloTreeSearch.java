@@ -22,6 +22,8 @@ public class MonteCarloTreeSearch {
     public static PentagoMove resetTree(CustomPentagoBoardState boardState) {
         root = new MonteCarloTreeNode();
 
+        System.gc();
+
         // If the opponent made the first move, we want to play next to them to start off a defensive game.
         List<PentagoMove> moves = (boardState.boardOneOrThreeMoves()) ? boardState.getAllLegalMovesWithSymmetryAroundOpponent() : boardState.getAllLegalMovesWithSymmetry();
 
@@ -58,7 +60,7 @@ public class MonteCarloTreeSearch {
         if (boardState.getTurnNumber() < 3) {
             // If the game has not started that much yet no need to worry
             System.out.println("No need to check move since it is before move 3");
-
+            return Collections.max(root.getChildren(), Comparator.comparing(node -> node.getWinRatioBoardHeuristicComboScore(offensiveMode))).getMove();
         }
 
         while (true) {
@@ -73,7 +75,6 @@ public class MonteCarloTreeSearch {
 
             // No need to check if the move is safe before move 3
             if (boardState.getTurnNumber() < 3) {
-                System.out.println("No need to check move safety before move 3");
                 return max.getMove();
             }
 
@@ -81,8 +82,6 @@ public class MonteCarloTreeSearch {
 
             // Process the move to see what the board would be like if we played the move max
             boardState.processMove(max.getMove());
-
-            System.out.println("There are " + unexploredChildren.size() + " child moves unexplored");
 
             for (MonteCarloTreeNode unexploredChild : unexploredChildren) {
 
@@ -92,7 +91,6 @@ public class MonteCarloTreeSearch {
                     // Revert the move that was made
                     boardState.revertMove(max.getMove());
                     max = null;
-                    System.out.println("One of the children was unsafe");
                     break;
                 }
             }
