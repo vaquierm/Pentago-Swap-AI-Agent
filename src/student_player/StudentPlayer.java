@@ -27,8 +27,8 @@ public class StudentPlayer extends PentagoPlayer {
     public Move chooseMove(PentagoBoardState boardState) {
         long start = System.currentTimeMillis();
         // Return your move to be processed by the server.
-        long timeToPlay = ((boardState.getTurnNumber() == 0) ? 10000 : 1500);
-        System.out.println("Playing move " + boardState.getTurnNumber() + " with " + (Runtime.getRuntime()).availableProcessors() + " processors");
+        long timeToPlay = 1600;
+        System.out.println("Playing move " + boardState.getTurnNumber());
         Move move = Agent.findBestMoveMontecarlo(timeToPlay, boardState);
 
         System.out.println("Move played in " + (System.currentTimeMillis() - start) + "ms");
