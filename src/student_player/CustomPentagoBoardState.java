@@ -34,6 +34,8 @@ public class CustomPentagoBoardState extends BoardState {
     private static int FIRST_PLAYER = WHITE;
     private static HashMap<Quadrant, Integer> quadToInt;
     private static HashMap<Integer, Quadrant> intToQuad;
+    private static HashMap<Integer, PentagoMove> intToMove;
+
     static {
         quadToInt = new HashMap<>(4);
         quadToInt.put(Quadrant.TL, 0);
@@ -45,6 +47,32 @@ public class CustomPentagoBoardState extends BoardState {
         intToQuad.put(1, Quadrant.TR);
         intToQuad.put(2, Quadrant.BL);
         intToQuad.put(3, Quadrant.BR);
+
+        intToMove = new HashMap<>(BOARD_SIZE * BOARD_SIZE * 6 * 2);
+
+        for (int i = 0; i < BOARD_SIZE; i++) { //Iterate through positions on board
+            for (int j = 0; j < BOARD_SIZE; j++) {
+                for (int k = 0; k < NUM_QUADS - 1; k++) { // Iterate through valid swaps
+                    for (int l = k + 1; l < NUM_QUADS; l++) {
+                        intToMove.put(moveToInt(i, j, intToQuad.get(k), intToQuad.get(l), 0), new PentagoMove(i, j, intToQuad.get(k), intToQuad.get(l), 0));
+                        intToMove.put(moveToInt(i, j, intToQuad.get(k), intToQuad.get(l), 1), new PentagoMove(i, j, intToQuad.get(k), intToQuad.get(l), 1));
+                    }
+                }
+            }
+        }
+    }
+
+    private static int moveToInt(int x, int y, Quadrant A, Quadrant B, int player) {
+        int intRepresentation = x;
+        intRepresentation = intRepresentation << 3;
+        intRepresentation += y;
+        intRepresentation = intRepresentation << 2;
+        intRepresentation += quadToInt.get(A);
+        intRepresentation = intRepresentation << 2;
+        intRepresentation += quadToInt.get(B);
+        intRepresentation = intRepresentation << 1;
+        intRepresentation += player;
+        return intRepresentation;
     }
 
     private Piece[][] board;
@@ -175,7 +203,7 @@ public class CustomPentagoBoardState extends BoardState {
                         for (int k = 0; k < NUM_QUADS - 1; k++) { // Iterate through valid swaps
                             for (int l = k+1; l < NUM_QUADS; l++) {
                                 if (swapCount == randMoveIndex) {
-                                    return new PentagoMove(i, j, intToQuad.get(k), intToQuad.get(l), turnPlayer);
+                                    return intToMove.get(moveToInt(i, j, intToQuad.get(k), intToQuad.get(l), turnPlayer));
                                 }
                                 swapCount++;
                             }
@@ -206,7 +234,7 @@ public class CustomPentagoBoardState extends BoardState {
                 if (board[i][j] == Piece.EMPTY) {
                     for (int k = 0; k < NUM_QUADS - 1; k++) { // Iterate through valid swaps
                         for (int l = k+1; l < NUM_QUADS; l++) {
-                            legalMoves.add(new PentagoMove(i, j, intToQuad.get(k), intToQuad.get(l), turnPlayer));
+                            legalMoves.add(intToMove.get(moveToInt(i, j, intToQuad.get(k), intToQuad.get(l), turnPlayer)));
                         }
                     }
                 }
@@ -536,7 +564,7 @@ public class CustomPentagoBoardState extends BoardState {
             else return 0;
         }
 
-        int val = computePatternValuesForPiece(Piece.WHITE, true) - computePatternValuesForPiece(Piece.BLACK, true);
+        int val = computePatternValuesForPiece(Piece.WHITE, (piece == Piece.WHITE)) - computePatternValuesForPiece(Piece.BLACK, piece == Piece.WHITE);
 
         return (piece == Piece.WHITE) ? val : - val;
     }
