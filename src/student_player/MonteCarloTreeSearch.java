@@ -22,8 +22,6 @@ public class MonteCarloTreeSearch {
     public static PentagoMove resetTree(CustomPentagoBoardState boardState) {
         root = new MonteCarloTreeNode();
 
-        System.gc();
-
         // If the opponent made the first move, we want to play next to them to start off a defensive game.
         List<PentagoMove> moves = (boardState.boardOneOrThreeMoves()) ? boardState.getAllLegalMovesWithSymmetryAroundOpponent() : boardState.getAllLegalMovesWithSymmetry();
 

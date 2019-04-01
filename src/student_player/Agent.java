@@ -30,7 +30,7 @@ public class Agent {
             return winMove;
         }
 
-        while (System.currentTimeMillis() - startTime < timeout) {
+        while (System.currentTimeMillis() - startTime < timeout && counter < 50000) {
 
             counter++;
 
