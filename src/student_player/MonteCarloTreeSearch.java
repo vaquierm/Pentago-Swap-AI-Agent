@@ -51,7 +51,7 @@ public class MonteCarloTreeSearch {
      */
     public static PentagoMove getBestMoveWithTree(int player, CustomPentagoBoardState boardState) {
 
-        boolean offensiveMode = boardState.getTurnNumber() > 2 || boardState.getTurnPlayer() != CustomPentagoBoardState.BLACK;
+        boolean offensiveMode = boardState.getTurnNumber() > 3 || boardState.getTurnPlayer() != CustomPentagoBoardState.BLACK;
 
         MonteCarloTreeNode max;
 

@@ -564,9 +564,7 @@ public class CustomPentagoBoardState extends BoardState {
             else return 0;
         }
 
-        int val = computePatternValuesForPiece(Piece.WHITE, (piece == Piece.WHITE)) - computePatternValuesForPiece(Piece.BLACK, piece == Piece.WHITE);
-
-        return (piece == Piece.WHITE) ? val : - val;
+        return computePatternValuesForPiece(piece, (piece == Piece.WHITE));
     }
 
     private static int[] bitMasksForPairs = {      0b100100000, 0b010010000, 0b001001000, 0b000100100, 0b000010010, 0b000001001, // Pairs of verticals
@@ -583,6 +581,13 @@ public class CustomPentagoBoardState extends BoardState {
 
     private static int[] twoEndsBlockBitMasks = {  0b010000000, 0b000010000, 0b000000010, 0b000100000, 0b000010000, 0b000001000, 0b000010000, 0b000010000 };
 
+    private static int[] gameEndingTriplet = { 0b111000000, 0b000111000, 0b000000111, 0b100100100, 0b010010010, 0b001001001, 0b100010001, 0b001010100 };
+    private static int[][] correspondingDouble = { { 0b110000000, 0b011000000 }, { 0b000110000, 0b000011000 }, { 0b000000110, 0b000000011 },
+                                                   { 0b100100000, 0b000100100 }, { 0b010010000, 0b000010010 }, { 0b001001000, 0b000001001 },
+                                                   { 0b100010000, 0b000010001 }, { 0b001010000, 0b000010100 } };
+    private static int[] correspondingSingle = { 0b010000000, 0b000010000, 0b000000010, 0b000100000, 0b000010000, 0b000001000, 0b000010000, 0b000010000 };
+
+
     private static int[][] patternPresent = new int[4][bitMasksForPairs.length];
     private static int[][] patternPresentOpponent = new int[4][bitMasksForPairs.length];
     private static int[][] antiPatternPresent = new int[4][bitMasksForAntiPairs.length];
@@ -597,12 +602,13 @@ public class CustomPentagoBoardState extends BoardState {
     private int computePatternValuesForPiece(Piece piece, boolean offensiveMode) {
 
         int overallScore = 0;
+        Piece opponent = (piece == Piece.WHITE) ? Piece.BLACK : Piece.WHITE;
 
         int pairScore = (offensiveMode) ? 2 : 1;
         int blockScore = (offensiveMode) ? 1 : 4;
 
         int[] quadrantValues = getQuadrantIntValue(piece);
-        int[] quadrantValuesOpponent = getQuadrantIntValue((piece == Piece.WHITE) ? Piece.BLACK : Piece.WHITE);
+        int[] quadrantValuesOpponent = getQuadrantIntValue(opponent);
 
         for (int i = 0; i < bitMasksForPairs.length; i++) {
             for (int k = 0; k < 4; k++) {
@@ -671,6 +677,79 @@ public class CustomPentagoBoardState extends BoardState {
         }
 
 
+        // Check for the middle large 4 diagonal
+        if ((quadrantValues[1] & bitMasksForPairs[18]) == bitMasksForPairs[18] && (quadrantValues[2] & bitMasksForPairs[17]) == bitMasksForPairs[17]
+        && (quadrantValuesOpponent[1] & bitMasksForAntiPairs[18]) == 0 && (quadrantValuesOpponent[1] & bitMasksForAntiPairs[17]) == 0) {
+            return Integer.MAX_VALUE;
+        }
+        else if ((quadrantValuesOpponent[1] & bitMasksForPairs[18]) == bitMasksForPairs[18] && (quadrantValuesOpponent[2] & bitMasksForPairs[17]) == bitMasksForPairs[17]
+                && (quadrantValues[1] & bitMasksForAntiPairs[18]) == 0 && (quadrantValues[1] & bitMasksForAntiPairs[17]) == 0) {
+            return Integer.MIN_VALUE;
+        }
+        if ((quadrantValues[0] & bitMasksForPairs[12]) == bitMasksForPairs[12] && (quadrantValues[3] & bitMasksForPairs[15]) == bitMasksForPairs[15]
+                && (quadrantValuesOpponent[0] & bitMasksForAntiPairs[12]) == 0 && (quadrantValuesOpponent[3] & bitMasksForAntiPairs[15]) == 0) {
+            return Integer.MAX_VALUE;
+        }
+        else if ((quadrantValuesOpponent[0] & bitMasksForPairs[12]) == bitMasksForPairs[12] && (quadrantValuesOpponent[3] & bitMasksForPairs[15]) == bitMasksForPairs[15]
+                && (quadrantValues[0] & bitMasksForAntiPairs[12]) == 0 && (quadrantValues[3] & bitMasksForAntiPairs[15]) == 0) {
+            return Integer.MIN_VALUE;
+        }
+
+        // Check for middle large verticals
+        for (int i = 0; i < BOARD_SIZE; i++) {
+            if (board[i][0] == opponent || board[i][BOARD_SIZE - 1] == opponent)
+                break;
+            for (int j = 1; j < BOARD_SIZE - 1; j++) {
+                if (board[i][j] != piece)
+                    break;
+                if (j == BOARD_SIZE - 2)
+                    return Integer.MAX_VALUE;
+            }
+        }
+
+        // Check for middle large horizontals
+        for (int i = 0; i < BOARD_SIZE; i++) {
+            if (board[0][i] == opponent || board[BOARD_SIZE - 1][i] == opponent)
+                break;
+            for (int j = 1; j < BOARD_SIZE - 1; j++) {
+                if (board[j][i] != piece)
+                    break;
+                if (j == BOARD_SIZE - 2)
+                    return Integer.MAX_VALUE;
+            }
+        }
+
+        // Calculate the game ending triplet moves
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                if (i == j)
+                    continue;
+
+                for (int k = 0; k < 4; k++) {
+                    if (k == j || k == i)
+                        continue;
+
+                    for (int s = 0; s < gameEndingTriplet.length; s++) {
+                        // The triplet exists
+                        if ((quadrantValues[i] & gameEndingTriplet[s]) ==  gameEndingTriplet[s]) {
+                            // A corresponding double exists
+                            if ((quadrantValues[j] & correspondingDouble[s][0]) == correspondingDouble[s][0]
+                            || (quadrantValues[j] & correspondingDouble[s][1]) == correspondingDouble[s][1]
+                            || ((quadrantValues[j] & correspondingSingle[s]) == correspondingSingle[s]
+                                    && (quadrantValuesOpponent[j] & (correspondingSingle[s] ^ gameEndingTriplet[s])) == 0)) {
+                                // A corresponding single exists with no blocking from opponent
+                                if ((quadrantValues[k] & correspondingSingle[s]) == correspondingSingle[s]
+                                && (quadrantValuesOpponent[k] & (correspondingSingle[s] ^ gameEndingTriplet[s])) == 0) {
+                                    return Integer.MAX_VALUE;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+
         return overallScore;
 
     }
@@ -705,7 +784,7 @@ public class CustomPentagoBoardState extends BoardState {
 
         for (int i = 0; i < 3; i++) {
             for (int j = i + 1; j < 4; j++) {
-                if (patternPresent[i][index1] > 0 && patternPresent[j][index2] > 0) {
+                if (patternPresent[i][index1] > 0 && patternPresent[j][index2] > 0 || patternPresent[i][index2] > 0 && patternPresent[j][index1] > 0) {
                     bonus+=2;
                     break;
                 }
