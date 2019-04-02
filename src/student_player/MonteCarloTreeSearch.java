@@ -81,15 +81,25 @@ public class MonteCarloTreeSearch {
             // Process the move to see what the board would be like if we played the move max
             boardState.processMove(max.getMove());
 
-            for (MonteCarloTreeNode unexploredChild : unexploredChildren) {
+            if (boardState.getWinner() == 1 - player) {
+                // The move leads to a winning position for the opponent
+                root.getChildren().remove(max);
+                // Revert the move that was made
+                boardState.revertMove(max.getMove());
+                max = null;
+            }
+            else {
+                
+                for (MonteCarloTreeNode unexploredChild : unexploredChildren) {
 
-                if (moveLeadsToLoss(unexploredChild.getMove(), boardState, player)) {
-                    // The move leads to a winning position for the opponent
-                    root.getChildren().remove(max);
-                    // Revert the move that was made
-                    boardState.revertMove(max.getMove());
-                    max = null;
-                    break;
+                    if (moveLeadsToLoss(unexploredChild.getMove(), boardState, player)) {
+                        // The move leads to a winning position for the opponent
+                        root.getChildren().remove(max);
+                        // Revert the move that was made
+                        boardState.revertMove(max.getMove());
+                        max = null;
+                        break;
+                    }
                 }
             }
 
