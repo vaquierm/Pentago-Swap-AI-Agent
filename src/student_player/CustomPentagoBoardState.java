@@ -811,7 +811,7 @@ public class CustomPentagoBoardState extends BoardState {
         int[] quadValues = new int[4];
         for (int i = 0; i < QUAD_SIZE; i++) {
             for (int j = 0; j < QUAD_SIZE; j++) {
-                for (int k = 0; k < 3; k++) {
+                for (int k = 0; k < 4; k++) {
                     // If the piece exists at this position, add
                     if (quadrants[k][i][j] == piece) {
                         quadValues[k]++;
