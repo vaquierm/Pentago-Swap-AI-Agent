@@ -27,7 +27,7 @@ public class MonteCarloTreeSearch {
 
         MonteCarloTreeNode node;
         for (PentagoMove move : moves) {
-            Pair<Status, Integer> statusIntegerPair = moveLeadsAndGetBoardScore(move, boardState, boardState.getTurnPlayer());
+            Pair<Status, Integer> statusIntegerPair = moveLeadsAndGetBoardScore(move, boardState, boardState.getTurnPlayer(), true);
 
             if (statusIntegerPair.t == Status.WON) {
                 return move;
@@ -144,7 +144,7 @@ public class MonteCarloTreeSearch {
      * @param player  The player to check for
      * @return  The status the move leads to and the board status
      */
-    public static Pair<Status, Integer> moveLeadsAndGetBoardScore(PentagoMove move, CustomPentagoBoardState boardState, int player) {
+    public static Pair<Status, Integer> moveLeadsAndGetBoardScore(PentagoMove move, CustomPentagoBoardState boardState, int player, boolean recusre) {
 
         Status returnStatus;
         int returnVal = 0;
@@ -162,6 +162,20 @@ public class MonteCarloTreeSearch {
         }
         else {
             returnStatus = Status.PROGRESS;
+
+            if (recusre) {
+
+                for (PentagoMove nextMove : boardState.getAllLegalMovesWithSymmetry()) {
+
+                    if(moveLeadsToLoss(nextMove, boardState, player)) {
+                        returnStatus = Status.LOSS;
+                        boardState.revertMove(move);
+                        return new Pair<>(returnStatus, returnVal);
+                    }
+                }
+
+            }
+
             returnVal = boardState.evaluate((player == 0) ? PentagoBoardState.Piece.WHITE : PentagoBoardState.Piece.BLACK);
         }
 
