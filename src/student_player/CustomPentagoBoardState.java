@@ -686,19 +686,19 @@ public class CustomPentagoBoardState extends BoardState {
                 && (quadrantValues[1] & bitMasksForAntiPairs[18]) == 0 && (quadrantValues[1] & bitMasksForAntiPairs[17]) == 0) {
             return Integer.MIN_VALUE;
         }
-        if ((quadrantValues[0] & bitMasksForPairs[12]) == bitMasksForPairs[12] && (quadrantValues[3] & bitMasksForPairs[15]) == bitMasksForPairs[15]
-                && (quadrantValuesOpponent[0] & bitMasksForAntiPairs[12]) == 0 && (quadrantValuesOpponent[3] & bitMasksForAntiPairs[15]) == 0) {
+        if ((quadrantValues[0] & bitMasksForPairs[15]) == bitMasksForPairs[15] && (quadrantValues[3] & bitMasksForPairs[12]) == bitMasksForPairs[12]
+                && (quadrantValuesOpponent[0] & bitMasksForAntiPairs[15]) == 0 && (quadrantValuesOpponent[3] & bitMasksForAntiPairs[12]) == 0) {
             return Integer.MAX_VALUE;
         }
-        else if ((quadrantValuesOpponent[0] & bitMasksForPairs[12]) == bitMasksForPairs[12] && (quadrantValuesOpponent[3] & bitMasksForPairs[15]) == bitMasksForPairs[15]
-                && (quadrantValues[0] & bitMasksForAntiPairs[12]) == 0 && (quadrantValues[3] & bitMasksForAntiPairs[15]) == 0) {
+        else if ((quadrantValuesOpponent[0] & bitMasksForPairs[15]) == bitMasksForPairs[15] && (quadrantValuesOpponent[3] & bitMasksForPairs[12]) == bitMasksForPairs[15]
+                && (quadrantValues[0] & bitMasksForAntiPairs[15]) == 0 && (quadrantValues[3] & bitMasksForAntiPairs[12]) == 0) {
             return Integer.MIN_VALUE;
         }
 
         // Check for middle large verticals
         for (int i = 0; i < BOARD_SIZE; i++) {
             if (board[i][0] == opponent || board[i][BOARD_SIZE - 1] == opponent)
-                break;
+                continue;
             for (int j = 1; j < BOARD_SIZE - 1; j++) {
                 if (board[i][j] != piece)
                     break;
@@ -710,7 +710,7 @@ public class CustomPentagoBoardState extends BoardState {
         // Check for middle large horizontals
         for (int i = 0; i < BOARD_SIZE; i++) {
             if (board[0][i] == opponent || board[BOARD_SIZE - 1][i] == opponent)
-                break;
+                continue;
             for (int j = 1; j < BOARD_SIZE - 1; j++) {
                 if (board[j][i] != piece)
                     break;
