@@ -208,16 +208,17 @@ public class MonteCarloTreeSearch {
         else {
             returnStatus = Status.PROGRESS;
 
-            for (PentagoMove nextMove : boardState.getAllLegalMovesWithSymmetry()) {
+            if (boardState.getTurnNumber() >= 2) {
+                for (PentagoMove nextMove : boardState.getAllLegalMovesWithSymmetry()) {
 
-                int leadsTo = moveLeadsToDeepLoss(nextMove, boardState, player);
-                if(leadsTo == 1) {
-                    returnStatus = Status.LOSS;
-                    boardState.revertMove(move);
-                    return new Pair<>(returnStatus, returnVal);
-                }
-                else if (leadsTo == 2) {
-                    returnStatus = Status.CRITICAL;
+                    int leadsTo = moveLeadsToDeepLoss(nextMove, boardState, player);
+                    if (leadsTo == 1) {
+                        returnStatus = Status.LOSS;
+                        boardState.revertMove(move);
+                        return new Pair<>(returnStatus, returnVal);
+                    } else if (leadsTo == 2) {
+                        returnStatus = Status.CRITICAL;
+                    }
                 }
             }
 
