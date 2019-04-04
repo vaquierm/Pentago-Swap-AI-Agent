@@ -24,7 +24,7 @@ public class MonteCarloTreeNode {
     private Status status;
 
     public enum Status {
-        WON, LOSS, TIE, PROGRESS
+        WON, LOSS, TIE, PROGRESS, CRITICAL
     }
 
     public MonteCarloTreeNode() {

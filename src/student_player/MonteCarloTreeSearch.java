@@ -5,10 +5,7 @@ import pentago_swap.PentagoBoardState;
 import pentago_swap.PentagoMove;
 import student_player.MonteCarloTreeNode.Status;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class MonteCarloTreeSearch {
 
@@ -22,12 +19,14 @@ public class MonteCarloTreeSearch {
     public static PentagoMove resetTree(CustomPentagoBoardState boardState) {
         root = new MonteCarloTreeNode();
 
+        List<Pair<PentagoMove, Pair<Status, Integer>>> lastResortMoves = new ArrayList<>();
+
         // If the opponent made the first move, we want to play next to them to start off a defensive game.
         List<PentagoMove> moves = (boardState.boardOneOrThreeMoves()) ? boardState.getAllLegalMovesWithSymmetryAroundOpponent() : boardState.getAllLegalMovesWithSymmetry();
 
         MonteCarloTreeNode node;
         for (PentagoMove move : moves) {
-            Pair<Status, Integer> statusIntegerPair = moveLeadsAndGetBoardScore(move, boardState, boardState.getTurnPlayer(), true);
+            Pair<Status, Integer> statusIntegerPair = moveLeadsAndGetBoardScore(move, boardState, boardState.getTurnPlayer());
 
             if (statusIntegerPair.t == Status.WON) {
                 return move;
@@ -39,6 +38,15 @@ public class MonteCarloTreeSearch {
             else if (statusIntegerPair.t == Status.PROGRESS) {
                 // Add the board heuristic
                 new MonteCarloTreeNode(root, move, statusIntegerPair.u);
+            }
+            else if (statusIntegerPair.t == Status.CRITICAL) {
+                lastResortMoves.add(new Pair<>(move, statusIntegerPair));
+            }
+        }
+
+        if (root.getChildren().size() == 0) {
+            for (Pair<PentagoMove, Pair<Status, Integer>> lastMove : lastResortMoves) {
+                new MonteCarloTreeNode(root, lastMove.t, lastMove.u.u);
             }
         }
 
@@ -136,6 +144,43 @@ public class MonteCarloTreeSearch {
     }
 
     /**
+     * Check if the move leads to the opponent being able to put us in a critical state
+     * @param move  move to be examined
+     * @param boardState  the current boardstate
+     * @param player  myplayer
+     * @return  0 if no real danger, 1 if leads to immediate loss, 2 if leads to critical state
+     */
+    public static int moveLeadsToDeepLoss(PentagoMove move, CustomPentagoBoardState boardState, int player) {
+        int returnVal;
+
+        boardState.processMove(move);
+
+        if (boardState.getWinner() == 1 - player) {
+            returnVal = 1;
+        } else {
+            if (boardState.isCriticalStateForPiece((player == 1) ? PentagoBoardState.Piece.WHITE : PentagoBoardState.Piece.BLACK)) {
+                returnVal = 2;
+
+                // Even if the move is critical if the opponent makes this move and we can won right after it is ok
+                for (PentagoMove nextMove : boardState.getAllLegalMoves()) {
+                    if (moveLeadsToLoss(nextMove, boardState, 1 - player)) {
+                        returnVal = 0;
+                        break;
+                    }
+                }
+
+
+            }
+            else
+                returnVal = 0;
+        }
+
+        boardState.revertMove(move);
+
+        return returnVal;
+    }
+
+    /**
      * Check if a particular move leads to a loss for the player
      * and het a heuristic on how good the board is
      * Note: The board state will be reverted back to normal
@@ -144,7 +189,7 @@ public class MonteCarloTreeSearch {
      * @param player  The player to check for
      * @return  The status the move leads to and the board status
      */
-    public static Pair<Status, Integer> moveLeadsAndGetBoardScore(PentagoMove move, CustomPentagoBoardState boardState, int player, boolean recusre) {
+    public static Pair<Status, Integer> moveLeadsAndGetBoardScore(PentagoMove move, CustomPentagoBoardState boardState, int player) {
 
         Status returnStatus;
         int returnVal = 0;
@@ -163,18 +208,19 @@ public class MonteCarloTreeSearch {
         else {
             returnStatus = Status.PROGRESS;
 
-            if (recusre) {
+            for (PentagoMove nextMove : boardState.getAllLegalMovesWithSymmetry()) {
 
-                for (PentagoMove nextMove : boardState.getAllLegalMovesWithSymmetry()) {
-
-                    if(moveLeadsToLoss(nextMove, boardState, player)) {
-                        returnStatus = Status.LOSS;
-                        boardState.revertMove(move);
-                        return new Pair<>(returnStatus, returnVal);
-                    }
+                int leadsTo = moveLeadsToDeepLoss(nextMove, boardState, player);
+                if(leadsTo == 1) {
+                    returnStatus = Status.LOSS;
+                    boardState.revertMove(move);
+                    return new Pair<>(returnStatus, returnVal);
                 }
-
+                else if (leadsTo == 2) {
+                    returnStatus = Status.CRITICAL;
+                }
             }
+
 
             returnVal = boardState.evaluate((player == 0) ? PentagoBoardState.Piece.WHITE : PentagoBoardState.Piece.BLACK);
         }

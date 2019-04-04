@@ -601,6 +601,9 @@ public class CustomPentagoBoardState extends BoardState {
      */
     private int computePatternValuesForPiece(Piece piece, boolean offensiveMode) {
 
+        if (isCriticalStateForPiece(piece))
+            return Integer.MAX_VALUE;
+
         int overallScore = 0;
         Piece opponent = (piece == Piece.WHITE) ? Piece.BLACK : Piece.WHITE;
 
@@ -674,49 +677,6 @@ public class CustomPentagoBoardState extends BoardState {
 
         for (int i = 0; i < bitMasksForPairs.length; i++) {
             overallScore += computeBonusSamePatternInDiffQuad(patternPresent, i);
-        }
-
-
-        // Check for the middle large 4 diagonal
-        if ((quadrantValues[1] & bitMasksForPairs[18]) == bitMasksForPairs[18] && (quadrantValues[2] & bitMasksForPairs[17]) == bitMasksForPairs[17]
-        && (quadrantValuesOpponent[1] & bitMasksForAntiPairs[18]) == 0 && (quadrantValuesOpponent[1] & bitMasksForAntiPairs[17]) == 0) {
-            return Integer.MAX_VALUE;
-        }
-        else if ((quadrantValuesOpponent[1] & bitMasksForPairs[18]) == bitMasksForPairs[18] && (quadrantValuesOpponent[2] & bitMasksForPairs[17]) == bitMasksForPairs[17]
-                && (quadrantValues[1] & bitMasksForAntiPairs[18]) == 0 && (quadrantValues[1] & bitMasksForAntiPairs[17]) == 0) {
-            return Integer.MIN_VALUE;
-        }
-        if ((quadrantValues[0] & bitMasksForPairs[15]) == bitMasksForPairs[15] && (quadrantValues[3] & bitMasksForPairs[12]) == bitMasksForPairs[12]
-                && (quadrantValuesOpponent[0] & bitMasksForAntiPairs[15]) == 0 && (quadrantValuesOpponent[3] & bitMasksForAntiPairs[12]) == 0) {
-            return Integer.MAX_VALUE;
-        }
-        else if ((quadrantValuesOpponent[0] & bitMasksForPairs[15]) == bitMasksForPairs[15] && (quadrantValuesOpponent[3] & bitMasksForPairs[12]) == bitMasksForPairs[15]
-                && (quadrantValues[0] & bitMasksForAntiPairs[15]) == 0 && (quadrantValues[3] & bitMasksForAntiPairs[12]) == 0) {
-            return Integer.MIN_VALUE;
-        }
-
-        // Check for middle large verticals
-        for (int i = 0; i < BOARD_SIZE; i++) {
-            if (board[i][0] == opponent || board[i][BOARD_SIZE - 1] == opponent)
-                continue;
-            for (int j = 1; j < BOARD_SIZE - 1; j++) {
-                if (board[i][j] != piece)
-                    break;
-                if (j == BOARD_SIZE - 2)
-                    return Integer.MAX_VALUE;
-            }
-        }
-
-        // Check for middle large horizontals
-        for (int i = 0; i < BOARD_SIZE; i++) {
-            if (board[0][i] == opponent || board[BOARD_SIZE - 1][i] == opponent)
-                continue;
-            for (int j = 1; j < BOARD_SIZE - 1; j++) {
-                if (board[j][i] != piece)
-                    break;
-                if (j == BOARD_SIZE - 2)
-                    return Integer.MAX_VALUE;
-            }
         }
 
         // Calculate the game ending triplet moves
@@ -829,6 +789,66 @@ public class CustomPentagoBoardState extends BoardState {
         quadValues[3] = quadValues[3] >> 1;
 
         return quadValues;
+    }
+
+    /**
+     * Check if the current boardstate is a critical state for the piece
+     * @param piece  The piece to check for
+     * @return  True oof critical state, False otherwise
+     */
+    public boolean isCriticalStateForPiece(Piece piece) {
+
+        Piece opponent = (piece == Piece.WHITE) ? Piece.BLACK : Piece.WHITE;
+
+        // Check for middle large verticals
+        for (int i = 0; i < BOARD_SIZE; i++) {
+            if (board[i][0] == opponent || board[i][BOARD_SIZE - 1] == opponent)
+                continue;
+            for (int j = 1; j < BOARD_SIZE - 1; j++) {
+                if (board[i][j] != piece)
+                    break;
+                if (j == BOARD_SIZE - 2)
+                    return true;
+            }
+        }
+
+        // Check for middle large horizontals
+        for (int i = 0; i < BOARD_SIZE; i++) {
+            if (board[0][i] == opponent || board[BOARD_SIZE - 1][i] == opponent)
+                continue;
+            for (int j = 1; j < BOARD_SIZE - 1; j++) {
+                if (board[j][i] != piece)
+                    break;
+                if (j == BOARD_SIZE - 2)
+                    return true;
+            }
+        }
+
+        for (int i = 0; i < BOARD_SIZE; i++) {
+            if (i == 0 || i == BOARD_SIZE - 1) {
+                if (board[i][i] != Piece.EMPTY)
+                    break;
+                if (i == BOARD_SIZE - 1)
+                    return true;
+            }
+            else if (board[i][i] != piece) {
+                break;
+            }
+        }
+
+        for (int i = 0; i < BOARD_SIZE; i++) {
+            if (i == 0 || i == BOARD_SIZE - 1) {
+                if (board[i][BOARD_SIZE - i - 1] != Piece.EMPTY)
+                    break;
+                if (i == BOARD_SIZE - 1)
+                    return true;
+            }
+            else if (board[i][BOARD_SIZE - i - 1] != piece) {
+                break;
+            }
+        }
+
+        return false;
     }
 
     /**
