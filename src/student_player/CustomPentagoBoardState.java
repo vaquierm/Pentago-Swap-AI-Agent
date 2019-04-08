@@ -582,9 +582,6 @@ public class CustomPentagoBoardState extends BoardState {
     private static int[] twoEndsBlockBitMasks = {  0b010000000, 0b000010000, 0b000000010, 0b000100000, 0b000010000, 0b000001000, 0b000010000, 0b000010000 };
 
     private static int[] gameEndingTriplet = { 0b111000000, 0b000111000, 0b000000111, 0b100100100, 0b010010010, 0b001001001, 0b100010001, 0b001010100 };
-    private static int[][] correspondingDouble = { { 0b110000000, 0b011000000 }, { 0b000110000, 0b000011000 }, { 0b000000110, 0b000000011 },
-                                                   { 0b100100000, 0b000100100 }, { 0b010010000, 0b000010010 }, { 0b001001000, 0b000001001 },
-                                                   { 0b100010000, 0b000010001 }, { 0b001010000, 0b000010100 } };
     private static int[] correspondingSingle = { 0b010000000, 0b000010000, 0b000000010, 0b000100000, 0b000010000, 0b000001000, 0b000010000, 0b000010000 };
 
 
@@ -834,10 +831,8 @@ public class CustomPentagoBoardState extends BoardState {
                         // The triplet exists
                         if ((quadrantValues[i] & gameEndingTriplet[s]) ==  gameEndingTriplet[s]) {
                             // A corresponding double exists
-                            if ((quadrantValues[j] & correspondingDouble[s][0]) == correspondingDouble[s][0]
-                                    || (quadrantValues[j] & correspondingDouble[s][1]) == correspondingDouble[s][1]
-                                    || ((quadrantValues[j] & correspondingSingle[s]) == correspondingSingle[s]
-                                    && (quadrantValuesOpponent[j] & (correspondingSingle[s] ^ gameEndingTriplet[s])) == 0)) {
+                            if ((quadrantValues[k] & correspondingSingle[s]) == correspondingSingle[s]
+                                    && (quadrantValuesOpponent[k] & (correspondingSingle[s] ^ gameEndingTriplet[s])) < (correspondingSingle[s] ^ gameEndingTriplet[s])) {
                                 // A corresponding single exists with no blocking from opponent
                                 if ((quadrantValues[k] & correspondingSingle[s]) == correspondingSingle[s]
                                         && (quadrantValuesOpponent[k] & (correspondingSingle[s] ^ gameEndingTriplet[s])) == 0) {
