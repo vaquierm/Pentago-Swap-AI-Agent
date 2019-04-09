@@ -848,6 +848,29 @@ public class CustomPentagoBoardState extends BoardState {
         return false;
     }
 
+    public List<PentagoMove> getAllLegalMovesWithSymmetryAroundPlayer() {
+
+        List<PentagoMove> moves = getAllLegalMovesWithSymmetry();
+        List<PentagoMove> movesAroundSelf = new LinkedList<>();
+
+        Piece selfPiece = (turnPlayer == BLACK) ? Piece.BLACK : Piece.WHITE;
+
+        for (int i = 0; i < BOARD_SIZE; i++) {
+            for (int j = 0; j < BOARD_SIZE; j++) {
+                if (board[i][j] == selfPiece) {
+                    for (PentagoMove move : moves) {
+                        if (!movesAroundSelf.contains(move) && move.getMoveCoord().getX() / QUAD_SIZE == i / QUAD_SIZE && move.getMoveCoord().getY() / QUAD_SIZE == j / QUAD_SIZE
+                                && ((Math.abs(i - move.getMoveCoord().getX()) == 0 && Math.abs(j - move.getMoveCoord().getY()) == 1) || (Math.abs(i - move.getMoveCoord().getX()) == 1 && Math.abs(j - move.getMoveCoord().getY()) == 0))) {
+                            movesAroundSelf.add(move);
+                        }
+                    }
+                }
+            }
+        }
+
+        return movesAroundSelf;
+    }
+
     /**
      * @return  True if only one or three moves has been played so far, False otherwise
      */
