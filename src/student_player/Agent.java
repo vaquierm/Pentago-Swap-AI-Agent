@@ -26,8 +26,8 @@ public class Agent {
 
         CustomPentagoBoardState customPentagoBoardState = new CustomPentagoBoardState(boardState);
 
-        if (boardState.getTurnNumber() == 0) {
-            winMove = customPentagoBoardState.findCenterMove();
+        if (boardState.getTurnNumber() == 2) {
+            winMove = customPentagoBoardState.moveThreeObligation();
             if (winMove != null)
                 return winMove;
         }

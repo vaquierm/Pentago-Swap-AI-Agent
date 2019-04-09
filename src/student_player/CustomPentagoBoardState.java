@@ -663,7 +663,9 @@ public class CustomPentagoBoardState extends BoardState {
 
     private static int[] gameEndingTriplet = {0b111000000, 0b000111000, 0b000000111, 0b100100100, 0b010010010, 0b001001001, /*0b100010001, 0b001010100*/};
     private static int[] correspondingSingle = {0b010000000, 0b000010000, 0b000000010, 0b000100000, 0b000010000, 0b000001000, 0b000010000, 0b000010000};
-
+    private static int[][] correspondingDouble = { { 0b110000000, 0b011000000 }, { 0b000110000, 0b000011000 }, { 0b000000110, 0b000000011 },
+            { 0b100100000, 0b000100100 }, { 0b010010000, 0b000010010 }, { 0b001001000, 0b000001001 },
+            { 0b100010000, 0b000010001 }, { 0b001010000, 0b000010100 } };
 
     private static int[][] patternPresent = new int[4][bitMasksForPairs.length];
     private static int[][] patternPresentOpponent = new int[4][bitMasksForPairs.length];
@@ -1013,6 +1015,60 @@ public class CustomPentagoBoardState extends BoardState {
             return new PentagoMove(4, 4, PentagoBoardState.Quadrant.BL, PentagoBoardState.Quadrant.TR, 0);
         }
         return null;
+    }
+
+    public PentagoMove moveThreeObligation() {
+        if (turnPlayer != 0 || turnNumber != 2) {
+            return null;
+        }
+
+        int[] quadrantValues = getQuadrantIntValue(Piece.WHITE);
+        int[] quadrantValuesOpponent = getQuadrantIntValue(Piece.BLACK);
+
+        int countBlock = 0;
+        int moveToPlay = -1;
+        int quadToPlay = 0;
+
+        for (int i = 0; i < 4; i++) {
+
+            for (int s = 0; s < gameEndingTriplet.length; s++) {
+                // Double found
+                if ((quadrantValues[i] & correspondingDouble[s][0]) == correspondingDouble[s][0] || (quadrantValues[i] & correspondingDouble[s][1]) == correspondingDouble[s][1]) {
+
+                    for (int k = 0; k < 4; k++) {
+                        if (k==i)
+                            continue;
+
+                        if ((quadrantValuesOpponent[k] & correspondingSingle[s]) == correspondingSingle[s]) {
+                            countBlock++;
+                        }
+                        else {
+                            quadToPlay = k;
+                            moveToPlay = correspondingSingle[s];
+                        }
+                    }
+
+                }
+            }
+
+        }
+
+
+        if (moveToPlay == -1 && countBlock < 2)
+            return null;
+
+        int moveNumber = QUAD_SIZE * QUAD_SIZE - 1;
+        while (moveToPlay > 0) {
+            moveNumber--;
+            moveToPlay = moveToPlay >> 1;
+        }
+
+        moveNumber++;
+
+        int xPlus = (quadToPlay / 2) * QUAD_SIZE;
+        int yPlus = (quadToPlay % 2) * QUAD_SIZE;
+
+        return new PentagoMove((moveNumber / QUAD_SIZE) + xPlus, (moveNumber % QUAD_SIZE) + yPlus, Quadrant.BL, Quadrant.TR, 0);
     }
 
 }
