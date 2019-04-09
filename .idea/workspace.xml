@@ -14,11 +14,84 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/Michael_Storng_Block/CustomPentagoBoardState.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="382">
+              <caret line="1014" column="20" selection-start-line="1014" selection-start-column="20" selection-end-line="1014" selection-end-column="20" />
+              <folding>
+                <element signature="e#6135#6136#0" expanded="true" />
+                <element signature="e#6168#6169#0" expanded="true" />
+                <element signature="e#6187#6188#0" expanded="true" />
+                <element signature="e#6243#6244#0" expanded="true" />
+                <element signature="e#6311#6312#0" expanded="true" />
+                <element signature="e#6340#6341#0" expanded="true" />
+                <element signature="e#6392#6393#0" expanded="true" />
+                <element signature="e#6420#6421#0" expanded="true" />
+                <element signature="e#6468#6469#0" expanded="true" />
+                <element signature="e#6501#6502#0" expanded="true" />
+                <element signature="e#6549#6550#0" expanded="true" />
+                <element signature="e#6582#6583#0" expanded="true" />
+                <element signature="e#6634#6635#0" expanded="true" />
+                <element signature="e#6670#6671#0" expanded="true" />
+                <element signature="e#6716#6717#0" expanded="true" />
+                <element signature="e#6751#6752#0" expanded="true" />
+                <element signature="e#6783#6784#0" expanded="true" />
+                <element signature="e#6843#6844#0" expanded="true" />
+                <element signature="e#8390#8391#0" expanded="true" />
+                <element signature="e#8451#8452#0" expanded="true" />
+                <element signature="e#17772#17773#0" expanded="true" />
+                <element signature="e#18037#18038#0" expanded="true" />
+                <element signature="e#19412#19413#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/Michael_Storng_Block/MonteCarloTreeNode.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1518">
+              <caret line="141" selection-start-line="141" selection-end-line="141" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/Michael_Storng_Block/MonteCarloTreeSearch.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-1972">
+              <caret line="28" selection-start-line="28" selection-end-line="28" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/Michael_Storng_Block/Agent.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="238">
+              <caret line="18" column="30" selection-start-line="18" selection-start-column="30" selection-end-line="18" selection-end-column="30" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/Michael_Storng_Block/StudentPlayer.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="158">
+              <caret line="18" column="35" selection-start-line="18" selection-start-column="35" selection-end-line="18" selection-end-column="35" />
+            </state>
+          </provider>
+        </entry>
+      </file>
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/boardgame/ServerGUI.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-561">
-              <caret line="39" column="102" selection-start-line="39" selection-start-column="102" selection-end-line="39" selection-end-column="102" />
+            <state relative-caret-position="255">
+              <caret line="39" column="138" selection-start-line="39" selection-start-column="138" selection-end-line="39" selection-end-column="138" />
             </state>
           </provider>
         </entry>
@@ -65,8 +138,10 @@
         <option value="$PROJECT_DIR$/src/Michael_32/MonteCarloTreeNode.java" />
         <option value="$PROJECT_DIR$/src/Michael_40/StudentPlayer.java" />
         <option value="$PROJECT_DIR$/src/Michael_41/StudentPlayer.java" />
-        <option value="$PROJECT_DIR$/src/boardgame/ServerGUI.java" />
         <option value="$PROJECT_DIR$/src/Michael_50/StudentPlayer.java" />
+        <option value="$PROJECT_DIR$/src/Michael_Storng_Block/CustomPentagoBoardState.java" />
+        <option value="$PROJECT_DIR$/src/Michael_Storng_Block/StudentPlayer.java" />
+        <option value="$PROJECT_DIR$/src/boardgame/ServerGUI.java" />
       </list>
     </option>
   </component>
@@ -82,6 +157,7 @@
     </navigator>
     <panes>
       <pane id="Scope" />
+      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -104,23 +180,28 @@
               <item name="Pentago-Swap-AI-Agent" type="b2602c69:ProjectViewProjectNode" />
               <item name="Pentago-Swap-AI-Agent" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="benchmark_player" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Pentago-Swap-AI-Agent" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Pentago-Swap-AI-Agent" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="boardgame" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="Pentago-Swap-AI-Agent" type="b2602c69:ProjectViewProjectNode" />
               <item name="Pentago-Swap-AI-Agent" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="Michael_50" type="462c0819:PsiDirectoryNode" />
+              <item name="Michael_Storng_Block" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
-      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1553708769563" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1554780915826" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -190,7 +271,7 @@
     <frame x="-6" y="-6" width="1513" height="973" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.23230241" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.21099657" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Image Layers" order="2" />
       <window_info id="Designer" order="3" />
@@ -199,7 +280,7 @@
       <window_info id="Favorites" order="6" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.5255042" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.41518387" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.27164888" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.47449586" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -217,6 +298,22 @@
       <window_info anchor="right" id="Capture Analysis" order="6" />
       <window_info anchor="right" id="Palette&#9;" order="7" />
     </layout>
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="RECENT_FILTERS">
+      <map>
+        <entry key="Branch">
+          <value>
+            <list />
+          </value>
+        </entry>
+        <entry key="User">
+          <value>
+            <list />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -463,10 +560,56 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/Michael_Storng_Block/CustomPentagoBoardState.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="382">
+          <caret line="1014" column="20" selection-start-line="1014" selection-start-column="20" selection-end-line="1014" selection-end-column="20" />
+          <folding>
+            <element signature="e#6135#6136#0" expanded="true" />
+            <element signature="e#6168#6169#0" expanded="true" />
+            <element signature="e#6187#6188#0" expanded="true" />
+            <element signature="e#6243#6244#0" expanded="true" />
+            <element signature="e#6311#6312#0" expanded="true" />
+            <element signature="e#6340#6341#0" expanded="true" />
+            <element signature="e#6392#6393#0" expanded="true" />
+            <element signature="e#6420#6421#0" expanded="true" />
+            <element signature="e#6468#6469#0" expanded="true" />
+            <element signature="e#6501#6502#0" expanded="true" />
+            <element signature="e#6549#6550#0" expanded="true" />
+            <element signature="e#6582#6583#0" expanded="true" />
+            <element signature="e#6634#6635#0" expanded="true" />
+            <element signature="e#6670#6671#0" expanded="true" />
+            <element signature="e#6716#6717#0" expanded="true" />
+            <element signature="e#6751#6752#0" expanded="true" />
+            <element signature="e#6783#6784#0" expanded="true" />
+            <element signature="e#6843#6844#0" expanded="true" />
+            <element signature="e#8390#8391#0" expanded="true" />
+            <element signature="e#8451#8452#0" expanded="true" />
+            <element signature="e#17772#17773#0" expanded="true" />
+            <element signature="e#18037#18038#0" expanded="true" />
+            <element signature="e#19412#19413#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Michael_Storng_Block/Agent.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="238">
+          <caret line="18" column="30" selection-start-line="18" selection-start-column="30" selection-end-line="18" selection-end-column="30" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Michael_Storng_Block/StudentPlayer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="158">
+          <caret line="18" column="35" selection-start-line="18" selection-start-column="35" selection-end-line="18" selection-end-column="35" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/boardgame/ServerGUI.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-561">
-          <caret line="39" column="102" selection-start-line="39" selection-start-column="102" selection-end-line="39" selection-end-column="102" />
+        <state relative-caret-position="255">
+          <caret line="39" column="138" selection-start-line="39" selection-start-column="138" selection-end-line="39" selection-end-column="138" />
         </state>
       </provider>
     </entry>
