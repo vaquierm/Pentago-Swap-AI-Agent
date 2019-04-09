@@ -620,6 +620,10 @@ public class CustomPentagoBoardState extends BoardState {
             0b000000001, 0b000000000, 0b000000000, 0b100000000,
             0b000000000, 0b000000100, 0b001000000, 0b000000000};
 
+    private static int[] bitMasksForMatchingCenter = {  0b000100000, 0b000010000, 0b000001000, 0b000100000, 0b000010000, 0b000001000, // Pairs of verticals
+            0b010000000, 0b001000000, 0b000010000, 0b000010000, 0b000000010, 0b000000010 }; // Pairs of horizontals
+
+
     private static int[] twoEndsBitMasks = {       0b101000000, 0b000101000, 0b000000101, 0b100000100, 0b010000101, 0b001000001, 0b100000001, 0b001000100 };
 
     private static int[] twoEndsBlockBitMasks = {  0b010000000, 0b000010000, 0b000000010, 0b000100000, 0b000010000, 0b000001000, 0b000010000, 0b000010000 };
@@ -647,15 +651,23 @@ public class CustomPentagoBoardState extends BoardState {
         int overallScore = 0;
         Piece opponent = (piece == Piece.WHITE) ? Piece.BLACK : Piece.WHITE;
 
-        int pairScore = (offensiveMode) ? 2 : 1;
-        int blockScore = (offensiveMode) ? 1 : 4;
-
         int[] quadrantValues = getQuadrantIntValue(piece);
         int[] quadrantValuesOpponent = getQuadrantIntValue(opponent);
+
+        if (turnNumber == 2 && !offensiveMode && isStartGameOptimal(quadrantValues, quadrantValuesOpponent))
+            return Integer.MAX_VALUE;
+
+        int pairScore = (offensiveMode) ? 4 : 2;
+        int blockScore = (offensiveMode) ? 2 : 8;
+
 
         for (int i = 0; i < bitMasksForPairs.length; i++) {
             for (int k = 0; k < 4; k++) {
                 int temp = bitMasksForPairs[i] & quadrantValues[k]; // Check if the pattern is present in the quadrant
+                if (i >= 12) {
+                    pairScore = pairScore >> 1;
+                    blockScore = blockScore >> 1;
+                }
                 if (temp == bitMasksForPairs[i]) {
                     // If the pattern is present in the quadrant, indicate that in the flags array
                     patternPresent[k][i]++;
@@ -744,6 +756,25 @@ public class CustomPentagoBoardState extends BoardState {
 
         return overallScore;
 
+    }
+
+    private boolean isStartGameOptimal(int[] quadrantValues, int[] quadrantValuesOpponent) {
+
+        int occurrences = 0;
+
+        for (int i = 0; i < bitMasksForMatchingCenter.length; i++) {
+            for (int l = 1; l < 4; l++) {
+                if ((quadrantValuesOpponent[l] & bitMasksForPairs[i]) == bitMasksForPairs[i]) {
+                    for (int k = 0; k < 4; k++) {
+                        if ((quadrantValues[k] & bitMasksForMatchingCenter[i]) == bitMasksForMatchingCenter[i]) {
+                            occurrences++;
+                        }
+                    }
+                }
+            }
+        }
+
+        return occurrences > 1;
     }
 
     /**

@@ -2,11 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0ad525eb-777c-486d-a924-d7dddb08f768" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/student_player/Agent.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/student_player/Agent.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/student_player/CustomPentagoBoardState.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/student_player/CustomPentagoBoardState.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/student_player/MonteCarloTreeNode.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/student_player/MonteCarloTreeNode.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/student_player/MonteCarloTreeSearch.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/student_player/MonteCarloTreeSearch.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -20,8 +16,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/student_player/CustomPentagoBoardState.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-403">
-              <caret line="302" column="120" selection-start-line="302" selection-start-column="120" selection-end-line="302" selection-end-column="120" />
+            <state relative-caret-position="158">
+              <caret line="760" column="20" selection-start-line="760" selection-start-column="20" selection-end-line="760" selection-end-column="20" />
               <folding>
                 <element signature="e#6187#6188#0" expanded="true" />
                 <element signature="e#6243#6244#0" expanded="true" />
@@ -157,7 +153,7 @@
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1554768693878" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1554771335682" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -235,7 +231,6 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-6" y="-6" width="1513" height="973" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.21099657" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -246,8 +241,8 @@
       <window_info id="Favorites" order="6" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.23131673" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.27164888" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.37841043" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.27164888" />
+      <window_info active="true" anchor="bottom" id="Debug" order="3" visible="true" weight="0.37841043" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" weight="0.32977462" />
@@ -281,20 +276,13 @@
       </map>
     </option>
   </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/student_player/CustomPentagoBoardState.java</url>
-          <line>302</line>
-          <properties />
-          <option name="timeStamp" value="10" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
-  </component>
   <component name="debuggerHistoryManager">
     <expressions id="breakpointCondition">
+      <expression>
+        <expression-string>occurrences == 1</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
       <expression>
         <expression-string>this.move.getPlayerID() != Agent.AGENT</expression-string>
         <language-id>JAVA</language-id>
@@ -495,8 +483,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/student_player/CustomPentagoBoardState.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-403">
-          <caret line="302" column="120" selection-start-line="302" selection-start-column="120" selection-end-line="302" selection-end-column="120" />
+        <state relative-caret-position="158">
+          <caret line="760" column="20" selection-start-line="760" selection-start-column="20" selection-end-line="760" selection-end-column="20" />
           <folding>
             <element signature="e#6187#6188#0" expanded="true" />
             <element signature="e#6243#6244#0" expanded="true" />
