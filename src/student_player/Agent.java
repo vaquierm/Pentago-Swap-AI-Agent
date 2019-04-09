@@ -8,6 +8,8 @@ import java.lang.reflect.InvocationTargetException;
 
 public class Agent {
 
+    public static int AGENT;
+
     /**
      * Find best move with a monte carlo tree search with UCT
      * @param timeout  Allowed search time
@@ -17,6 +19,11 @@ public class Agent {
     public static PentagoMove findBestMoveMontecarlo(long timeout, PentagoBoardState boardState) {
 
         long startTime = System.currentTimeMillis();
+
+        AGENT = boardState.getTurnPlayer();
+
+        if (boardState.getTurnNumber() == 0 && boardState.getTurnPlayer() == 0)
+            return new PentagoMove(1,1, PentagoBoardState.Quadrant.BL, PentagoBoardState.Quadrant.TR, 0);
 
         CustomPentagoBoardState customPentagoBoardState = new CustomPentagoBoardState(boardState);
 

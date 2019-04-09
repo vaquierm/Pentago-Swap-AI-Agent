@@ -56,7 +56,7 @@ public class MonteCarloTreeNode {
     public double getWinRatioBoardHeuristicComboScore(boolean offensiveMode) {
         double divTerm = offensiveMode ? 20 : 8;
 
-        double boardVal = (boardHeuristic < 0) ? -Math.log(Math.abs(boardHeuristic) + 1) : Math.log(Math.abs(boardHeuristic) + 1);
+        double boardVal = boardHeuristic;//(boardHeuristic < 0) ? -Math.log(Math.abs(boardHeuristic) + 1) : Math.log(Math.abs(boardHeuristic) + 1);
         boardVal /= divTerm;
 
         return getWinRatio() + boardVal;
@@ -128,16 +128,19 @@ public class MonteCarloTreeNode {
     }
 
     public double getUCTValue() {
-        if (parent == null || status != Status.PROGRESS) {// TODO: Figure out if this is useful
+        if (parent == null || status != Status.PROGRESS) {
             return -100000;
         }
         if (visitCount == 0) {
             return 100000;
         }
+
+        double ratio = (this.move.getPlayerID() == Agent.AGENT) ? getWinRatio() : -getWinRatio();
+
         if (parent.getVisitCount() == 0)
             return this.getWinRatio();
 
-        return this.getWinRatio() + 1.41 * Math.sqrt(Math.log(parent.getVisitCount()) / (double) visitCount);
+        return ratio + 1.41 * Math.sqrt(Math.log(parent.getVisitCount()) / (double) visitCount);
     }
 
     public MonteCarloTreeNode getChildWithBestUCT() {

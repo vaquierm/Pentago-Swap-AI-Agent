@@ -22,10 +22,11 @@ public class MonteCarloTreeSearch {
         List<Pair<PentagoMove, Pair<Status, Integer>>> lastResortMoves = new ArrayList<>();
 
         // If the opponent made the first move, we want to play next to them to start off a defensive game.
-        List<PentagoMove> moves = (boardState.boardOneOrThreeMoves()) ? boardState.getAllLegalMovesWithSymmetryAroundOpponent() : boardState.getAllLegalMovesWithSymmetry();
+        List<PentagoMove> moves = (boardState.getTurnPlayer() == 0 && boardState.getTurnNumber() == 1) ? boardState.getAllLegalMovesWithSymmetryAroundPlayer() : (boardState.boardOneOrThreeMoves()) ? boardState.getAllLegalMovesWithSymmetryAroundOpponent() : boardState.getAllLegalMovesWithSymmetry();
 
         MonteCarloTreeNode node;
         for (PentagoMove move : moves) {
+
             Pair<Status, Integer> statusIntegerPair = moveLeadsAndGetBoardScore(move, boardState, boardState.getTurnPlayer());
 
             if (statusIntegerPair.t == Status.WON) {
@@ -161,14 +162,15 @@ public class MonteCarloTreeSearch {
             if (boardState.isCriticalStateForPiece((player == 1) ? PentagoBoardState.Piece.WHITE : PentagoBoardState.Piece.BLACK)) {
                 returnVal = 2;
 
-                // Even if the move is critical if the opponent makes this move and we can won right after it is ok
-                for (PentagoMove nextMove : boardState.getAllLegalMoves()) {
-                    if (moveLeadsToLoss(nextMove, boardState, 1 - player)) {
-                        returnVal = 0;
-                        break;
+                if (boardState.getTurnNumber() > 5) {
+                    // Even if the move is critical if the opponent makes this move and we can won right after it is ok
+                    for (PentagoMove nextMove : boardState.getAllLegalMoves()) {
+                        if (moveLeadsToLoss(nextMove, boardState, 1 - player)) {
+                            returnVal = 0;
+                            break;
+                        }
                     }
                 }
-
 
             }
             else

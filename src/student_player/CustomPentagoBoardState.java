@@ -271,6 +271,7 @@ public class CustomPentagoBoardState extends BoardState {
         return moves;
     }
 
+
     /**
      * @return  The list of valid moves taking into account symmetry, and around the opponent piece.
      * Note: Assumes that there is only one opponent piece on the board.
@@ -279,14 +280,33 @@ public class CustomPentagoBoardState extends BoardState {
 
         List<PentagoMove> moves = getAllLegalMovesWithSymmetry();
         List<PentagoMove> movesAroundOpponent = new LinkedList<>();
+        List<PentagoMove> movesShadowOpponent = new LinkedList<>();
 
         Piece opponent = (turnPlayer == BLACK) ? Piece.WHITE : Piece.BLACK;
+
+        List<PentagoCoord> opponentMoves = new LinkedList<>();
+
+        for (int i = 0; i < BOARD_SIZE; i++) {
+            for (int j = 0; j < BOARD_SIZE; j++) {
+                if (board[i][j] == opponent)
+                    opponentMoves.add(new PentagoCoord(i, j));
+            }
+
+        }
 
         for (int i = 0; i < BOARD_SIZE; i++) {
             for (int j = 0; j < BOARD_SIZE; j++) {
                 if (board[i][j] == opponent) {
                     for (PentagoMove move : moves) {
-                        if (!movesAroundOpponent.contains(move) && move.getMoveCoord().getX() / QUAD_SIZE == i / QUAD_SIZE && move.getMoveCoord().getY() / QUAD_SIZE == j / QUAD_SIZE && move.getMoveCoord().getX() + move.getMoveCoord().getY() - i - j < 3) {
+                        if ((move.getMoveCoord().getX() % 3 == 1 || move.getMoveCoord().getY() % 3 == 1)) {
+                            for (PentagoCoord opponentMove : opponentMoves) {
+                                if (move.getMoveCoord().getX() % 3 == opponentMove.getX() % 3 && move.getMoveCoord().getY() % 3 == opponentMove.getY() % 3) {
+                                    movesShadowOpponent.add(move);
+                                    break;
+                                }
+                            }
+                        }
+                        else if (movesShadowOpponent.isEmpty() && !movesAroundOpponent.contains(move) && move.getMoveCoord().getX() / QUAD_SIZE == i / QUAD_SIZE && move.getMoveCoord().getY() / QUAD_SIZE == j / QUAD_SIZE && move.getMoveCoord().getX() + move.getMoveCoord().getY() - i - j < 3) {
                             movesAroundOpponent.add(move);
                         }
                     }
@@ -294,7 +314,30 @@ public class CustomPentagoBoardState extends BoardState {
             }
         }
 
-        return movesAroundOpponent;
+        return movesShadowOpponent.isEmpty() ? movesAroundOpponent : movesShadowOpponent;
+    }
+
+    public List<PentagoMove> getAllLegalMovesWithSymmetryAroundPlayer() {
+
+        List<PentagoMove> moves = getAllLegalMovesWithSymmetry();
+        List<PentagoMove> movesAroundSelf = new LinkedList<>();
+
+        Piece selfPiece = (turnPlayer == BLACK) ? Piece.BLACK : Piece.WHITE;
+
+        for (int i = 0; i < BOARD_SIZE; i++) {
+            for (int j = 0; j < BOARD_SIZE; j++) {
+                if (board[i][j] == selfPiece) {
+                    for (PentagoMove move : moves) {
+                        if (!movesAroundSelf.contains(move) && move.getMoveCoord().getX() / QUAD_SIZE == i / QUAD_SIZE && move.getMoveCoord().getY() / QUAD_SIZE == j / QUAD_SIZE
+                                && ((Math.abs(i -move.getMoveCoord().getX()) == 0 && Math.abs(j - move.getMoveCoord().getY()) == 1) || (Math.abs(i -move.getMoveCoord().getX()) == 1 && Math.abs(j - move.getMoveCoord().getY()) == 0))) {
+                            movesAroundSelf.add(move);
+                        }
+                    }
+                }
+            }
+        }
+
+        return movesAroundSelf;
     }
 
     /**
@@ -581,7 +624,7 @@ public class CustomPentagoBoardState extends BoardState {
 
     private static int[] twoEndsBlockBitMasks = {  0b010000000, 0b000010000, 0b000000010, 0b000100000, 0b000010000, 0b000001000, 0b000010000, 0b000010000 };
 
-    private static int[] gameEndingTriplet = { 0b111000000, 0b000111000, 0b000000111, 0b100100100, 0b010010010, 0b001001001, 0b100010001, 0b001010100 };
+    private static int[] gameEndingTriplet = { 0b111000000, 0b000111000, 0b000000111, 0b100100100, 0b010010010, 0b001001001, /*0b100010001, 0b001010100*/ };
     private static int[] correspondingSingle = { 0b010000000, 0b000010000, 0b000000010, 0b000100000, 0b000010000, 0b000001000, 0b000010000, 0b000010000 };
 
 
@@ -639,6 +682,29 @@ public class CustomPentagoBoardState extends BoardState {
                     antiPatternPresentOpponent[k][i]++;
                     // Update the overall score that the pattern was found for the opponent blocking your pattern
                     overallScore-=blockScore;
+                }
+            }
+        }
+
+        for (int i = 0; i < gameEndingTriplet.length; i++) {
+            for (int k = 0; k < 4; k++) {
+                if ((gameEndingTriplet[i] & quadrantValues[k]) != gameEndingTriplet[i])
+                    continue;
+
+                int freeQuadCount = 0;
+
+                // If game ending triplet is present, make sure that other places are free
+                for (int l = 0; l < 4; l++) {
+                    if (l == k)
+                        continue;
+
+                    if ((correspondingSingle[i] & quadrantValuesOpponent[l]) != correspondingSingle[i] && ((gameEndingTriplet[i] ^ correspondingSingle[i]) & quadrantValuesOpponent[l]) < (gameEndingTriplet[i] ^ correspondingSingle[i])) {
+                        freeQuadCount++;
+                    }
+                }
+
+                if (freeQuadCount >= 2) {
+                    overallScore += 50;
                 }
             }
         }
