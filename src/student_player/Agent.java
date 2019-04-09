@@ -22,16 +22,22 @@ public class Agent {
 
         AGENT = boardState.getTurnPlayer();
 
-        if (boardState.getTurnNumber() == 0 && boardState.getTurnPlayer() == 0)
-            return new PentagoMove(1,1, PentagoBoardState.Quadrant.BL, PentagoBoardState.Quadrant.TR, 0);
+        PentagoMove winMove = null;
 
         CustomPentagoBoardState customPentagoBoardState = new CustomPentagoBoardState(boardState);
+
+        if (boardState.getTurnNumber() == 0) {
+            winMove = customPentagoBoardState.findCenterMove();
+            if (winMove != null)
+                return winMove;
+        }
+
 
         int player = boardState.getTurnPlayer();
 
         int counter = 0;
 
-        PentagoMove winMove = MonteCarloTreeSearch.resetTree(customPentagoBoardState);
+        winMove = MonteCarloTreeSearch.resetTree(customPentagoBoardState);
 
         if (winMove != null) {
             return winMove;

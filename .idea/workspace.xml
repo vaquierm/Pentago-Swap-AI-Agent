@@ -2,6 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0ad525eb-777c-486d-a924-d7dddb08f768" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/student_player/Agent.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/student_player/Agent.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/student_player/CustomPentagoBoardState.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/student_player/CustomPentagoBoardState.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
@@ -13,19 +15,35 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/student_player/CustomPentagoBoardState.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="158">
-              <caret line="760" column="20" selection-start-line="760" selection-start-column="20" selection-end-line="760" selection-end-column="20" />
+            <state relative-caret-position="195">
+              <caret line="1003" column="106" selection-start-line="1003" selection-start-column="106" selection-end-line="1003" selection-end-column="106" />
               <folding>
+                <element signature="e#6135#6136#0" expanded="true" />
+                <element signature="e#6168#6169#0" expanded="true" />
                 <element signature="e#6187#6188#0" expanded="true" />
                 <element signature="e#6243#6244#0" expanded="true" />
+                <element signature="e#6311#6312#0" expanded="true" />
+                <element signature="e#6340#6341#0" expanded="true" />
+                <element signature="e#6392#6393#0" expanded="true" />
+                <element signature="e#6420#6421#0" expanded="true" />
+                <element signature="e#6468#6469#0" expanded="true" />
+                <element signature="e#6501#6502#0" expanded="true" />
+                <element signature="e#6549#6550#0" expanded="true" />
+                <element signature="e#6582#6583#0" expanded="true" />
+                <element signature="e#6634#6635#0" expanded="true" />
+                <element signature="e#6670#6671#0" expanded="true" />
+                <element signature="e#6716#6717#0" expanded="true" />
+                <element signature="e#6751#6752#0" expanded="true" />
+                <element signature="e#6783#6784#0" expanded="true" />
+                <element signature="e#6843#6844#0" expanded="true" />
                 <element signature="e#8390#8391#0" expanded="true" />
                 <element signature="e#8451#8452#0" expanded="true" />
-                <element signature="e#17566#17567#0" expanded="true" />
-                <element signature="e#17831#17832#0" expanded="true" />
-                <element signature="e#19169#19170#0" expanded="true" />
+                <element signature="e#17760#17761#0" expanded="true" />
+                <element signature="e#18025#18026#0" expanded="true" />
+                <element signature="e#19400#19401#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -43,8 +61,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/student_player/MonteCarloTreeSearch.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="158">
-              <caret line="24" column="228" lean-forward="true" selection-start-line="24" selection-start-column="228" selection-end-line="24" selection-end-column="228" />
+            <state relative-caret-position="221">
+              <caret line="28" lean-forward="true" selection-start-line="28" selection-end-line="28" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -52,11 +70,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/student_player/Agent.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="187">
-              <caret line="15" column="44" selection-start-line="15" selection-start-column="44" selection-end-line="15" selection-end-column="44" />
+            <state relative-caret-position="255">
+              <caret line="31" column="31" selection-start-line="31" selection-start-column="31" selection-end-line="31" selection-end-column="31" />
             </state>
           </provider>
         </entry>
@@ -90,10 +108,11 @@
         <option value="$PROJECT_DIR$/src/boardgame/Server.java" />
         <option value="$PROJECT_DIR$/src/student_player/StudentPlayer.java" />
         <option value="$PROJECT_DIR$/src/boardgame/ServerGUI.java" />
-        <option value="$PROJECT_DIR$/src/student_player/Agent.java" />
-        <option value="$PROJECT_DIR$/src/student_player/MonteCarloTreeSearch.java" />
         <option value="$PROJECT_DIR$/src/student_player/MonteCarloTreeNode.java" />
+        <option value="$PROJECT_DIR$/src/student_player/MonteCarloTreeSearch.java" />
+        <option value="$PROJECT_DIR$/src/pentago_swap/PentagoBoardState.java" />
         <option value="$PROJECT_DIR$/src/student_player/CustomPentagoBoardState.java" />
+        <option value="$PROJECT_DIR$/src/student_player/Agent.java" />
       </list>
     </option>
   </component>
@@ -153,7 +172,7 @@
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1554771335682" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1554774254618" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -169,8 +188,9 @@
   </component>
   <component name="RunManager" selected="Application.GUI">
     <configuration name="Agent" type="Application" factoryName="Application">
-      <option name="MAIN_CLASS_NAME" value="student_player.Agent" />
+      <option name="MAIN_CLASS_NAME" value="boardgame.Client" />
       <module name="Pentago-Swap-AI-Agent" />
+      <option name="VM_PARAMETERS" value="-" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -199,7 +219,7 @@
     <configuration name="Remote Client" type="Application" factoryName="Application">
       <option name="MAIN_CLASS_NAME" value="boardgame.Client" />
       <module name="Pentago-Swap-AI-Agent" />
-      <option name="PROGRAM_PARAMETERS" value="student_player.StudentPlayer 0.tcp.ngrok.io 14922" />
+      <option name="PROGRAM_PARAMETERS" value="student_player.StudentPlayer" />
       <option name="VM_PARAMETERS" value="-Xms520m -Xmx520m" />
       <method v="2">
         <option name="Make" enabled="true" />
@@ -231,6 +251,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-6" y="-6" width="1513" height="973" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.21099657" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -241,8 +262,8 @@
       <window_info id="Favorites" order="6" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.23131673" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.27164888" />
-      <window_info active="true" anchor="bottom" id="Debug" order="3" visible="true" weight="0.37841043" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.27164888" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.37841043" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" weight="0.32977462" />
@@ -362,13 +383,6 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/student_player/CustomPentagoMove.java" />
-    <entry file="file://$PROJECT_DIR$/src/pentago_swap/PentagoBoardState.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="172">
-          <caret line="194" selection-start-line="194" selection-end-line="194" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/student_player/Pair.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="170">
@@ -457,20 +471,20 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/student_player/Agent.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="187">
-          <caret line="15" column="44" selection-start-line="15" selection-start-column="44" selection-end-line="15" selection-end-column="44" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/student_player/MonteCarloTreeSearch.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="158">
-          <caret line="24" column="228" lean-forward="true" selection-start-line="24" selection-start-column="228" selection-end-line="24" selection-end-column="228" />
+        <state relative-caret-position="221">
+          <caret line="28" lean-forward="true" selection-start-line="28" selection-end-line="28" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/pentago_swap/PentagoBoardState.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3068">
+          <caret line="337" column="5" selection-start-line="337" selection-start-column="5" selection-end-line="337" selection-end-column="5" />
         </state>
       </provider>
     </entry>
@@ -483,17 +497,40 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/student_player/CustomPentagoBoardState.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="158">
-          <caret line="760" column="20" selection-start-line="760" selection-start-column="20" selection-end-line="760" selection-end-column="20" />
+        <state relative-caret-position="195">
+          <caret line="1003" column="106" selection-start-line="1003" selection-start-column="106" selection-end-line="1003" selection-end-column="106" />
           <folding>
+            <element signature="e#6135#6136#0" expanded="true" />
+            <element signature="e#6168#6169#0" expanded="true" />
             <element signature="e#6187#6188#0" expanded="true" />
             <element signature="e#6243#6244#0" expanded="true" />
+            <element signature="e#6311#6312#0" expanded="true" />
+            <element signature="e#6340#6341#0" expanded="true" />
+            <element signature="e#6392#6393#0" expanded="true" />
+            <element signature="e#6420#6421#0" expanded="true" />
+            <element signature="e#6468#6469#0" expanded="true" />
+            <element signature="e#6501#6502#0" expanded="true" />
+            <element signature="e#6549#6550#0" expanded="true" />
+            <element signature="e#6582#6583#0" expanded="true" />
+            <element signature="e#6634#6635#0" expanded="true" />
+            <element signature="e#6670#6671#0" expanded="true" />
+            <element signature="e#6716#6717#0" expanded="true" />
+            <element signature="e#6751#6752#0" expanded="true" />
+            <element signature="e#6783#6784#0" expanded="true" />
+            <element signature="e#6843#6844#0" expanded="true" />
             <element signature="e#8390#8391#0" expanded="true" />
             <element signature="e#8451#8452#0" expanded="true" />
-            <element signature="e#17566#17567#0" expanded="true" />
-            <element signature="e#17831#17832#0" expanded="true" />
-            <element signature="e#19169#19170#0" expanded="true" />
+            <element signature="e#17760#17761#0" expanded="true" />
+            <element signature="e#18025#18026#0" expanded="true" />
+            <element signature="e#19400#19401#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/student_player/Agent.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="255">
+          <caret line="31" column="31" selection-start-line="31" selection-start-column="31" selection-end-line="31" selection-end-column="31" />
         </state>
       </provider>
     </entry>
