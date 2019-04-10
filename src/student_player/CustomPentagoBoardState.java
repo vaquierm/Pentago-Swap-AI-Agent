@@ -684,6 +684,9 @@ public class CustomPentagoBoardState extends BoardState {
         if (isCriticalStateForPiece(piece))
             return Integer.MAX_VALUE;
 
+        if (isSemiCriticalForPiece(piece))
+            return Integer.MAX_VALUE >> 1;
+
         int overallScore = 0;
         Piece opponent = (piece == Piece.WHITE) ? Piece.BLACK : Piece.WHITE;
 
@@ -982,6 +985,42 @@ public class CustomPentagoBoardState extends BoardState {
         return false;
     }
 
+    private boolean isSemiCriticalForPiece(Piece piece) {
+        Piece opponent = (piece == Piece.WHITE) ? Piece.BLACK : Piece.WHITE;
+
+        int[] quadrantValues = getQuadrantIntValue(piece);
+        int[] quadrantValuesOpponent = getQuadrantIntValue(opponent);
+
+        // Calculate the game ending triplet moves
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                if (i == j)
+                    continue;
+
+                for (int k = 0; k < 4; k++) {
+                    if (k == j || k == i)
+                        continue;
+
+                    for (int s = 0; s < gameEndingTriplet.length; s++) {
+                        // The triplet exists
+                        if ((quadrantValues[i] & gameEndingTriplet[s]) == gameEndingTriplet[s]) {
+                            // Another triplet completely inoccupied by opponent
+                            if ((quadrantValuesOpponent[j] & gameEndingTriplet[s]) == 0) {
+                                // A corresponding single exists with no blocking from opponent
+                                if ((quadrantValues[k] & correspondingSingle[s]) == correspondingSingle[s]
+                                        && (quadrantValuesOpponent[k] & (correspondingSingle[s] ^ gameEndingTriplet[s])) == 0) {
+                                    return true;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
     /**
      * @return True if only one or three moves has been played so far, False otherwise
      */
@@ -1052,7 +1091,6 @@ public class CustomPentagoBoardState extends BoardState {
             }
 
         }
-
 
         if (moveToPlay == -1 || countBlock < 2)
             return null;
