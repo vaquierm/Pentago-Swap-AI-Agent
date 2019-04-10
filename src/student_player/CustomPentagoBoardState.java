@@ -965,8 +965,8 @@ public class CustomPentagoBoardState extends BoardState {
                         // The triplet exists
                         if ((quadrantValues[i] & gameEndingTriplet[s]) == gameEndingTriplet[s]) {
                             // A corresponding double exists
-                            if ((quadrantValues[k] & correspondingSingle[s]) == correspondingSingle[s]
-                                    && (quadrantValuesOpponent[k] & (correspondingSingle[s] ^ gameEndingTriplet[s])) < (correspondingSingle[s] ^ gameEndingTriplet[s])) {
+                            if ((quadrantValues[j] & correspondingSingle[s]) == correspondingSingle[s]
+                                    && (quadrantValuesOpponent[j] & (correspondingSingle[s] ^ gameEndingTriplet[s])) < (correspondingSingle[s] ^ gameEndingTriplet[s])) {
                                 // A corresponding single exists with no blocking from opponent
                                 if ((quadrantValues[k] & correspondingSingle[s]) == correspondingSingle[s]
                                         && (quadrantValuesOpponent[k] & (correspondingSingle[s] ^ gameEndingTriplet[s])) == 0) {
@@ -998,7 +998,7 @@ public class CustomPentagoBoardState extends BoardState {
             }
         }
 
-        return pieceCount == 1 || pieceCount == 3 || pieceCount == 5;
+        return pieceCount == 1 || pieceCount == 3;
     }
 
     public PentagoMove findCenterMove() {
@@ -1054,7 +1054,7 @@ public class CustomPentagoBoardState extends BoardState {
         }
 
 
-        if (moveToPlay == -1 && countBlock < 2)
+        if (moveToPlay == -1 || countBlock < 2)
             return null;
 
         int moveNumber = QUAD_SIZE * QUAD_SIZE - 1;

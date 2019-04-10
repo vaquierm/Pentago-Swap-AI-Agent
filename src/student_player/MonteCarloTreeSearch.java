@@ -20,6 +20,8 @@ public class MonteCarloTreeSearch {
         root = new MonteCarloTreeNode();
 
         List<Pair<PentagoMove, Pair<Status, Integer>>> lastResortMoves = new ArrayList<>();
+        LinkedList<PentagoMove> conditionalWinMoves = new LinkedList<>();
+
 
         // If the opponent made the first move, we want to play next to them to start off a defensive game.
         List<PentagoMove> moves = (boardState.getTurnPlayer() == 0 && boardState.getTurnNumber() == 1) ? boardState.getAllLegalMovesWithSymmetryAroundPlayer() : (boardState.boardOneOrThreeMoves()) ? boardState.getAllLegalMovesWithSymmetryAroundOpponent() : boardState.getAllLegalMovesWithSymmetry();
@@ -43,6 +45,13 @@ public class MonteCarloTreeSearch {
             else if (statusIntegerPair.t == Status.CRITICAL) {
                 lastResortMoves.add(new Pair<>(move, statusIntegerPair));
             }
+            else if (statusIntegerPair.t == Status.CONDITIONAL_WIN) {
+                conditionalWinMoves.add(move);
+            }
+        }
+
+        if (!conditionalWinMoves.isEmpty()) {
+            return conditionalWinMoves.getFirst();
         }
 
         if (root.getChildren().size() == 0) {
@@ -210,16 +219,41 @@ public class MonteCarloTreeSearch {
         else {
             returnStatus = Status.PROGRESS;
 
-            if (boardState.getTurnNumber() >= 2) {
-                for (PentagoMove nextMove : boardState.getAllLegalMovesWithSymmetry()) {
+            if (boardState.isCriticalStateForPiece((player == 0) ? PentagoBoardState.Piece.WHITE : PentagoBoardState.Piece.BLACK)) {
 
-                    int leadsTo = moveLeadsToDeepLoss(nextMove, boardState, player);
-                    if (leadsTo == 1) {
+                for (PentagoMove nextMove : boardState.getAllLegalMoves()) {
+                    if (moveLeadsToLoss(nextMove, boardState, player)) {
                         returnStatus = Status.LOSS;
                         boardState.revertMove(move);
                         return new Pair<>(returnStatus, returnVal);
-                    } else if (leadsTo == 2) {
-                        returnStatus = Status.CRITICAL;
+                    }
+                }
+
+                returnStatus = Status.CONDITIONAL_WIN;
+                boardState.revertMove(move);
+                return new Pair<>(returnStatus, returnVal);
+            }
+            else if (boardState.getTurnNumber() >= 2) {
+                boolean searchDeep = true;
+                for (PentagoMove nextMove : boardState.getAllLegalMovesWithSymmetry()) {
+
+                    if (searchDeep) {
+                        int leadsTo = moveLeadsToDeepLoss(nextMove, boardState, player);
+                        if (leadsTo == 1) {
+                            returnStatus = Status.LOSS;
+                            boardState.revertMove(move);
+                            return new Pair<>(returnStatus, returnVal);
+                        } else if (leadsTo == 2) {
+                            returnStatus = Status.CRITICAL;
+                            searchDeep = false;
+                        }
+                    }
+                    else {
+                        if (moveLeadsToLoss(nextMove, boardState, player)) {
+                            returnStatus = Status.LOSS;
+                            boardState.revertMove(move);
+                            return new Pair<>(returnStatus, returnVal);
+                        }
                     }
                 }
             }

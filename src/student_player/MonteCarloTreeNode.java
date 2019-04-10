@@ -24,7 +24,7 @@ public class MonteCarloTreeNode {
     private Status status;
 
     public enum Status {
-        WON, LOSS, TIE, PROGRESS, CRITICAL
+        WON, LOSS, TIE, PROGRESS, CRITICAL, CONDITIONAL_WIN
     }
 
     public MonteCarloTreeNode() {
@@ -56,7 +56,7 @@ public class MonteCarloTreeNode {
     public double getWinRatioBoardHeuristicComboScore(boolean offensiveMode) {
         double divTerm = offensiveMode ? 20 : 8;
 
-        double boardVal = boardHeuristic;//(boardHeuristic < 0) ? -Math.log(Math.abs(boardHeuristic) + 1) : Math.log(Math.abs(boardHeuristic) + 1);
+        double boardVal = (boardHeuristic < 0) ? -Math.log(Math.abs(boardHeuristic) + 1) : Math.log(Math.abs(boardHeuristic) + 1);
         boardVal /= divTerm;
 
         return getWinRatio() + boardVal;
