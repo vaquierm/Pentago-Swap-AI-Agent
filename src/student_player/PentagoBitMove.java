@@ -106,7 +106,7 @@ public class PentagoBitMove {
     }
 
     public static long setBQuad(long move, int BQuad) {
-        return move | (((long) (BQuad & 0b11)) << 40);
+        return move | (((long) (BQuad & 0b11)) << 36);
     }
 
     public static long getBitCoord(long move) {
@@ -120,10 +120,10 @@ public class PentagoBitMove {
      */
     static PentagoMove bitMoveToPentagoMove(long move) {
 
-        int player = (int) ((move >> 40) & 1);
-        int smallerQuad = (int) ((move >> 38) & 0b11);
-        int largerQuad = (int) ((move >> 36) & 0b11);
-        long coord = move & 0b111111111111111111111111111111111111L;
+        int player = getPlayer(move);
+        int smallerQuad = getAQuad(move);
+        int largerQuad = getBQuad(move);
+        long coord = getBitCoord(move);
 
         int[] coordColRow = bitCoordToColRow(coord);
 

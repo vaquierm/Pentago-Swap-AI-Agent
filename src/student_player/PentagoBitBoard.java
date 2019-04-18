@@ -1,13 +1,10 @@
 package student_player;
 
 import boardgame.Board;
+import com.sun.org.apache.bcel.internal.generic.SWAP;
 import pentago_swap.PentagoBoardState;
-import pentago_swap.PentagoMove;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Scanner;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 import static pentago_swap.PentagoBoardState.*;
@@ -436,24 +433,25 @@ public class PentagoBitBoard {
 	/**
 	 * Swaps two quadrants on the board. Note that smallerQuad < largerQuad. No legality is checked on this for efficiency
 	 *
+	 * @param pieces Pieces long ints to swap
 	 * @param smallerQuad First quadrant to swap
 	 * @param largerQuad Second quadrant to swap
 	 */
-	private void swapQuadrants(int smallerQuad, int largerQuad) {
+	private void swapQuadrants(long[] pieces, int smallerQuad, int largerQuad) {
 
-		for(int i = 0; i < this.pieces.length; i++) {
+		for(int i = 0; i < pieces.length; i++) {
 			// Shift the smaller quad down to make for the new larger quad
 
-			long newLarge = (this.pieces[i] & QUADRANT_MASKS[smallerQuad]) >> QUADRANT_BIT_SHIFTS[smallerQuad][largerQuad];
+			long newLarge = (pieces[i] & QUADRANT_MASKS[smallerQuad]) >> QUADRANT_BIT_SHIFTS[smallerQuad][largerQuad];
 
 			// Shift the larger quad up to make the new smaller quad
-			long newSmall = (this.pieces[i] & QUADRANT_MASKS[largerQuad]) << QUADRANT_BIT_SHIFTS[smallerQuad][largerQuad];
+			long newSmall = (pieces[i] & QUADRANT_MASKS[largerQuad]) << QUADRANT_BIT_SHIFTS[smallerQuad][largerQuad];
 
 			// Perform the update
 			long newConfig = newLarge | newSmall;
 			long updateMask = ~ (QUADRANT_MASKS[smallerQuad] | QUADRANT_MASKS[largerQuad]);
 
-			this.pieces[i] = (this.pieces[i] & updateMask) | newConfig;
+			pieces[i] = (pieces[i] & updateMask) | newConfig;
 		}
 	}
 
@@ -483,7 +481,7 @@ public class PentagoBitBoard {
 
 		//Place the coordinate based on player
 		this.pieces[player] = this.pieces[player] | coord;
-		this.swapQuadrants(aQuad, bQuad);
+		this.swapQuadrants(this.pieces, aQuad, bQuad);
 		this.turnNumber++;
 
 		this.updateWinner();
@@ -509,7 +507,7 @@ public class PentagoBitBoard {
 		long coord = getBitCoord(move);
 
 		// Re-swap the quadrants
-		this.swapQuadrants(aQuad, bQuad);
+		this.swapQuadrants(this.pieces, aQuad, bQuad);
 
 		// Undo the placement
 		this.pieces[player] = this.pieces[player] & ~coord;
@@ -566,6 +564,91 @@ public class PentagoBitBoard {
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * Returns a win move if it exists
+	 * @return  return[0]: Win BitMove if it exists, 0 if none exists.  return[1]: number of ways that leads to win
+	 */
+	public long[] getWinMove() {
+
+		long[] winMove = new long[2];
+
+		long[][] swappedBoards = getAllSwapConfigurations();
+		for (int i = 0; i < swappedBoards.length; i++) {
+
+			long[] tempMove = getWinMoveForSwap(swappedBoards[i], turnPlayer);
+
+			if (tempMove[0] > 0) {
+				winMove[1] += tempMove[1];
+
+				if (winMove[0] == 0) {
+					swapQuadrants(tempMove, QUAD_SWAPS[i][0], QUAD_SWAPS[i][1]);
+					winMove[0] = createBitMove(turnPlayer, QUAD_SWAPS[i][0], QUAD_SWAPS[i][1], tempMove[0]);
+				}
+			}
+		}
+
+		return winMove;
+	}
+
+	private static long[] getWinMoveForSwap(long[] swappedBoard, int turnPlayer) {
+
+		long[] winMove = new long[2];
+
+		for (int i = 0; i < WINNING_MASKS.length; i++) {
+
+			// If the opponent is already blocking this win continue
+			if ((WINNING_MASKS[i] & swappedBoard[1 - turnPlayer]) > 0)
+				continue;
+
+			long masked = (~(swappedBoard[turnPlayer] & WINNING_MASKS[i])) & WINNING_MASKS[i];
+
+			// If the mask applied matches perfectly, one move away from win. could place anywhere
+			if (masked == 0) {
+				long availibleSpots = ~(swappedBoard[0] | swappedBoard[1]);
+				int bitNum = 0;
+
+				while (availibleSpots > 0) {
+					if ((availibleSpots & 1) == 1)
+						break;
+
+					availibleSpots = availibleSpots >> 1;
+				}
+
+				winMove[0] = 1L << bitNum;
+				winMove[1]++;
+			}
+
+			// If the mask applied is missing one bit, it is one move away from a win
+			else if ((masked & (masked - 1)) == 0) {
+				winMove[0] = masked;
+				winMove[1]++;
+			}
+		}
+
+		return winMove;
+	}
+
+	/**
+	 * Gets all swap configuration of the current board
+	 * return[i][0] white pieces with quadrants QUAD_SWAPS[i] swapped
+	 * @return  All 6 swap configurations of current board
+	 */
+	private long[][] getAllSwapConfigurations() {
+
+		long[][] swappedBoards = new long[QUAD_SWAPS.length][2];
+
+		for (int i = 0; i < QUAD_SWAPS.length; i++) {
+			// Copy the current board
+			swappedBoards[i][0] = this.pieces[0];
+			swappedBoards[i][1] = this.pieces[1];
+
+			// Perform the swap
+			swapQuadrants(swappedBoards[i], QUAD_SWAPS[i][0], QUAD_SWAPS[i][1]);
+		}
+
+		return swappedBoards;
 	}
 
 	/**
