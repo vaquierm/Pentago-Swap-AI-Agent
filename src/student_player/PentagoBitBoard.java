@@ -1,7 +1,6 @@
 package student_player;
 
 import boardgame.Board;
-import com.sun.org.apache.bcel.internal.generic.SWAP;
 import pentago_swap.PentagoBoardState;
 
 import java.util.*;
@@ -73,33 +72,30 @@ public class PentagoBitBoard {
 		long baseRowMask = 0b111110000000000000000000000000000000L;
 		int i = 0;
 		WINNING_MASKS[i++] = baseRowMask;
-		for(; i < 6; i++) {
-			baseRowMask = baseRowMask >> 6;
-			WINNING_MASKS[i] = baseRowMask;
-		}
-		baseRowMask = baseRowMask >> 1;
-		WINNING_MASKS[i++] = baseRowMask;
 		for(; i < 12; i++) {
-			baseRowMask = baseRowMask << 6;
+			int shift = (i%2 == 0) ? 5 : 1;
+			baseRowMask = baseRowMask >> shift;
 			WINNING_MASKS[i] = baseRowMask;
 		}
 
 		// Generate the columns
 		long baseColumnMask = 0b100000100000100000100000100000000000L;
 		WINNING_MASKS[i++] = baseColumnMask;
-		for(; i < 24; i++) {
+		for(; i < 24; i+=2) {
 			baseColumnMask = baseColumnMask >> 1;
 			WINNING_MASKS[i] = baseColumnMask;
+			WINNING_MASKS[i+1] = (baseColumnMask >> 6);
 		}
 
 		// Diagonal masks (hardcoded since the logic to generate them would be too complex)
 		WINNING_MASKS[24] = 0b100000010000001000000100000010000000L;
-		WINNING_MASKS[25] = 0b010000001000000100000010000001000000L;
-		WINNING_MASKS[26] = 0b000000010000001000000100000010000001L;
-		WINNING_MASKS[27] = 0b000000100000010000001000000100000010L;
-		WINNING_MASKS[28] = 0b000001000010000100001000010000000000L;
-		WINNING_MASKS[29] = 0b000010000100001000010000100000000000L;
-		WINNING_MASKS[30] = 0b000000000010000100001000010000100000L;
+		WINNING_MASKS[25] = 0b000000010000001000000100000010000001L;
+		WINNING_MASKS[26] = 0b000001000010000100001000010000000000L;
+		WINNING_MASKS[27] = 0b000000000010000100001000010000100000L;
+
+		WINNING_MASKS[28] = 0b010000001000000100000010000001000000L;
+		WINNING_MASKS[29] = 0b000000100000010000001000000100000010L;
+		WINNING_MASKS[30] = 0b000010000100001000010000100000000000L;
 		WINNING_MASKS[31] = 0b000000000001000010000100001000010000L;
 
 	}
@@ -344,7 +340,7 @@ public class PentagoBitBoard {
 					byte[][] swapsQ0 = new byte[4][2];
 					int initialCapacityQ0 = (QUAD_SIZE * QUAD_SIZE) * swaps.length;
 
-					Q0 = equalQuadrants.get(0).get(0);
+					Q0 = uniqueQuadrant.get(0);
 
 					// Generate first 3 swaps
 					for(int i = 0; i < identicalQuadrants.size(); i++) {
@@ -566,12 +562,67 @@ public class PentagoBitBoard {
 		return false;
 	}
 
+	public boolean isCriticalState() {
+
+		int player = 1 - turnPlayer;
+
+		for (int i = 0; i < 28; i+=2) {
+			// If the opponent is already blocking this win continue
+			if ((WINNING_MASKS[i] & pieces[1 - player]) > 0)
+				continue;
+			if ((WINNING_MASKS[i+1] & pieces[1 - player]) > 0)
+				continue;
+
+			long masked = (~(pieces[player] & WINNING_MASKS[i])) & WINNING_MASKS[i];
+
+			if ((masked & (masked - 1)) != 0)
+				continue;
+
+			masked = (~(pieces[player] & WINNING_MASKS[i+1])) & WINNING_MASKS[i+1];
+
+			if ((masked & (masked - 1)) != 0)
+				continue;
+
+			boolean clear = true;
+			for (Long otherMove : getAllLegalNonSymmetricMoves()) {
+
+				processMove(otherMove);
+
+				if (winner == 1 - player) {
+					undoMove(otherMove);
+					clear = false;
+					break;
+				}
+
+				undoMove(otherMove);
+			}
+
+			if (clear) {
+				return true;
+			}
+		}
+
+		for (Long otherMove : getAllLegalNonSymmetricMoves()) {
+
+			processMove(otherMove);
+
+			if (winner == 1 - player || getWinMove(player) == 0) {
+				undoMove(otherMove);
+				return false;
+			}
+
+			undoMove(otherMove);
+		}
+
+		return true;
+	}
+
 	/**
 	 * Returns a win move if it exists
 	 * @param player player to check for
-	 * @return  return[0]: Win BitMove if it exists, 0 if none exists.  return[1]: number of ways that leads to win
+	 * @return  Win BitMove if it exists, 0 if none exists.
 	 */
-	public long[] getWinMove(int player) {
+	public long getWinMove(int player) {
 
 		long[] winMove = new long[2];
 
@@ -590,7 +641,8 @@ public class PentagoBitBoard {
 			}
 		}
 
-		return winMove;
+		winMove[0] = PentagoBitMove.setPriority(winMove[0], (int) winMove[1]);
+		return winMove[0];
 	}
 
 	private static long[] getWinMoveForSwap(long[] swappedBoard, int player) {
@@ -628,6 +680,7 @@ public class PentagoBitBoard {
 			}
 		}
 
+		//winMove[1] = (winMove[1]) << winMove[1];
 		return winMove;
 	}
 

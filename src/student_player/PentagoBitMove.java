@@ -113,6 +113,18 @@ public class PentagoBitMove {
         return move & 0b111111111111111111111111111111111111L;
     }
 
+    public static long setPriority(long move, int priority) {
+        return move | (((long) (priority & 0b11111)) << 42);
+    }
+
+    public static int getPriority(long move) {
+        return (int) ((move >> 42) & 0b11111);
+    }
+
+    public static long getBitMoveNoPriority(long move) {
+        return move & 0b11111111111111111111111111111111111111111L;
+    }
+
     /**
      * Coverts a move long to a PentagoMove object
      * @param move The move long to convert

@@ -1,13 +1,14 @@
 package student_player;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class MoveFilter {
 
     private static List<Long> firstLayerElimination;
     private static List<Long> secondLayerElimination;
     private static List<Long> criticalStateMoves;
+    private static List<Long> potentialWinMoves;
+    private static List<Long> opponentCriticalStateMove;
 
     public static List<Long> getNonDangerousMoves(PentagoBitBoard boardState) {
 
@@ -16,6 +17,8 @@ public class MoveFilter {
         firstLayerElimination = new ArrayList<>(moves.size());
         secondLayerElimination = new ArrayList<>(moves.size());
         criticalStateMoves = new ArrayList<>(moves.size());
+        potentialWinMoves = new ArrayList<>(moves.size());
+        opponentCriticalStateMove = new ArrayList<>(moves.size());
 
         firstLayerFilter(moves, boardState);
 
@@ -38,7 +41,18 @@ public class MoveFilter {
                 moves.add(criticalStateMoves.get(criticalStateMoves.size() - 1));
                 break;
             }
+            else {
+                criticalStateMoves.remove(criticalStateMoves.get(criticalStateMoves.size() - 1));
+            }
         }
+
+        moves.removeAll(opponentCriticalStateMove);
+        if (moves.isEmpty()) {
+            System.out.println("The opponent could put the agent in a critical state...");
+            return opponentCriticalStateMove;
+        }
+
+        moves.sort(Comparator.comparingInt(PentagoBitMove::getPriority));
 
         return moves;
     }
@@ -52,19 +66,23 @@ public class MoveFilter {
 
             boardState.processMove(move);
 
-            long[] winMove = boardState.getWinMove(player);
-
-            if (winMove[1] > 1) {
+            if (boardState.isCriticalState()) {
                 criticalStateMoves.add(move);
+            }
+
+            long winMove = boardState.getWinMove(player);
+
+            if (winMove > 1) {
+                potentialWinMoves.add(PentagoBitMove.setPriority(move, PentagoBitMove.getPriority(winMove)));
             }
 
             // This move makes the opponent win. Remove it
             if (boardState.getWinner() == 1 - player) {
-                firstLayerElimination.add(move);
+                firstLayerElimination.add(PentagoBitMove.setPriority(move, PentagoBitMove.getPriority(winMove)));
             }
             // Check further in the tree
             else {
-                secondLayerFilter(player, move, boardState);
+                secondLayerFilter(player, PentagoBitMove.setPriority(move, PentagoBitMove.getPriority(winMove)), boardState);
             }
 
             boardState.undoMove(move);
@@ -86,6 +104,9 @@ public class MoveFilter {
             }
             else {
                 // Check if the opponent is has put us in a critical state
+                if (boardState.isCriticalState()) {
+                    opponentCriticalStateMove.add(rootMove);
+                }
             }
 
             boardState.undoMove(secondMove);

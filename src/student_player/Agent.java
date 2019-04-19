@@ -10,16 +10,16 @@ public class Agent {
 
     public static PentagoMove findBestMove(PentagoBoardState pentagoBoardState) {
 
-        System.out.println("Player " + pentagoBoardState.getTurnPlayer() + " playing.");
-
         // Convert the PentagoBoardState to a bitboard
         PentagoBitBoard boardState = new PentagoBitBoard(pentagoBoardState);
 
-        long[] winMove = boardState.getWinMove(boardState.getTurnPlayer());
+        System.out.println("Player " + pentagoBoardState.getTurnPlayer() + " playing move " + boardState.getTurnPlayer());
 
-        if (winMove[0] > 0) {
-            System.out.println("Win move found: " + PentagoBitMove.toPrettyString(winMove[0]));
-            return PentagoBitMove.bitMoveToPentagoMove(winMove[0]);
+        long winMove = boardState.getWinMove(boardState.getTurnPlayer());
+
+        if (winMove > 0) {
+            System.out.println("Win move found: " + PentagoBitMove.toPrettyString(winMove));
+            return PentagoBitMove.bitMoveToPentagoMove(winMove);
         }
 
         List<Long> moves = MoveFilter.getNonDangerousMoves(boardState);
