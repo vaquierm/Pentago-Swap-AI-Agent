@@ -473,6 +473,8 @@ public class PentagoBitBoard {
 	 */
 	void processMove(long move) {
 
+		if (!isLegalMove(move)) { throw new IllegalArgumentException("Invalid move. Move: " + toPrettyString(move)); }
+
 		//Extract info from move
 		int player = getPlayer(move);
 		int aQuad = getAQuad(move);
@@ -497,8 +499,6 @@ public class PentagoBitBoard {
 	 * @param move the move to undo
 	 */
 	void undoMove(long move) {
-
-		if (!isLegalMove(move)) { throw new IllegalArgumentException("Invalid move. Move: " + toPrettyString(move)); }
 
 		//Extract info from move
 		int player = getPlayer(move);

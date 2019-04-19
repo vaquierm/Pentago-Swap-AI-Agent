@@ -3,6 +3,8 @@ package student_player;
 import pentago_swap.PentagoBoardState;
 import pentago_swap.PentagoMove;
 
+import java.util.List;
+
 public class Agent {
 
 
@@ -18,6 +20,8 @@ public class Agent {
             return PentagoBitMove.bitMoveToPentagoMove(winMove[0]);
         }
 
-        return PentagoBitMove.bitMoveToPentagoMove(boardState.getRandomMove());
+        List<Long> moves = MoveFilter.getNonDangerousMoves(boardState);
+
+        return PentagoBitMove.bitMoveToPentagoMove(moves.get(((int) (Math.random() * moves.size()))));
     }
 }
