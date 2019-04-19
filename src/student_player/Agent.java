@@ -13,7 +13,7 @@ public class Agent {
         // Convert the PentagoBoardState to a bitboard
         PentagoBitBoard boardState = new PentagoBitBoard(pentagoBoardState);
 
-        System.out.println("Player " + pentagoBoardState.getTurnPlayer() + " playing move " + boardState.getTurnPlayer());
+        System.out.println("Player " + pentagoBoardState.getTurnPlayer() + " playing move " + boardState.getTurnNumber());
 
         long winMove = boardState.getWinMove(boardState.getTurnPlayer());
 
