@@ -624,63 +624,62 @@ public class PentagoBitBoard {
 	 */
 	public long getWinMove(int player) {
 
-		long[] winMove = new long[2];
-
 		long[][] swappedBoards = getAllSwapConfigurations();
 		for (int i = 0; i < swappedBoards.length; i++) {
 
-			long[] tempMove = getWinMoveForSwap(swappedBoards[i], player);
+			long tempMove = getWinMoveForSwap(swappedBoards[i], player);
 
-			if (tempMove[0] > 0) {
-				winMove[1] += tempMove[1];
-
-				if (winMove[0] == 0) {
-					swapQuadrants(tempMove, QUAD_SWAPS[i][0], QUAD_SWAPS[i][1]);
-					winMove[0] = createBitMove(player, QUAD_SWAPS[i][0], QUAD_SWAPS[i][1], tempMove[0]);
-				}
+			if (tempMove > 0) {
+				return PentagoBitMove.createBitMove(player, QUAD_SWAPS[i][0], QUAD_SWAPS[i][1], tempMove);
 			}
+
 		}
 
-		winMove[0] = PentagoBitMove.setPriority(winMove[0], (int) winMove[1]);
-		return winMove[0];
+		return 0;
 	}
 
-	private static long[] getWinMoveForSwap(long[] swappedBoard, int player) {
+	private static long getWinMoveForSwap(long[] swappedBoard, int player) {
 
-		long[] winMove = new long[2];
+		long winMove = 0;
 
 		for (int i = 0; i < WINNING_MASKS.length; i++) {
 
-			// If the opponent is already blocking this win continue
-			if ((WINNING_MASKS[i] & swappedBoard[1 - player]) > 0)
-				continue;
+			long masked = (~(swappedBoard[1 - player] & WINNING_MASKS[i])) & WINNING_MASKS[i];
 
-			long masked = (~(swappedBoard[player] & WINNING_MASKS[i])) & WINNING_MASKS[i];
-
-			// If the mask applied matches perfectly, one move away from win. could place anywhere
 			if (masked == 0) {
-				long availibleSpots = ~(swappedBoard[0] | swappedBoard[1]);
-				int bitNum = 0;
+				return 0;
+			}
+			else if ((swappedBoard[1 - player] & WINNING_MASKS[i]) > 0) {
+				// If the opponent is already blocking this win continue
+				continue;
+			}
 
-				while (availibleSpots > 0) {
-					if ((availibleSpots & 1) == 1)
-						break;
 
-					availibleSpots = availibleSpots >> 1;
+			masked = (~(swappedBoard[player] & WINNING_MASKS[i])) & WINNING_MASKS[i];
+
+			if (winMove == 0) {
+				// If the mask applied matches perfectly, one move away from win. could place anywhere
+				if (masked == 0) {
+					long availibleSpots = ~(swappedBoard[0] | swappedBoard[1]);
+					int bitNum = 0;
+
+					while (availibleSpots > 0) {
+						if ((availibleSpots & 1) == 1)
+							break;
+
+						availibleSpots = availibleSpots >> 1;
+					}
+
+					winMove = 1L << bitNum;
 				}
-
-				winMove[0] = 1L << bitNum;
-				winMove[1]++;
+				// If the mask applied is missing one bit, it is one move away from a win
+				else if ((masked & (masked - 1)) == 0) {
+					winMove = masked;
+				}
 			}
 
-			// If the mask applied is missing one bit, it is one move away from a win
-			else if ((masked & (masked - 1)) == 0) {
-				winMove[0] = masked;
-				winMove[1]++;
-			}
 		}
 
-		//winMove[1] = (winMove[1]) << winMove[1];
 		return winMove;
 	}
 
