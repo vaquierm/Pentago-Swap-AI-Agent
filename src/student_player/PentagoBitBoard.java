@@ -568,23 +568,24 @@ public class PentagoBitBoard {
 
 	/**
 	 * Returns a win move if it exists
+	 * @param player player to check for
 	 * @return  return[0]: Win BitMove if it exists, 0 if none exists.  return[1]: number of ways that leads to win
 	 */
-	public long[] getWinMove() {
+	public long[] getWinMove(int player) {
 
 		long[] winMove = new long[2];
 
 		long[][] swappedBoards = getAllSwapConfigurations();
 		for (int i = 0; i < swappedBoards.length; i++) {
 
-			long[] tempMove = getWinMoveForSwap(swappedBoards[i], turnPlayer);
+			long[] tempMove = getWinMoveForSwap(swappedBoards[i], player);
 
 			if (tempMove[0] > 0) {
 				winMove[1] += tempMove[1];
 
 				if (winMove[0] == 0) {
 					swapQuadrants(tempMove, QUAD_SWAPS[i][0], QUAD_SWAPS[i][1]);
-					winMove[0] = createBitMove(turnPlayer, QUAD_SWAPS[i][0], QUAD_SWAPS[i][1], tempMove[0]);
+					winMove[0] = createBitMove(player, QUAD_SWAPS[i][0], QUAD_SWAPS[i][1], tempMove[0]);
 				}
 			}
 		}
@@ -592,17 +593,17 @@ public class PentagoBitBoard {
 		return winMove;
 	}
 
-	private static long[] getWinMoveForSwap(long[] swappedBoard, int turnPlayer) {
+	private static long[] getWinMoveForSwap(long[] swappedBoard, int player) {
 
 		long[] winMove = new long[2];
 
 		for (int i = 0; i < WINNING_MASKS.length; i++) {
 
 			// If the opponent is already blocking this win continue
-			if ((WINNING_MASKS[i] & swappedBoard[1 - turnPlayer]) > 0)
+			if ((WINNING_MASKS[i] & swappedBoard[1 - player]) > 0)
 				continue;
 
-			long masked = (~(swappedBoard[turnPlayer] & WINNING_MASKS[i])) & WINNING_MASKS[i];
+			long masked = (~(swappedBoard[player] & WINNING_MASKS[i])) & WINNING_MASKS[i];
 
 			// If the mask applied matches perfectly, one move away from win. could place anywhere
 			if (masked == 0) {

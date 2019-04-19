@@ -7,7 +7,7 @@ public class MoveFilter {
 
     private static List<Long> firstLayerElimination;
     private static List<Long> secondLayerElimination;
-    private static List<Long> thirdLayerElimination;
+    private static List<Long> criticalStateMoves;
 
     public static List<Long> getNonDangerousMoves(PentagoBitBoard boardState) {
 
@@ -15,18 +15,29 @@ public class MoveFilter {
 
         firstLayerElimination = new ArrayList<>(moves.size());
         secondLayerElimination = new ArrayList<>(moves.size());
-        thirdLayerElimination = new ArrayList<>(moves.size());
+        criticalStateMoves = new ArrayList<>(moves.size());
 
         firstLayerFilter(moves, boardState);
 
         moves.removeAll(firstLayerElimination);
         if (moves.isEmpty()) {
+            System.out.println("No more options, must make opponent win...");
             return firstLayerElimination;
         }
 
         moves.removeAll(secondLayerElimination);
         if (moves.isEmpty()) {
+            System.out.println("No more hope, cornered by opponent...");
             return secondLayerElimination;
+        }
+
+        while (!criticalStateMoves.isEmpty()) {
+            if (moves.contains(criticalStateMoves.get(criticalStateMoves.size() - 1))) {
+                System.out.println("Found safe critical state move");
+                moves = new ArrayList<>(1);
+                moves.add(criticalStateMoves.get(criticalStateMoves.size() - 1));
+                break;
+            }
         }
 
         return moves;
@@ -40,6 +51,12 @@ public class MoveFilter {
         for (Long move : moves) {
 
             boardState.processMove(move);
+
+            long[] winMove = boardState.getWinMove(player);
+
+            if (winMove[1] > 1) {
+                criticalStateMoves.add(move);
+            }
 
             // This move makes the opponent win. Remove it
             if (boardState.getWinner() == 1 - player) {
