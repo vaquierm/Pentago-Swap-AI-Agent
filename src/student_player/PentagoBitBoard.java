@@ -543,6 +543,8 @@ public class PentagoBitBoard {
 		boolean playerWin = checkWin(this.turnPlayer);
 		boolean otherWin = checkWin((byte) (1 - this.turnPlayer));
 
+		this.winner = NOBODY;
+
 		if (playerWin) { // Current player has won
 			this.winner = otherWin ? DRAW : this.turnPlayer;
 		} else if (otherWin) { // Player's move caused the opponent to win
@@ -569,9 +571,9 @@ public class PentagoBitBoard {
 	public boolean isCriticalState() {
 
 		// If the game is over, this is not a critical state
-		//if (gameOver()) {
-		//	return false;
-		//}
+		if (gameOver()) {
+			return false;
+		}
 
 		int player = 1 - turnPlayer;
 

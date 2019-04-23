@@ -2,11 +2,14 @@ package student_player;
 
 import java.util.*;
 
+import static student_player.PentagoBitBoard.NOBODY;
+
 public class MoveFilter {
 
     private static List<Long> firstLayerElimination;
     private static List<Long> secondLayerElimination;
     private static List<Long> criticalStateMoves;
+    private static List<Long> criticalStateSecondMove;
     private static List<Long> opponentCriticalStateMove;
 
     public static List<Long> getNonDangerousMoves(PentagoBitBoard boardState) {
@@ -18,6 +21,7 @@ public class MoveFilter {
         firstLayerElimination = new ArrayList<>(moves.size());
         secondLayerElimination = new ArrayList<>(moves.size());
         criticalStateMoves = new ArrayList<>(moves.size());
+        criticalStateSecondMove = new ArrayList<>(moves.size());
         opponentCriticalStateMove = new ArrayList<>(moves.size());
 
         firstLayerFilter(moves, boardState);
@@ -56,6 +60,22 @@ public class MoveFilter {
             }
         }
 
+
+        if (!criticalStateSecondMove.isEmpty()) {
+            System.out.println("There is a total of " + criticalStateSecondMove.size() + " potential two move away critical moves to play");
+        }
+        while (!criticalStateSecondMove.isEmpty()) {
+            if (moves.contains(criticalStateSecondMove.get(criticalStateSecondMove.size() - 1))) {
+                System.out.println("Found safe two move away critical state move");
+                moves = new ArrayList<>(1);
+                moves.add(criticalStateSecondMove.get(criticalStateSecondMove.size() - 1));
+                return moves;
+            }
+            else {
+                criticalStateSecondMove.remove(criticalStateSecondMove.get(criticalStateSecondMove.size() - 1));
+            }
+        }
+
         moves.removeAll(opponentCriticalStateMove);
         if (moves.isEmpty()) {
             System.out.println("The opponent could put the agent in a critical state...");
@@ -81,20 +101,20 @@ public class MoveFilter {
 
             boardState.processMove(move);
 
-            if (boardState.isCriticalState()) {
-                criticalStateMoves.add(move);
-            }
-
-            long winMove = boardState.getWinMove(player);
-
             // This move makes the opponent win. Remove it
             if (boardState.getWinner() == 1 - player) {
                 firstLayerElimination.add(move);
+            }
+
+            // Check if we have put the opponent in a critical state
+            if (boardState.isCriticalState()) {
+                criticalStateMoves.add(move);
             }
             // Check further in the tree
             else {
                 secondLayerFilter(player, move, boardState);
             }
+
 
             boardState.undoMove(move);
         }
@@ -105,28 +125,70 @@ public class MoveFilter {
 
         List<Long> secondLayerMoves = boardState.getAllLegalNonSymmetricMoves();
 
-        boolean critical = false;
+        // If the opponent can win from this boardstate after our move, do not consider the move.
+        if (!secondLayerElimination.contains(rootMove) && boardState.getWinMove(1 - player) > 0) {
+            secondLayerElimination.add(rootMove);
+            return;
+        }
+
+        boolean twoLayerCritical = true;
 
         for (Long secondMove : secondLayerMoves) {
 
+            // Play the opponent move.
             boardState.processMove(secondMove);
 
-            // Opponent can win in one move if we perform root move
-            if (!secondLayerElimination.contains(rootMove) && boardState.getWinner() == 1 - player) {
-                secondLayerElimination.add(rootMove);
-                boardState.undoMove(secondMove);
-                break;
-            }
-            else {
-                // Check if the opponent is has put us in a critical state
-                if (!critical && !opponentCriticalStateMove.contains(rootMove) && boardState.isCriticalState()) {
+            // If the opponent player makes the agent win, continue
+            if (boardState.getWinner() == NOBODY) {
+
+                // Check if the opponent has put us in a critical state
+                if (!opponentCriticalStateMove.contains(rootMove) && boardState.isCriticalState()) {
                     opponentCriticalStateMove.add(rootMove);
-                    critical = true;
+                    boardState.undoMove(secondMove);
+                    return;
+                }
+                // If the opponent cannot put us in a critical state, check if we can now put the opponent in a critical state from their move.
+                else {
+
+                    if (!twoLayerCritical || !canWinGuaranteed(player, rootMove, boardState)) {
+                        twoLayerCritical = false;
+                    }
                 }
             }
 
             boardState.undoMove(secondMove);
         }
+
+        // We can guarantee a win from any of the moves the opponent plays at this level.
+        if (twoLayerCritical) {
+            criticalStateSecondMove.add(rootMove);
+        }
+    }
+
+
+    private static boolean canWinGuaranteed(int player, long rootMove, PentagoBitBoard boardState) {
+
+        // If the player can win return 1;
+        if (boardState.getWinner() == player || boardState.getWinMove(player) > 0) {
+            return true;
+        }
+
+        List<Long> thirdLayerMoves = boardState.getAllLegalNonSymmetricMoves();
+
+        for (Long thirdMove : thirdLayerMoves) {
+
+            boardState.processMove(thirdMove);
+
+            if (boardState.isCriticalState()) {
+                boardState.undoMove(thirdMove);
+                return true;
+            }
+
+            boardState.undoMove(thirdMove);
+
+        }
+
+        return false;
     }
 
 }
