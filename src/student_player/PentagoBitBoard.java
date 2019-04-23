@@ -24,7 +24,7 @@ public class PentagoBitBoard {
 	private static final ThreadLocalRandom rand = ThreadLocalRandom.current();
 
 	static final byte DRAW = Byte.MAX_VALUE;
-	private static final byte NOBODY = Byte.MAX_VALUE - 1;
+	static final byte NOBODY = Byte.MAX_VALUE - 1;
 
 	/**
 	 * Pieces are stored in two long values where a bit set (1) indicates a piece is present at that location.
@@ -289,6 +289,10 @@ public class PentagoBitBoard {
 	 * @return All legal moves ignoring symmetric moves
 	 */
 	ArrayList<Long> getAllLegalNonSymmetricMoves() {
+
+		if (winner != NOBODY) {
+			return new ArrayList<>(1);
+		}
 
 		// Identify which quadrants are identical
 		ArrayList<ArrayList<Byte>> equalQuadrants = partitionQuadrants();
@@ -564,7 +568,17 @@ public class PentagoBitBoard {
 
 	public boolean isCriticalState() {
 
+		// If the game is over, this is not a critical state
+		//if (gameOver()) {
+		//	return false;
+		//}
+
 		int player = 1 - turnPlayer;
+
+		// If the opponent can win. this is not a critical state
+		if (getWinMove(turnPlayer) > 0) {
+			return false;
+		}
 
 		for (int i = 0; i < 28; i+=2) {
 			// If the opponent is already blocking this win continue
@@ -606,7 +620,8 @@ public class PentagoBitBoard {
 
 			processMove(otherMove);
 
-			if (winner == 1 - player || getWinMove(player) == 0) {
+			// After the opponent plays make sure that we have a way to win.
+			if (getWinMove(player) == 0) {
 				undoMove(otherMove);
 				return false;
 			}
