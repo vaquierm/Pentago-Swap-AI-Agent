@@ -19,6 +19,15 @@ public class PentagoBitMove {
         intToQuad.put(3, PentagoBoardState.Quadrant.BR);
     }
 
+    /**
+     * Create a BitMove Long integer.
+     * @param player The player to play
+     * @param quadrantA The first quadrant to swap
+     * @param quadrantB The second quadrant to swap
+     * @param col y
+     * @param row x
+     * @return The long representation of the move
+     */
     public static long createBitMove(int player, int quadrantA, int quadrantB, int col, int row) {
 
         // Create a bitMove long int with the coordinates to play at
@@ -34,6 +43,14 @@ public class PentagoBitMove {
         return  bitMove;
     }
 
+    /**
+     * Create a BitMove Long integer
+     * @param player The play to play
+     * @param quadrantA The first quadrant to swap
+     * @param quadrantB The second quadrant to swap
+     * @param bitMove The long representation of the coordinate to play
+     * @return The long representation of the move
+     */
     public static long createBitMove(int player, int quadrantA, int quadrantB, long bitMove) {
 
         // Add the player bit

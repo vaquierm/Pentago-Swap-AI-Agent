@@ -8,6 +8,11 @@ import java.util.List;
 public class Agent {
 
 
+    /**
+     * Finds the move to play given a particular board state.
+     * @param pentagoBoardState Current board state.
+     * @return The move to play
+     */
     public static PentagoMove findBestMove(PentagoBoardState pentagoBoardState) {
 
         // Convert the PentagoBoardState to a bitboard

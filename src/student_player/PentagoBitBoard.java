@@ -630,7 +630,10 @@ public class PentagoBitBoard {
 			long tempMove = getWinMoveForSwap(swappedBoards[i], player);
 
 			if (tempMove > 0) {
-				return PentagoBitMove.createBitMove(player, QUAD_SWAPS[i][0], QUAD_SWAPS[i][1], tempMove);
+				long[] movePair = new long[2];
+				movePair[0] = tempMove;
+				swapQuadrants(movePair, QUAD_SWAPS[i][0], QUAD_SWAPS[i][1]);
+				return PentagoBitMove.createBitMove(player, QUAD_SWAPS[i][0], QUAD_SWAPS[i][1], movePair[0]);
 			}
 
 		}
@@ -638,6 +641,12 @@ public class PentagoBitBoard {
 		return 0;
 	}
 
+	/**
+	 * Get the position of a win move for a particular board configuration
+	 * @param swappedBoard Permuted board
+	 * @param player  Player to check for win
+	 * @return The win move position for this permutation of the board. 0 if non exist
+	 */
 	private static long getWinMoveForSwap(long[] swappedBoard, int player) {
 
 		long winMove = 0;
