@@ -14,6 +14,18 @@ public class MoveFilter {
 
     public static List<Long> getNonDangerousMoves(PentagoBitBoard boardState) {
 
+        // Check to see if the agent can win from this board state
+        long winMove = boardState.getWinMove(boardState.getTurnPlayer());
+
+        if (winMove > 0) {
+            System.out.println("Win move found: " + PentagoBitMove.toPrettyString(winMove));
+            List<Long> winMoveList = new ArrayList<>(1);
+            winMoveList.add(winMove);
+            return winMoveList;
+        }
+
+        System.out.println("Filtering bad moves.");
+
         List<Long> moves = boardState.getAllLegalNonSymmetricMoves();
 
         System.out.println("The agent has the possibility to play " + moves.size() + " moves");
@@ -150,7 +162,7 @@ public class MoveFilter {
                 // If the opponent cannot put us in a critical state, check if we can now put the opponent in a critical state from their move.
                 else {
 
-                    if (!twoLayerCritical || !canWinGuaranteed(player, rootMove, boardState)) {
+                    if (!twoLayerCritical || !canWinGuaranteed(player, boardState)) {
                         twoLayerCritical = false;
                     }
                 }
@@ -166,7 +178,7 @@ public class MoveFilter {
     }
 
 
-    private static boolean canWinGuaranteed(int player, long rootMove, PentagoBitBoard boardState) {
+    private static boolean canWinGuaranteed(int player, PentagoBitBoard boardState) {
 
         // If the player can win return 1;
         if (boardState.getWinner() == player || boardState.getWinMove(player) > 0) {

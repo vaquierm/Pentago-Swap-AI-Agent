@@ -709,6 +709,28 @@ public class PentagoBitBoard {
 		return winMove;
 	}
 
+	public int evaluateBoard(int player) {
+
+		if (gameOver()) {
+			if (winner == player) {
+				return Integer.MAX_VALUE;
+			}
+			else if (winner == 1 - player) {
+				return Integer.MIN_VALUE;
+			}
+			else if (winner == DRAW) {
+				return 0;
+			}
+		}
+
+		int score = 0;
+
+		score = (int) (Math.random() * 1000);
+
+		return score;
+
+	}
+
 	/**
 	 * Gets all swap configuration of the current board
 	 * return[i][0] white pieces with quadrants QUAD_SWAPS[i] swapped
@@ -793,6 +815,10 @@ public class PentagoBitBoard {
 		}
 		boardString.append(rowMarker);
 		return boardString.toString();
+	}
+
+	public void printBoard() {
+		System.out.println(this.toString());
 	}
 
 	public static void main(String[] args) {

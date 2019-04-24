@@ -20,17 +20,12 @@ public class Agent {
 
         System.out.println("Player " + pentagoBoardState.getTurnPlayer() + " playing move " + boardState.getTurnNumber());
 
-        long winMove = boardState.getWinMove(boardState.getTurnPlayer());
-
-        if (winMove > 0) {
-            System.out.println("Win move found: " + PentagoBitMove.toPrettyString(winMove));
-            return PentagoBitMove.bitMoveToPentagoMove(winMove);
-        }
-
         List<Long> moves = MoveFilter.getNonDangerousMoves(boardState);
 
-        System.out.println("Move decided, returning move");
+        long moveToPlay = MovePicker.pickMoveFromSet(boardState, moves);
 
-        return PentagoBitMove.bitMoveToPentagoMove(moves.get(((int) (Math.random() * moves.size()))));
+        System.out.println("Move decided, returning move: " + PentagoBitMove.toPrettyString(moveToPlay));
+
+        return PentagoBitMove.bitMoveToPentagoMove(moveToPlay);
     }
 }
