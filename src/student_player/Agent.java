@@ -15,6 +15,8 @@ public class Agent {
      */
     public static PentagoMove findBestMove(PentagoBoardState pentagoBoardState) {
 
+        long startTime = System.currentTimeMillis();
+
         // Convert the PentagoBoardState to a bitboard
         PentagoBitBoard boardState = new PentagoBitBoard(pentagoBoardState);
 
@@ -24,7 +26,7 @@ public class Agent {
 
         long moveToPlay = MovePicker.pickMoveFromSet(boardState, moves);
 
-        System.out.println("Move decided, returning move: " + PentagoBitMove.toPrettyString(moveToPlay));
+        System.out.println("Move decided in " + (System.currentTimeMillis() - startTime) + " ms, returning move: " + PentagoBitMove.toPrettyString(moveToPlay));
 
         return PentagoBitMove.bitMoveToPentagoMove(moveToPlay);
     }

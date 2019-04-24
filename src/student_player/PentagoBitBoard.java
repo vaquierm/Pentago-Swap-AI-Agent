@@ -725,10 +725,86 @@ public class PentagoBitBoard {
 
 		int score = 0;
 
-		score = (int) (Math.random() * 1000);
+		long[][] swapPermutations = getAllSwapConfigurations();
+
+		for (long[] swap : swapPermutations) {
+
+			for (int i = 0; i < WINNING_MASKS.length; i++) {
+
+				long playerMasked = WINNING_MASKS[i] & swap[player];
+				long opponentMasked = WINNING_MASKS[i] & swap[1 - player];
+
+				if (opponentMasked == 0) {
+					// The opponent is not blocking anything here
+					int bitCount = countSetBits(playerMasked);
+					score += (bitCount*bitCount);
+				}
+
+				if (playerMasked == 0) {
+					// We are not blocking this mask at all
+					int bitCount = countSetBits(opponentMasked);
+					score -= (bitCount*bitCount);
+				}
+
+			}
+
+		}
 
 		return score;
 
+	}
+
+
+	private int[][] getQuadrants() {
+		int[][] quads = new int[2][4];
+
+		for (int i = 0 ; i < 4 ; i++) {
+			int[] quad = getQuadrant(i);
+			quads[0][i] = quad[0];
+			quads[1][i] = quad[1];
+		}
+
+		return quads;
+	}
+
+	private int[] getQuadrant(int quadNumber) {
+
+		int [] quad = new int[2];
+
+		int initialOffset = 18 * (1 - (quadNumber / 2));
+
+		if (quadNumber % 2 == 0) {
+			initialOffset += 3;
+		}
+
+		long longQuad = (QUADRANT_MASKS[quadNumber] & pieces[0]) >> initialOffset;
+		longQuad = (longQuad & 0b111L) + (longQuad >> 3);
+		longQuad = (longQuad & 0b111111L) + ((longQuad & 0b111000000000L) >> 3);
+
+		quad[0] = (int) longQuad;
+
+		longQuad = (QUADRANT_MASKS[quadNumber] & pieces[1]) >> initialOffset;
+		longQuad = (longQuad & 0b111L) + ((longQuad) >> 3);
+		longQuad = (longQuad & 0b111111L) + ((longQuad & 0b111000000000L) >> 3);
+
+		quad[1] = (int) longQuad;
+
+		return quad;
+
+	}
+
+	private static int countSetBits(long n) {
+		return countSetBits((int) n) + countSetBits((int) (n >> 32));
+	}
+
+	private static int countSetBits(int n)
+	{
+		n = n - ((n >> 1) & 0x55555555);
+		n = (n & 0x33333333) + ((n >> 2) & 0x33333333);
+		n = (n + (n >> 4)) & 0x0F0F0F0F;
+		n = n + (n >> 8);
+		n = n + (n >> 16);
+		return n & 0x0000003F;
 	}
 
 	/**

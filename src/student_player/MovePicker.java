@@ -1,5 +1,6 @@
 package student_player;
 
+import java.util.Collections;
 import java.util.List;
 
 public class MovePicker {
@@ -24,6 +25,9 @@ public class MovePicker {
         // Initialize the best move value
         int bestMoveValue = Integer.MIN_VALUE;
         long bestBitMove = 0;
+
+        // Shuffle the moves to add some non determinism
+        Collections.shuffle(setOfMoves);
 
         // Iterate through all moves to determine which one is best
         for (Long move : setOfMoves) {
