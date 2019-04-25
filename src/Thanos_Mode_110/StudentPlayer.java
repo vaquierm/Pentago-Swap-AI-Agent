@@ -1,4 +1,4 @@
-package Thanos_Mode_10;
+package Thanos_Mode_110;
 
 import boardgame.Move;
 
@@ -14,7 +14,7 @@ public class StudentPlayer extends PentagoPlayer {
      * associate you with your agent. The constructor should do nothing else.
      */
     public StudentPlayer() {
-        super("Thanos Mode 1.0");
+        super("Thanos Mode 11.0");
     }
 
     /**

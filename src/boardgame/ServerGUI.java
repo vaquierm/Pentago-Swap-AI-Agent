@@ -37,7 +37,7 @@ public class ServerGUI extends JFrame implements BoardPanel.BoardPanelListener {
     /** The list of games for which servers can be launched */
     protected static final String[] BOARD_CLASSES = { "pentago_swap.PentagoBoard" };
     /** The list of players that can be launched */
-    protected static final String[] PLAYER_CLASSES = { "pentago_swap.RandomPentagoPlayer", "benchmark_player.StudentPlayer", "BitBoards_Random.StudentPlayer", "Thanos_Mode_10.StudentPlayer", "Michael_Storng_Block.StudentPlayer", "Michael_Ascend.StudentPlayer", "Michael_Hybrid.StudentPlayer", "Michael_50.StudentPlayer", "Michael_41.StudentPlayer", "Michael_40.StudentPlayer", "Michael_32.StudentPlayer", "Michael_31.StudentPlayer", "Michael_30.StudentPlayer", "Michael_20.StudentPlayer", "Michael_10.StudentPlayer" };
+    protected static final String[] PLAYER_CLASSES = { "pentago_swap.RandomPentagoPlayer", "benchmark_player.StudentPlayer", "BitBoards_Random.StudentPlayer", "Thanos_Mode_110.StudentPlayer", "Michael_Storng_Block.StudentPlayer", "Michael_Ascend.StudentPlayer", "Michael_Hybrid.StudentPlayer", "Michael_50.StudentPlayer", "Michael_41.StudentPlayer", "Michael_40.StudentPlayer", "Michael_32.StudentPlayer", "Michael_31.StudentPlayer", "Michael_30.StudentPlayer", "Michael_20.StudentPlayer", "Michael_10.StudentPlayer" };
     private static final int BOARD_SIZE = 800;
     private static final int LIST_WIDTH = 280;
 

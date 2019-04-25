@@ -1,4 +1,4 @@
-package Thanos_Mode_10;
+package Thanos_Mode_110;
 
 import pentago_swap.PentagoBoardState;
 import pentago_swap.PentagoMove;

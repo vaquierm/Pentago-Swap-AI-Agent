@@ -1,4 +1,4 @@
-package Thanos_Mode_10;
+package Thanos_Mode_110;
 
 import boardgame.Board;
 import pentago_swap.PentagoBoardState;
@@ -8,7 +8,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import static pentago_swap.PentagoBoardState.*;
 
-import static Thanos_Mode_10.PentagoBitMove.*;
+import static Thanos_Mode_110.PentagoBitMove.*;
 
 /**
  * A class to more efficiently represent the state an actions applicable to a PentagoBoardState
@@ -23,8 +23,8 @@ public class PentagoBitBoard {
 	// https://lemire.me/blog/2016/02/01/default-random-number-generators-are-slow/
 	private static final ThreadLocalRandom rand = ThreadLocalRandom.current();
 
-	static final byte DRAW = Byte.MAX_VALUE;
-	static final byte NOBODY = Byte.MAX_VALUE - 1;
+	public static final byte DRAW = Byte.MAX_VALUE;
+	public static final byte NOBODY = Byte.MAX_VALUE - 1;
 
 	/**
 	 * Pieces are stored in two long values where a bit set (1) indicates a piece is present at that location.
@@ -66,6 +66,9 @@ public class PentagoBitBoard {
 	 */
 	private static final long[] WINNING_MASKS = new long[32];
 
+	private static final long[] FOUR_LONG_MASKS = new long[14];
+	private static final long[] FOUR_LONG_BLOCK_MASKS = new long[14];
+
 	// Generates the WINNING_MASKS
 	static {
 		// Generate the rows
@@ -97,6 +100,44 @@ public class PentagoBitBoard {
 		WINNING_MASKS[29] = 0b000000100000010000001000000100000010L;
 		WINNING_MASKS[30] = 0b000010000100001000010000100000000000L;
 		WINNING_MASKS[31] = 0b000000000001000010000100001000010000L;
+
+		// Create the four long masks
+		i = 0;
+		baseRowMask = 0b011110000000000000000000000000000000L;
+		FOUR_LONG_MASKS[i++] = baseRowMask;
+		for(; i < 6; i++) {
+			baseRowMask = baseRowMask >> 6;
+			FOUR_LONG_MASKS[i] = baseRowMask;
+		}
+
+		baseColumnMask = 0b000000100000100000100000100000000000L;
+		FOUR_LONG_MASKS[i++] = baseColumnMask;
+		for(; i < 12; i++) {
+			baseColumnMask = baseColumnMask >> 1;
+			FOUR_LONG_MASKS[i] = baseColumnMask;
+		}
+
+		FOUR_LONG_MASKS[12] = 0b000000010000001000000100000010000000L;
+		FOUR_LONG_MASKS[13] = 0b000000000010000100001000010000000000L;
+
+		// Create the masks to which block the four long masks
+		i = 0;
+		baseRowMask = 0b100001000000000000000000000000000000L;
+		FOUR_LONG_BLOCK_MASKS[i++] = baseRowMask;
+		for(; i < 6; i++) {
+			baseRowMask = baseRowMask >> 6;
+			FOUR_LONG_BLOCK_MASKS[i] = baseRowMask;
+		}
+
+		baseColumnMask = 0b100000000000000000000000000000100000L;
+		FOUR_LONG_BLOCK_MASKS[i++] = baseColumnMask;
+		for(; i < 12; i++) {
+			baseColumnMask = baseColumnMask >> 1;
+			FOUR_LONG_BLOCK_MASKS[i] = baseColumnMask;
+		}
+
+		FOUR_LONG_BLOCK_MASKS[12] = 0b100000000000000000000000000000000001L;
+		FOUR_LONG_BLOCK_MASKS[13] = 0b000001000000000000000000000000100000L;
 
 	}
 
@@ -261,7 +302,7 @@ public class PentagoBitBoard {
 	 *
 	 * @return A random legal move
 	 */
-	long getRandomMove() {
+	public long getRandomMove() {
 
 		long availableSpots = ~(this.pieces[WHITE] | this.pieces[BLACK]);
 
@@ -288,7 +329,7 @@ public class PentagoBitBoard {
 	 *
 	 * @return All legal moves ignoring symmetric moves
 	 */
-	ArrayList<Long> getAllLegalNonSymmetricMoves() {
+	public ArrayList<Long> getAllLegalNonSymmetricMoves() {
 
 		if (winner != NOBODY) {
 			return new ArrayList<>(1);
@@ -471,7 +512,7 @@ public class PentagoBitBoard {
 	 *
 	 * @param move The next move to play
 	 */
-	void processMove(long move) {
+	public void processMove(long move) {
 
 		if (!isLegalMove(move)) { throw new IllegalArgumentException("Invalid move. Move: " + toPrettyString(move)); }
 
@@ -523,7 +564,7 @@ public class PentagoBitBoard {
 	 * @param move  The move to be tested
 	 * @return  True if the move is legal for the current board state
 	 */
-	boolean isLegalMove(long move) {
+	public boolean isLegalMove(long move) {
 		if (getAQuad(move) == getBQuad(move))
 			return false;
 
@@ -568,6 +609,78 @@ public class PentagoBitBoard {
 		return false;
 	}
 
+	/**
+	 * Checks if the current board state is a state where the turnplayer is doomed and if
+	 * the other player plays optimally, it will win no matter what.
+	 * @return True is the turn player is doomed
+	 */
+	public boolean isTwoMoveCriticalState() {
+
+		// If the game is over, this is not a critical state
+		if (gameOver()) {
+			return false;
+		}
+
+		int player = 1 - turnPlayer;
+
+		// If the opponent can win. this is not a critical state
+		if (getWinMove(turnPlayer) > 0) {
+			return false;
+		}
+
+		// Counter keeping track of how many masks are one away
+		int count = 0;
+
+		for (int i = 0; i < FOUR_LONG_MASKS.length; i++) {
+			// If the opponent is already blocking this win, continue
+			if ((FOUR_LONG_MASKS[i] & pieces[1 - player]) > 0)
+				continue;
+
+			// If the opponent is blocking the four
+			if ((FOUR_LONG_BLOCK_MASKS[i] & pieces[1 - player]) > 0)
+				continue;
+
+			long masked = (~(pieces[player] & FOUR_LONG_MASKS[i])) & FOUR_LONG_MASKS[i];
+
+			if ((masked & (masked - 1)) == 0)
+				count++;
+
+			if (count == 2)
+				break;
+
+		}
+
+		// If we did not find two one away masks, consider it not a two away critical state
+		if (count < 2)
+			return false;
+
+		boolean clear = true;
+		for (Long otherMove : getAllLegalNonSymmetricMoves()) {
+
+			// Play the opponent move
+			processMove(otherMove);
+
+			// If the opponent can win or put us in a critical state, this is not a two moves away state.
+			if (winner == 1 - player || isCriticalState()) {
+				undoMove(otherMove);
+				clear = false;
+				break;
+			}
+
+			undoMove(otherMove);
+		}
+
+		// If the move does not lead to an immediate defeat, it is ok
+		return clear;
+
+	}
+
+
+	/**
+	 * Checks if the current state is a critical state. This means that no matter what move is played
+	 * by the turn player, the other player will win.
+	 * @return True if this is a critical state
+	 */
 	public boolean isCriticalState() {
 
 		// If the game is over, this is not a critical state
@@ -664,19 +777,20 @@ public class PentagoBitBoard {
 	 * @param player  Player to check for win
 	 * @return The win move position for this permutation of the board. 0 if non exist
 	 */
-	private static long getWinMoveForSwap(long[] swappedBoard, int player) {
+	private long getWinMoveForSwap(long[] swappedBoard, int player) {
 
 		long winMove = 0;
 
 		for (int i = 0; i < WINNING_MASKS.length; i++) {
 
-			long masked = (~(swappedBoard[1 - player] & WINNING_MASKS[i])) & WINNING_MASKS[i];
+			long masked = swappedBoard[1 - player] & WINNING_MASKS[i];
 
-			if (masked == 0) {
+			// If this swap leads to opponent win
+			if (masked == WINNING_MASKS[i]) {
 				return 0;
 			}
-			else if ((swappedBoard[1 - player] & WINNING_MASKS[i]) > 0) {
-				// If the opponent is already blocking this win continue
+			else if (masked > 0) {
+				// If the opponent is already blocking this win, continue
 				continue;
 			}
 
@@ -686,7 +800,7 @@ public class PentagoBitBoard {
 			if (winMove == 0) {
 				// If the mask applied matches perfectly, one move away from win. could place anywhere
 				if (masked == 0) {
-					long availibleSpots = ~(swappedBoard[0] | swappedBoard[1]);
+					long availibleSpots = (~(swappedBoard[0] | swappedBoard[1])) & 0xFFFFFFFFFL;
 					int bitNum = 0;
 
 					while (availibleSpots > 0) {
@@ -694,6 +808,7 @@ public class PentagoBitBoard {
 							break;
 
 						availibleSpots = availibleSpots >> 1;
+						bitNum++;
 					}
 
 					winMove = 1L << bitNum;
@@ -832,7 +947,7 @@ public class PentagoBitBoard {
 	 * Checks if the game is over
 	 * @return true if game is over, false if still ongoing
 	 */
-	boolean gameOver() {
+	public boolean gameOver() {
 		return (this.turnNumber >= MAX_TURNS) || this.winner != NOBODY;
 	}
 
@@ -840,23 +955,19 @@ public class PentagoBitBoard {
 		return this.pieces.clone();
 	}
 
-	byte getWinner() {
+	public byte getWinner() {
 		return winner;
 	}
 
-	byte getOpponent() {
+	public byte getOpponent() {
 		return (byte) (1 - this.turnPlayer);
 	}
 
-	void togglePlayer() {
-		this.turnPlayer = getOpponent();
-	}
-
-	byte getTurnNumber() {
+	public byte getTurnNumber() {
 		return this.turnNumber;
 	}
 
-	byte getTurnPlayer() {
+	public byte getTurnPlayer() {
 		return this.turnPlayer;
 	}
 

@@ -1,4 +1,4 @@
-package Thanos_Mode_10;
+package Thanos_Mode_110;
 
 import pentago_swap.PentagoBoardState;
 import pentago_swap.PentagoMove;
@@ -7,6 +7,7 @@ import java.util.List;
 
 public class Agent {
 
+    private static final long TIMEOUT = 2000;
 
     /**
      * Finds the move to play given a particular board state.
@@ -24,7 +25,8 @@ public class Agent {
 
         List<Long> moves = MoveFilter.getNonDangerousMoves(boardState);
 
-        long moveToPlay = MovePicker.pickMoveFromSet(boardState, moves);
+        // Pick the best move to play, allocate the time remaining to do so.
+        long moveToPlay = MovePicker.pickMoveFromSet(TIMEOUT - System.currentTimeMillis() + startTime, boardState, moves);
 
         System.out.println("Move decided in " + (System.currentTimeMillis() - startTime) + " ms, returning move: " + PentagoBitMove.toPrettyString(moveToPlay));
 
