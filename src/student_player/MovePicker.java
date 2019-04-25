@@ -8,11 +8,12 @@ public class MovePicker {
 
     /**
      * Pick the best move to play among non dangerous moves.
+     * @param timeout The time allocated to pick a move
      * @param boardState The current board state
      * @param setOfMoves The set of moves to chose from
      * @return The best move to play.
      */
-    public static long pickMoveFromSet(PentagoBitBoard boardState, List<Long> setOfMoves) {
+    public static long pickMoveFromSet(long timeout, PentagoBitBoard boardState, List<Long> setOfMoves) {
 
         // If there is only one move to pick from return the move.
         if (setOfMoves.size() == 1) {
@@ -21,7 +22,7 @@ public class MovePicker {
 
         System.out.println("Computing what move to play out of " + setOfMoves.size() + " least dangerous moves.");
 
-        return MCTS.getMCTSBestMove(1000, setOfMoves, boardState);
+        return MCTS.getMCTSBestMove(timeout, setOfMoves, boardState);
     }
 
 
