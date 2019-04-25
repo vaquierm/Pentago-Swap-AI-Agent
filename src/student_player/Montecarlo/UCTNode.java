@@ -156,6 +156,6 @@ class UCTNode {
     }
 
     UCTNode getRandomChild() {
-        return children.get((int)(Math.random() * children.size()));
+        return children.get(rand.nextInt(children.size()));
     }
 }

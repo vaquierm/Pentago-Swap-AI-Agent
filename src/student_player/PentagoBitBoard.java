@@ -783,13 +783,14 @@ public class PentagoBitBoard {
 
 		for (int i = 0; i < WINNING_MASKS.length; i++) {
 
-			long masked = (~(swappedBoard[1 - player] & WINNING_MASKS[i])) & WINNING_MASKS[i];
+			long masked = swappedBoard[1 - player] & WINNING_MASKS[i];
 
-			if (masked == 0) {
+			// If this swap leads to opponent win
+			if (masked == WINNING_MASKS[i]) {
 				return 0;
 			}
-			else if ((swappedBoard[1 - player] & WINNING_MASKS[i]) > 0) {
-				// If the opponent is already blocking this win continue
+			else if (masked > 0) {
+				// If the opponent is already blocking this win, continue
 				continue;
 			}
 
@@ -799,7 +800,7 @@ public class PentagoBitBoard {
 			if (winMove == 0) {
 				// If the mask applied matches perfectly, one move away from win. could place anywhere
 				if (masked == 0) {
-					long availibleSpots = ~(swappedBoard[0] | swappedBoard[1]);
+					long availibleSpots = (~(swappedBoard[0] | swappedBoard[1])) & 0xFFFFFFFFFL;
 					int bitNum = 0;
 
 					while (availibleSpots > 0) {
@@ -807,6 +808,7 @@ public class PentagoBitBoard {
 							break;
 
 						availibleSpots = availibleSpots >> 1;
+						bitNum++;
 					}
 
 					winMove = 1L << bitNum;
@@ -959,10 +961,6 @@ public class PentagoBitBoard {
 
 	public byte getOpponent() {
 		return (byte) (1 - this.turnPlayer);
-	}
-
-	void togglePlayer() {
-		this.turnPlayer = getOpponent();
 	}
 
 	public byte getTurnNumber() {

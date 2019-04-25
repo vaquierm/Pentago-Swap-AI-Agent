@@ -78,13 +78,15 @@ public class MCTS {
             // Get the moves that can be made from node
             List<Long> moves = nodeState.getAllLegalNonSymmetricMoves();
 
-            // Expand the node
-            node.expandNode(moves);
+            if (moves.size() > 0) {
+                // Expand the node
+                node.expandNode(moves);
 
-            node = node.getRandomChild();
+                node = node.getRandomChild();
 
-            // Apply the move of the child that was chosen
-            nodeState.processMove(node.getMove());
+                // Apply the move of the child that was chosen
+                nodeState.processMove(node.getMove());
+            }
         }
 
         while (!nodeState.gameOver()) {
