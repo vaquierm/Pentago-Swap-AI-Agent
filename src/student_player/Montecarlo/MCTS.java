@@ -28,7 +28,7 @@ public class MCTS {
         // Expand the root node with the option moves
         UCTRoot.expandNode(moves);
 
-        while (System.currentTimeMillis() - startTime < timeout && UCTRoot.getNumSims() < 150000) {
+        while (System.currentTimeMillis() - startTime < timeout && UCTRoot.getNumSims() < 500000) {
 
             // Find a promising node to expand
             UCTNode promissingNode = findPromisingNode();
