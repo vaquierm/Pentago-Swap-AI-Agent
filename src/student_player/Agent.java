@@ -7,6 +7,9 @@ import java.util.List;
 
 public class Agent {
 
+    /**
+     * Time allocated for the agent to make a decision
+     */
     private static final long TIMEOUT = 2000;
 
     /**

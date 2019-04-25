@@ -7,6 +7,17 @@ import java.util.HashMap;
 
 import static pentago_swap.PentagoBoardState.BOARD_SIZE;
 
+/**
+ * This class is a utility class that is used to encode the BitMoves as long integers.
+ * The moves are encoded as follows
+ * <1 bit player number><2 bit Quadrant A><2 Bit Quadrant B><36 bit position on board>
+ *
+ * An example of a move would be
+ *
+ * 0b0 00 01 000000010000000000000000000000
+ *
+ * This move would be for player 0, placing a piece at position (1, 1) and swapping quadrants TL and TR (0 and 1).
+ */
 public class PentagoBitMove {
 
     private static HashMap<Integer, PentagoBoardState.Quadrant> intToQuad;
@@ -128,18 +139,6 @@ public class PentagoBitMove {
 
     public static long getBitCoord(long move) {
         return move & 0b111111111111111111111111111111111111L;
-    }
-
-    public static long setPriority(long move, int priority) {
-        return move | (((long) (priority & 0b11111)) << 42);
-    }
-
-    public static int getPriority(long move) {
-        return (int) ((move >> 42) & 0b11111);
-    }
-
-    public static long getBitMoveNoPriority(long move) {
-        return move & 0b11111111111111111111111111111111111111111L;
     }
 
     /**

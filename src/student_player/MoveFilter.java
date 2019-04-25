@@ -4,6 +4,17 @@ import java.util.*;
 
 import static student_player.PentagoBitBoard.NOBODY;
 
+/**
+ * This class is used to find the least dangerous moves that can be played.
+ * The level of danger goes in the following order.
+ *   1. Moves that lead to the opponent winning
+ *   2. Moves that gives the opportunity to the opponent to win in one move
+ *   3. Moves that leads to the opponent putting the agent in a state where it is guaranteed to lose in 2 moves
+ *   4. Moves that leads to the opponent putting the agent in a state where it is guaranteed to lose in 4 moves
+ *
+ * While filtering the moves, we also check for the moves that will lead to the agent winning with certainty on its next or 2 moves ahead.
+ * These moves are returned with priority if they are safe.
+ */
 public class MoveFilter {
 
     private static List<Long> firstLayerElimination;
@@ -13,6 +24,11 @@ public class MoveFilter {
     private static List<Long> opponentCriticalStateMove;
     private static List<Long> opponentCriticalStateTwoMove;
 
+    /**
+     * Return the least dangerous moves from this board state
+     * @param boardState The current state of the board
+     * @return The set of least dangerous moves
+     */
     public static List<Long> getNonDangerousMoves(PentagoBitBoard boardState) {
 
         // Check to see if the agent can win from this board state

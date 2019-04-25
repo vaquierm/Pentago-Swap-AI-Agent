@@ -6,6 +6,13 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+/**
+ * This class implements all logic for the MCTS algorithm.
+ * An Upper confidence tree (UCT) is used to as a tree policy.
+ * The default policy has been modified such that if a win move is available, it is played.
+ * If not, then a random move is player. This has been made possible due to the fact that win moves can be
+ * found in O(1) due to a clever implementation in the PentagoBitBoard class.
+ */
 public class MCTS {
 
     private static UCTNode UCTRoot;
