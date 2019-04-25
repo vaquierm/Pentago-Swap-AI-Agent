@@ -23,8 +23,8 @@ public class PentagoBitBoard {
 	// https://lemire.me/blog/2016/02/01/default-random-number-generators-are-slow/
 	private static final ThreadLocalRandom rand = ThreadLocalRandom.current();
 
-	static final byte DRAW = Byte.MAX_VALUE;
-	static final byte NOBODY = Byte.MAX_VALUE - 1;
+	public static final byte DRAW = Byte.MAX_VALUE;
+	public static final byte NOBODY = Byte.MAX_VALUE - 1;
 
 	/**
 	 * Pieces are stored in two long values where a bit set (1) indicates a piece is present at that location.
@@ -261,7 +261,7 @@ public class PentagoBitBoard {
 	 *
 	 * @return A random legal move
 	 */
-	long getRandomMove() {
+	public long getRandomMove() {
 
 		long availableSpots = ~(this.pieces[WHITE] | this.pieces[BLACK]);
 
@@ -288,7 +288,7 @@ public class PentagoBitBoard {
 	 *
 	 * @return All legal moves ignoring symmetric moves
 	 */
-	ArrayList<Long> getAllLegalNonSymmetricMoves() {
+	public ArrayList<Long> getAllLegalNonSymmetricMoves() {
 
 		if (winner != NOBODY) {
 			return new ArrayList<>(1);
@@ -471,7 +471,7 @@ public class PentagoBitBoard {
 	 *
 	 * @param move The next move to play
 	 */
-	void processMove(long move) {
+	public void processMove(long move) {
 
 		if (!isLegalMove(move)) { throw new IllegalArgumentException("Invalid move. Move: " + toPrettyString(move)); }
 
@@ -523,7 +523,7 @@ public class PentagoBitBoard {
 	 * @param move  The move to be tested
 	 * @return  True if the move is legal for the current board state
 	 */
-	boolean isLegalMove(long move) {
+	public boolean isLegalMove(long move) {
 		if (getAQuad(move) == getBQuad(move))
 			return false;
 
@@ -664,7 +664,7 @@ public class PentagoBitBoard {
 	 * @param player  Player to check for win
 	 * @return The win move position for this permutation of the board. 0 if non exist
 	 */
-	private static long getWinMoveForSwap(long[] swappedBoard, int player) {
+	private long getWinMoveForSwap(long[] swappedBoard, int player) {
 
 		long winMove = 0;
 
@@ -832,7 +832,7 @@ public class PentagoBitBoard {
 	 * Checks if the game is over
 	 * @return true if game is over, false if still ongoing
 	 */
-	boolean gameOver() {
+	public boolean gameOver() {
 		return (this.turnNumber >= MAX_TURNS) || this.winner != NOBODY;
 	}
 
@@ -840,11 +840,11 @@ public class PentagoBitBoard {
 		return this.pieces.clone();
 	}
 
-	byte getWinner() {
+	public byte getWinner() {
 		return winner;
 	}
 
-	byte getOpponent() {
+	public byte getOpponent() {
 		return (byte) (1 - this.turnPlayer);
 	}
 
@@ -852,11 +852,11 @@ public class PentagoBitBoard {
 		this.turnPlayer = getOpponent();
 	}
 
-	byte getTurnNumber() {
+	public byte getTurnNumber() {
 		return this.turnNumber;
 	}
 
-	byte getTurnPlayer() {
+	public byte getTurnPlayer() {
 		return this.turnPlayer;
 	}
 

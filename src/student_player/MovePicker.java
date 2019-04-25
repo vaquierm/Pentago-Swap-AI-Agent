@@ -1,6 +1,7 @@
 package student_player;
 
-import java.util.Collections;
+import student_player.Montecarlo.MCTS;
+
 import java.util.List;
 
 public class MovePicker {
@@ -20,33 +21,7 @@ public class MovePicker {
 
         System.out.println("Computing what move to play out of " + setOfMoves.size() + " least dangerous moves.");
 
-        int player = boardState.getTurnPlayer();
-
-        // Initialize the best move value
-        int bestMoveValue = Integer.MIN_VALUE;
-        long bestBitMove = 0;
-
-        // Shuffle the moves to add some non determinism
-        Collections.shuffle(setOfMoves);
-
-        // Iterate through all moves to determine which one is best
-        for (Long move : setOfMoves) {
-
-            // Process the move
-            boardState.processMove(move);
-
-            int tempScore = boardState.evaluateBoard(player);
-
-            if (tempScore > bestMoveValue) {
-                bestBitMove = move;
-                bestMoveValue = tempScore;
-            }
-
-            boardState.undoMove(move);
-
-        }
-
-        return bestBitMove;
+        return MCTS.getMCTSBestMove(1000, setOfMoves, boardState);
     }
 
 
