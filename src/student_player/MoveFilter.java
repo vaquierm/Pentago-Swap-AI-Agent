@@ -11,6 +11,7 @@ public class MoveFilter {
     private static List<Long> criticalStateMoves;
     private static List<Long> criticalStateSecondMove;
     private static List<Long> opponentCriticalStateMove;
+    private static List<Long> opponentCriticalStateTwoMove;
 
     public static List<Long> getNonDangerousMoves(PentagoBitBoard boardState) {
 
@@ -35,6 +36,7 @@ public class MoveFilter {
         criticalStateMoves = new ArrayList<>(moves.size());
         criticalStateSecondMove = new ArrayList<>(moves.size());
         opponentCriticalStateMove = new ArrayList<>(moves.size());
+        opponentCriticalStateTwoMove = new ArrayList<>(moves.size());
 
         firstLayerFilter(moves, boardState);
 
@@ -99,7 +101,20 @@ public class MoveFilter {
             System.out.println("Removed " + opponentCriticalStateMove.size() + " moves where the opponent could put the agent in a critical state");
         }
 
-        System.out.println("After filtering, the opponent has " + moves.size() + " possible moves to play");
+        moves.removeAll(opponentCriticalStateTwoMove);
+        if (moves.isEmpty()) {
+            System.out.println("The opponent could put the agent in a critical state two moves down...");
+            opponentCriticalStateTwoMove.removeAll(firstLayerElimination);
+            opponentCriticalStateTwoMove.removeAll(secondLayerElimination);
+            opponentCriticalStateTwoMove.removeAll(opponentCriticalStateMove);
+
+            return opponentCriticalStateTwoMove;
+        }
+        else {
+            System.out.println("Removed " + opponentCriticalStateTwoMove.size() + " moves where the opponent could put the agent in a critical state in two moves");
+        }
+
+        System.out.println("After filtering, the agent has " + moves.size() + " possible moves to play");
 
         return moves;
     }
@@ -156,6 +171,12 @@ public class MoveFilter {
                 // Check if the opponent has put us in a critical state
                 if (!opponentCriticalStateMove.contains(rootMove) && boardState.isCriticalState()) {
                     opponentCriticalStateMove.add(rootMove);
+                    boardState.undoMove(secondMove);
+                    return;
+                }
+                // Check if the opponent can guaranteed put us in a critical state two moves down
+                else if (!opponentCriticalStateTwoMove.contains(rootMove) && boardState.isTwoMoveCriticalState()) {
+                    opponentCriticalStateTwoMove.add(rootMove);
                     boardState.undoMove(secondMove);
                     return;
                 }

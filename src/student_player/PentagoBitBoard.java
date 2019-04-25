@@ -66,6 +66,9 @@ public class PentagoBitBoard {
 	 */
 	private static final long[] WINNING_MASKS = new long[32];
 
+	private static final long[] FOUR_LONG_MASKS = new long[14];
+	private static final long[] FOUR_LONG_BLOCK_MASKS = new long[14];
+
 	// Generates the WINNING_MASKS
 	static {
 		// Generate the rows
@@ -97,6 +100,44 @@ public class PentagoBitBoard {
 		WINNING_MASKS[29] = 0b000000100000010000001000000100000010L;
 		WINNING_MASKS[30] = 0b000010000100001000010000100000000000L;
 		WINNING_MASKS[31] = 0b000000000001000010000100001000010000L;
+
+		// Create the four long masks
+		i = 0;
+		baseRowMask = 0b011110000000000000000000000000000000L;
+		FOUR_LONG_MASKS[i++] = baseRowMask;
+		for(; i < 6; i++) {
+			baseRowMask = baseRowMask >> 6;
+			FOUR_LONG_MASKS[i] = baseRowMask;
+		}
+
+		baseColumnMask = 0b000000100000100000100000100000000000L;
+		FOUR_LONG_MASKS[i++] = baseColumnMask;
+		for(; i < 12; i++) {
+			baseColumnMask = baseColumnMask >> 1;
+			FOUR_LONG_MASKS[i] = baseColumnMask;
+		}
+
+		FOUR_LONG_MASKS[12] = 0b000000010000001000000100000010000000L;
+		FOUR_LONG_MASKS[13] = 0b000000000010000100001000010000000000L;
+
+		// Create the masks to which block the four long masks
+		i = 0;
+		baseRowMask = 0b100001000000000000000000000000000000L;
+		FOUR_LONG_BLOCK_MASKS[i++] = baseRowMask;
+		for(; i < 6; i++) {
+			baseRowMask = baseRowMask >> 6;
+			FOUR_LONG_BLOCK_MASKS[i] = baseRowMask;
+		}
+
+		baseColumnMask = 0b100000000000000000000000000000100000L;
+		FOUR_LONG_BLOCK_MASKS[i++] = baseColumnMask;
+		for(; i < 12; i++) {
+			baseColumnMask = baseColumnMask >> 1;
+			FOUR_LONG_BLOCK_MASKS[i] = baseColumnMask;
+		}
+
+		FOUR_LONG_BLOCK_MASKS[12] = 0b100000000000000000000000000000000001L;
+		FOUR_LONG_BLOCK_MASKS[13] = 0b000001000000000000000000000000100000L;
 
 	}
 
@@ -568,6 +609,78 @@ public class PentagoBitBoard {
 		return false;
 	}
 
+	/**
+	 * Checks if the current board state is a state where the turnplayer is doomed and if
+	 * the other player plays optimally, it will win no matter what.
+	 * @return True is the turn player is doomed
+	 */
+	public boolean isTwoMoveCriticalState() {
+
+		// If the game is over, this is not a critical state
+		if (gameOver()) {
+			return false;
+		}
+
+		int player = 1 - turnPlayer;
+
+		// If the opponent can win. this is not a critical state
+		if (getWinMove(turnPlayer) > 0) {
+			return false;
+		}
+
+		// Counter keeping track of how many masks are one away
+		int count = 0;
+
+		for (int i = 0; i < FOUR_LONG_MASKS.length; i++) {
+			// If the opponent is already blocking this win, continue
+			if ((FOUR_LONG_MASKS[i] & pieces[1 - player]) > 0)
+				continue;
+
+			// If the opponent is blocking the four
+			if ((FOUR_LONG_BLOCK_MASKS[i] & pieces[1 - player]) > 0)
+				continue;
+
+			long masked = (~(pieces[player] & FOUR_LONG_MASKS[i])) & FOUR_LONG_MASKS[i];
+
+			if ((masked & (masked - 1)) == 0)
+				count++;
+
+			if (count == 2)
+				break;
+
+		}
+
+		// If we did not find two one away masks, consider it not a two away critical state
+		if (count < 2)
+			return false;
+
+		boolean clear = true;
+		for (Long otherMove : getAllLegalNonSymmetricMoves()) {
+
+			// Play the opponent move
+			processMove(otherMove);
+
+			// If the opponent can win or put us in a critical state, this is not a two moves away state.
+			if (winner == 1 - player || isCriticalState()) {
+				undoMove(otherMove);
+				clear = false;
+				break;
+			}
+
+			undoMove(otherMove);
+		}
+
+		// If the move does not lead to an immediate defeat, it is ok
+		return clear;
+
+	}
+
+
+	/**
+	 * Checks if the current state is a critical state. This means that no matter what move is played
+	 * by the turn player, the other player will win.
+	 * @return True if this is a critical state
+	 */
 	public boolean isCriticalState() {
 
 		// If the game is over, this is not a critical state
