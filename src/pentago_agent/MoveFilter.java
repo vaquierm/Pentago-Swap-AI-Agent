@@ -1,8 +1,8 @@
-package student_player;
+package pentago_agent;
 
 import java.util.*;
 
-import static student_player.PentagoBitBoard.NOBODY;
+import static pentago_agent.PentagoBitBoard.NOBODY;
 
 /**
  * This class is used to find the least dangerous moves that can be played.

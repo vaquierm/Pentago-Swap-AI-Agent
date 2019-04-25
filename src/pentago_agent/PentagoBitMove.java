@@ -1,4 +1,4 @@
-package student_player;
+package pentago_agent;
 
 import pentago_swap.PentagoBoardState;
 import pentago_swap.PentagoMove;

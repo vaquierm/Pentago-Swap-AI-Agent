@@ -1,6 +1,6 @@
-package student_player;
+package pentago_agent;
 
-import student_player.Montecarlo.MCTS;
+import pentago_agent.Montecarlo.MCTS;
 
 import java.util.List;
 

@@ -1,23 +1,32 @@
-package student_player;
+package pentago_agent;
 
+import boardgame.Move;
+
+import pentago_swap.PentagoPlayer;
 import pentago_swap.PentagoBoardState;
-import pentago_swap.PentagoMove;
 
 import java.util.List;
 
-public class Agent {
+
+public class PentagoAgent extends PentagoPlayer {
 
     /**
      * Time allocated for the agent to make a decision
      */
     private static final long TIMEOUT = 2000;
 
+
+    public PentagoAgent() {
+        super("Thanos Tier Ultimate Agent");
+    }
+
+
     /**
-     * Finds the move to play given a particular board state.
-     * @param pentagoBoardState Current board state.
-     * @return The move to play
+     * Chooses a move to play
+     * @param pentagoBoardState The current board state
+     * @return The moves that the agent plays
      */
-    public static PentagoMove findBestMove(PentagoBoardState pentagoBoardState) {
+    public Move chooseMove(PentagoBoardState pentagoBoardState) {
 
         long startTime = System.currentTimeMillis();
 

@@ -1,4 +1,4 @@
-package student_player;
+package pentago_agent;
 
 import boardgame.Board;
 import pentago_swap.PentagoBoardState;
@@ -8,10 +8,12 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import static pentago_swap.PentagoBoardState.*;
 
-import static student_player.PentagoBitMove.*;
+import static pentago_agent.PentagoBitMove.*;
 
 /**
  * A class to more efficiently represent the state an actions applicable to a PentagoBoardState
+ * Thank you to @kareemhalabi for letting me use his initial implementation of this class a a base.
+ * https://github.com/kareemhalabi/COMP424-pentago_swap/blob/master/src/student_player/PentagoBitBoard.java
  */
 public class PentagoBitBoard {
 

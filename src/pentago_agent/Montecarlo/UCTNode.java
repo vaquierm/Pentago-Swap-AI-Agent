@@ -1,12 +1,12 @@
-package student_player.Montecarlo;
+package pentago_agent.Montecarlo;
 
-import student_player.PentagoBitBoard;
-import student_player.PentagoBitMove;
+import pentago_agent.PentagoBitBoard;
+import pentago_agent.PentagoBitMove;
 
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
-import static student_player.PentagoBitBoard.DRAW;
+import static pentago_agent.PentagoBitBoard.DRAW;
 
 /**
  * Class representing an Upper Confidence Tree (UCT) for use in Monte Carlo Tree search.

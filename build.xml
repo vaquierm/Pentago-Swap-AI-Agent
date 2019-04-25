@@ -18,10 +18,10 @@
         <javac srcdir="src" destdir="bin" debug="true" includeantruntime="false" source="${target.version}" target="${target.version}"/>
     </target>
 
-    <!-- Run Client with StudentPlayer ======================================================== -->
+    <!-- Run Client with BenchmarkPlayer ======================================================== -->
     <target name="student" depends="compile">
         <java classpath="${run.classpath}" classname="boardgame.Client" fork="true">
-            <arg value="student_player.StudentPlayer"/>
+            <arg value="pentago_agent.PentagoAgent"/>
         </java>
     </target>
 

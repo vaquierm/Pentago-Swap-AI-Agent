@@ -1,6 +1,6 @@
-package student_player.Montecarlo;
+package pentago_agent.Montecarlo;
 
-import student_player.PentagoBitBoard;
+import pentago_agent.PentagoBitBoard;
 
 import java.util.Collections;
 import java.util.Comparator;

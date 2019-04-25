@@ -11,12 +11,12 @@ import java.io.IOException;
 //
 //     java -cp bin autoplay.Autoplay n_games
 //
-// Note: The script is currently set up to have the StudentPlayer play against
+// Note: The script is currently set up to have the BenchmarkPlayer play against
 // RandomHusPlayer. In order to have different players participate, you need
 // to change the variables ``client1_line`` and ``client2_line``. Make sure
 // that in those lines, the classpath and the class name is set appropriately
 // so that java can find and run the compiled code for the agent that you want
-// to test. For example to have StudentPlayer play against itself, you would
+// to test. For example to have BenchmarkPlayer play against itself, you would
 // change ``client2_line`` to be equal to ``client1_line``.
 //
 public class Autoplay {
@@ -40,7 +40,7 @@ public class Autoplay {
             Process server = server_pb.start();
 
             ProcessBuilder client1_pb = new ProcessBuilder("java", "-cp", "bin", "-Xms520m", "-Xmx520m",
-                    "boardgame.Client", "student_player.StudentPlayer");
+                    "boardgame.Client", "pentago_agent.PentagoAgent");
             client1_pb.redirectOutput(ProcessBuilder.Redirect.INHERIT);
 
             ProcessBuilder client2_pb = new ProcessBuilder("java", "-cp", "bin", "-Xms520m", "-Xmx520m",
